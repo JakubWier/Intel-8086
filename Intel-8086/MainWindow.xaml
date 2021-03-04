@@ -33,11 +33,9 @@
                    FontFamily="Impact"
                    ></TextBlock>
 
-        <Border Grid.Column="2" 
-            BorderThickness="3" 
-            BorderBrush="Black">
-            
-            <TextBlock Grid.Row="0" 
+
+
+        <TextBlock Grid.Row="0" 
                        Grid.Column="2" 
                        Text="Output logs" 
                        VerticalAlignment="Center" 
@@ -45,14 +43,14 @@
                        FontSize="18" 
                        Foreground="White" 
                        Padding="0,0,5,0" 
-                       Background="#0F0F2D" 
+                       Background="#1F1F4D" 
                    ></TextBlock>
-        </Border>
-        
+
         <Border Grid.Row="1" 
                 Grid.Column="2" 
-                BorderThickness="3" 
-                BorderBrush="Black">
+                BorderThickness="2" 
+                BorderBrush="GhostWhite"
+                CornerRadius="5">
             
             <ScrollViewer>
                 <TextBlock x:Name="A" 
@@ -80,34 +78,72 @@
         <StackPanel Grid.Row="1" 
                     Grid.ColumnSpan="2" 
                     Orientation="Horizontal" 
-                    HorizontalAlignment="Center">
-            <TextBlock  Text="AX" 
+                    HorizontalAlignment="Center"
+                    Margin="0,5,0,0">
+            <TextBlock  Text="AX = " 
                         VerticalAlignment="Top"
                         TextAlignment="Center" 
-                        FontSize="12" 
+                        FontSize="16" 
                         Foreground="White" 
-                   ></TextBlock>
-            
-            <TextBlock  Text="BX" 
+                        Margin="10,0,0,0"
+                        ></TextBlock>
+
+            <TextBlock  x:Name="BlockAX" 
+                        Text="0000 0000"
                         VerticalAlignment="Top"
                         TextAlignment="Center" 
-                        FontSize="12" 
+                        FontSize="16" 
                         Foreground="White" 
-                   ></TextBlock>
-            
-            <TextBlock  Text="CX" 
+                        ></TextBlock>
+
+            <TextBlock  Text="BX = " 
                         VerticalAlignment="Top"
                         TextAlignment="Center" 
-                        FontSize="12" 
+                        FontSize="16" 
                         Foreground="White" 
-                   ></TextBlock>
-            
-            <TextBlock  Text="DX" 
-                        VerticalAlignment="Top" 
+                        Margin="10,0,0,0"
+                        ></TextBlock>
+
+            <TextBlock  x:Name="BlockBX" 
+                        Text="0000 0000"
+                        VerticalAlignment="Top"
                         TextAlignment="Center" 
-                        FontSize="12" 
+                        FontSize="16" 
                         Foreground="White" 
-                   ></TextBlock>
+                        ></TextBlock>
+
+            <TextBlock  Text="CX = " 
+                        VerticalAlignment="Top"
+                        TextAlignment="Center" 
+                        FontSize="16" 
+                        Foreground="White" 
+                        Margin="10,0,0,0"
+                        ></TextBlock>
+
+            <TextBlock  x:Name="BlockCX" 
+                        Text="0000 0000"
+                        VerticalAlignment="Top"
+                        TextAlignment="Center" 
+                        FontSize="16" 
+                        Foreground="White" 
+                        ></TextBlock>
+
+            <TextBlock  Text="DX = " 
+                        VerticalAlignment="Top"
+                        TextAlignment="Center" 
+                        FontSize="16" 
+                        Foreground="White" 
+                        Margin="10,0,0,0"
+                        ></TextBlock>
+
+            <TextBlock  x:Name="BlockDX" 
+                        Text="0000 0000"
+                        VerticalAlignment="Top"
+                        TextAlignment="Center"
+                        Foreground="White"
+                        FontSize="16"
+                        ></TextBlock>
+
         </StackPanel>
     </Grid>
 </Window>
