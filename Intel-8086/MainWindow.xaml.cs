@@ -24,5 +24,6 @@ namespace Intel_8086
         {
             InitializeComponent();
         }
+
     }
 }

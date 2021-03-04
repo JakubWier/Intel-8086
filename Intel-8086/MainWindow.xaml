@@ -5,8 +5,109 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Intel_8086"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" 
+        FontFamily="Calibri"
+        Background="#181735"
+        >
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Grid.Row="0" 
+                   Grid.Column="0" 
+                   Grid.ColumnSpan="2" 
+                   Text="Intel 8086 Simulator" 
+                   TextAlignment="Center"
+                   FontSize="26" 
+                   Foreground="White" 
+                   Background="#0F0F2D" 
+                   Padding="10,0,0,0" 
+                   FontFamily="Impact"
+                   ></TextBlock>
 
+        <Border Grid.Column="2" 
+            BorderThickness="3" 
+            BorderBrush="Black">
+            
+            <TextBlock Grid.Row="0" 
+                       Grid.Column="2" 
+                       Text="Output logs" 
+                       VerticalAlignment="Center" 
+                       TextAlignment="Center"
+                       FontSize="18" 
+                       Foreground="White" 
+                       Padding="0,0,5,0" 
+                       Background="#0F0F2D" 
+                   ></TextBlock>
+        </Border>
+        
+        <Border Grid.Row="1" 
+                Grid.Column="2" 
+                BorderThickness="3" 
+                BorderBrush="Black">
+            
+            <ScrollViewer>
+                <TextBlock x:Name="A" 
+                           Text="Tekst Tekst Tekst Tekst AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
+                           TextWrapping="Wrap"  
+                           FontSize="12" 
+                           Background="#1F1F4D" 
+                           Foreground="White" 
+                           Padding="5,0,5,0"
+                   ></TextBlock>
+            </ScrollViewer>
+        </Border>
+        
+        <TextBlock Grid.Row="2" 
+                   Grid.ColumnSpan="3" 
+                   Text="Jakub Wieroński" 
+                   VerticalAlignment="Bottom" 
+                   TextAlignment="Right" 
+                   FontSize="12" 
+                   Background="#0F0F2D" 
+                   Foreground="White" 
+                   Padding="0,0,5,0"
+                   ></TextBlock>
+
+        <StackPanel Grid.Row="1" 
+                    Grid.ColumnSpan="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center">
+            <TextBlock  Text="AX" 
+                        VerticalAlignment="Top"
+                        TextAlignment="Center" 
+                        FontSize="12" 
+                        Foreground="White" 
+                   ></TextBlock>
+            
+            <TextBlock  Text="BX" 
+                        VerticalAlignment="Top"
+                        TextAlignment="Center" 
+                        FontSize="12" 
+                        Foreground="White" 
+                   ></TextBlock>
+            
+            <TextBlock  Text="CX" 
+                        VerticalAlignment="Top"
+                        TextAlignment="Center" 
+                        FontSize="12" 
+                        Foreground="White" 
+                   ></TextBlock>
+            
+            <TextBlock  Text="DX" 
+                        VerticalAlignment="Top" 
+                        TextAlignment="Center" 
+                        FontSize="12" 
+                        Foreground="White" 
+                   ></TextBlock>
+        </StackPanel>
     </Grid>
 </Window>
