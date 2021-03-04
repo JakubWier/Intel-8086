@@ -14,16 +14,17 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
             <ColumnDefinition/>
+            <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
-        
+
         <TextBlock Grid.Row="0" 
                    Grid.Column="0" 
-                   Grid.ColumnSpan="2" 
+                   Grid.ColumnSpan="3" 
                    Text="Intel 8086 Simulator" 
                    TextAlignment="Center"
                    FontSize="26" 
@@ -35,23 +36,21 @@
 
 
 
-        <TextBlock Grid.Row="0" 
-                       Grid.Column="2" 
+        <TextBlock Grid.Column="3" 
                        Text="Output logs" 
-                       VerticalAlignment="Center" 
                        TextAlignment="Center"
                        FontSize="18" 
                        Foreground="White" 
-                       Padding="0,0,5,0" 
-                       Background="#1F1F4D" 
-                   ></TextBlock>
+                       Padding="0,5,0,0" 
+                       Background="#1F1F4D"/>
 
         <Border Grid.Row="1" 
-                Grid.Column="2" 
+                Grid.Column="3" 
                 BorderThickness="2" 
                 BorderBrush="GhostWhite"
-                CornerRadius="5">
-            
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,0">
+
             <ScrollViewer>
                 <TextBlock x:Name="A" 
                            Text="Tekst Tekst Tekst Tekst AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
@@ -63,11 +62,11 @@
                    ></TextBlock>
             </ScrollViewer>
         </Border>
-        
+
         <TextBlock Grid.Row="2" 
-                   Grid.ColumnSpan="3" 
+                   Grid.ColumnSpan="4" 
                    Text="Jakub Wieroński" 
-                   VerticalAlignment="Bottom" 
+                   VerticalAlignment="Center" 
                    TextAlignment="Right" 
                    FontSize="12" 
                    Background="#0F0F2D" 
@@ -76,10 +75,12 @@
                    ></TextBlock>
 
         <StackPanel Grid.Row="1" 
-                    Grid.ColumnSpan="2" 
+                    Grid.ColumnSpan="3" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Center"
-                    Margin="0,5,0,0">
+                    VerticalAlignment="Top"
+                    Margin="45,5,0,0"
+                    Height="25">
             <TextBlock  Text="AX = " 
                         VerticalAlignment="Top"
                         TextAlignment="Center" 
