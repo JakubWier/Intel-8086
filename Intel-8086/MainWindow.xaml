@@ -74,81 +74,73 @@
         </Border>
 
         <StackPanel Grid.Row="1" 
-                    Grid.ColumnSpan="3" 
-                    Orientation="Horizontal" 
-                    HorizontalAlignment="Center"
+                    Grid.RowSpan="2"
+                    Orientation="Vertical" 
+                    HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Margin="45,5,0,0"
-                    Height="25">
-            <TextBlock  Text="AX = " 
-                        VerticalAlignment="Top"
-                        TextAlignment="Center" 
+                    Margin="0,5,0,0">
+
+            <StackPanel Orientation="Horizontal">
+                <Label Foreground="White" FontSize="16">AX =</Label>
+
+                <TextBlock  x:Name="BlockAX" 
+                        Text="0000 0000 0000 0000"
+                        TextWrapping="WrapWithOverflow"
                         FontSize="16" 
                         Foreground="White" 
-                        Margin="10,0,0,0"
-                        ></TextBlock>
-
-            <TextBlock  x:Name="BlockAX" 
-                        Text="0000 0000"
                         VerticalAlignment="Top"
-                        TextAlignment="Center" 
+                        Padding="0,5,0,0"
+                        HorizontalAlignment="Center">
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label Foreground="White" FontSize="16">BX =</Label>
+
+                <TextBlock  x:Name="BlockBX" 
+                        Text="0"
                         FontSize="16" 
                         Foreground="White" 
-                        ></TextBlock>
-
-            <TextBlock  Text="BX = " 
                         VerticalAlignment="Top"
-                        TextAlignment="Center" 
+                        Padding="0,5,0,0"
+                        HorizontalAlignment="Center">
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label Foreground="White" FontSize="16">CX =</Label>
+
+                <TextBlock  x:Name="BlockCX" 
+                        Text="0"
                         FontSize="16" 
                         Foreground="White" 
-                        Margin="10,0,0,0"
-                        ></TextBlock>
-
-            <TextBlock  x:Name="BlockBX" 
-                        Text="0000 0000"
                         VerticalAlignment="Top"
-                        TextAlignment="Center" 
+                        Padding="0,5,0,0"
+                        HorizontalAlignment="Center">
+                </TextBlock>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <Label Foreground="White" FontSize="16">DX =</Label>
+
+                <TextBlock  x:Name="BlockDX" 
+                        Text="0"
                         FontSize="16" 
                         Foreground="White" 
-                        ></TextBlock>
-
-            <TextBlock  Text="CX = " 
                         VerticalAlignment="Top"
-                        TextAlignment="Center" 
-                        FontSize="16" 
-                        Foreground="White" 
-                        Margin="10,0,0,0"
-                        ></TextBlock>
-
-            <TextBlock  x:Name="BlockCX" 
-                        Text="0000 0000"
-                        VerticalAlignment="Top"
-                        TextAlignment="Center" 
-                        FontSize="16" 
-                        Foreground="White" 
-                        ></TextBlock>
-
-            <TextBlock  Text="DX = " 
-                        VerticalAlignment="Top"
-                        TextAlignment="Center" 
-                        FontSize="16" 
-                        Foreground="White" 
-                        Margin="10,0,0,0"
-                        ></TextBlock>
-
-            <TextBlock  x:Name="BlockDX" 
-                        Text="0000 0000"
-                        VerticalAlignment="Top"
-                        TextAlignment="Center"
-                        Foreground="White"
-                        FontSize="16"
-                        ></TextBlock>
+                        Padding="0,5,0,0"
+                        HorizontalAlignment="Center">
+                </TextBlock>
+            </StackPanel>
 
         </StackPanel>
 
-        <StackPanel Grid.Row="2"
+        <StackPanel Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.Column="2"
                     Orientation="Vertical"
-                    HorizontalAlignment="Left">
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Right">
 
             <Border BorderThickness="1"
                     BorderBrush="Gray"
@@ -157,13 +149,15 @@
                         Orientation="Vertical" 
                         Background="#1F1F4D">
 
-                    <Label FontWeight="Bold" Foreground="White">System of numeration:</Label>
+                    <Label FontSize="12" 
+                           FontWeight="Bold" 
+                           Foreground="White">System of numeration:</Label>
                     
                     <RadioButton IsChecked="True" Margin="15,5,10,0" 
                              Foreground="White">DEC</RadioButton>
                     <RadioButton Margin="15,5,10,0" 
                              Foreground="White">HEX</RadioButton>
-                    <RadioButton Margin="15,5,10,5" 
+                    <RadioButton Margin="15,5,10,10" 
                              Foreground="White">BIN</RadioButton>
                     
                 </StackPanel>
