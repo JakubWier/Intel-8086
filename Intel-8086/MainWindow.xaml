@@ -84,7 +84,7 @@
                 <Label Foreground="White" FontSize="16">AX =</Label>
 
                 <TextBlock  x:Name="BlockAX" 
-                        Text="0000 0000 0000 0000"
+                        Text="16"
                         TextWrapping="WrapWithOverflow"
                         FontSize="16" 
                         Foreground="White" 
@@ -98,7 +98,7 @@
                 <Label Foreground="White" FontSize="16">BX =</Label>
 
                 <TextBlock  x:Name="BlockBX" 
-                        Text="0"
+                        Text="17"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -111,7 +111,7 @@
                 <Label Foreground="White" FontSize="16">CX =</Label>
 
                 <TextBlock  x:Name="BlockCX" 
-                        Text="0"
+                        Text="18"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -124,7 +124,7 @@
                 <Label Foreground="White" FontSize="16">DX =</Label>
 
                 <TextBlock  x:Name="BlockDX" 
-                        Text="0"
+                        Text="255"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -152,13 +152,20 @@
                     <Label FontSize="12" 
                            FontWeight="Bold" 
                            Foreground="White">System of numeration:</Label>
-                    
-                    <RadioButton IsChecked="True" Margin="15,5,10,0" 
-                             Foreground="White">DEC</RadioButton>
-                    <RadioButton Margin="15,5,10,0" 
-                             Foreground="White">HEX</RadioButton>
-                    <RadioButton Margin="15,5,10,10" 
-                             Foreground="White">BIN</RadioButton>
+
+                    <RadioButton x:Name="DecRadio" 
+                                 IsChecked="True" 
+                                 Margin="15,5,10,0" 
+                                 Foreground="White"
+                                 Checked="RadioButton_Checked">DEC</RadioButton>
+                    <RadioButton x:Name="HexRadio" 
+                                 Margin="15,5,10,0" 
+                                Foreground="White"
+                                 Checked="RadioButton_Checked">HEX</RadioButton>
+                    <RadioButton x:Name="BinRadio" 
+                                 Margin="15,5,10,10" 
+                                Foreground="White"
+                                 Checked="RadioButton_Checked">BIN</RadioButton>
                     
                 </StackPanel>
             </Border>

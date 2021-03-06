@@ -20,10 +20,18 @@ namespace Intel_8086
     /// </summary>
     public partial class MainWindow : Window
     {
+        GeneralPurposeRegisters registers;
+        RegistersView registersView;
         public MainWindow()
         {
             InitializeComponent();
+            registers = new GeneralPurposeRegisters();
+            registersView = new RegistersView(registers);
         }
 
+        private void RadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
     }
 }
