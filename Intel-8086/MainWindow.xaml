@@ -56,8 +56,8 @@
 
         <Border Grid.Row="1" 
                 Grid.Column="3" 
-                BorderThickness="2" 
-                BorderBrush="GhostWhite"
+                BorderThickness="1" 
+                BorderBrush="Gray"
                 Grid.ColumnSpan="2"
                 Grid.RowSpan="2">
 
@@ -146,8 +146,28 @@
 
         </StackPanel>
 
-        <StackPanel Grid.Row="2" 
-                    Orientation="Horizontal">
+        <StackPanel Grid.Row="2"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Left">
+
+            <Border BorderThickness="1"
+                    BorderBrush="Gray"
+                    Margin="10,0,0,0">
+                <StackPanel
+                        Orientation="Vertical" 
+                        Background="#1F1F4D">
+
+                    <Label FontWeight="Bold" Foreground="White">System of numeration:</Label>
+                    
+                    <RadioButton IsChecked="True" Margin="15,5,10,0" 
+                             Foreground="White">DEC</RadioButton>
+                    <RadioButton Margin="15,5,10,0" 
+                             Foreground="White">HEX</RadioButton>
+                    <RadioButton Margin="15,5,10,5" 
+                             Foreground="White">BIN</RadioButton>
+                    
+                </StackPanel>
+            </Border>
 
             <TextBlock Text="A"
                    FontSize="16"
@@ -156,13 +176,6 @@
                    Margin="0,0,10,0">
             </TextBlock>
 
-            <ComboBox VerticalAlignment="Top"
-                  HorizontalAlignment="Left"
-                  Width="50">
-
-                <TextBlock Text="DEC"></TextBlock>
-                <TextBlock Text="HEX"></TextBlock>
-            </ComboBox>
         </StackPanel>
 
     </Grid>
