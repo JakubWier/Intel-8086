@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public delegate void RegistryChangedHandler(byte newValue);
+    public delegate void RegistryChangedHandler( byte newValue);
     class GeneralPurposeRegisters
     {
         public event RegistryChangedHandler RegistryChanged;
@@ -19,4 +19,6 @@ namespace Intel_8086
         public byte[] GetCX => CX;
         public byte[] GetDX => DX;
     }
+
+    //enum for registry names?
 }
