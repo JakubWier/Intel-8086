@@ -84,7 +84,7 @@
                 <Label Foreground="White" FontSize="16">AX =</Label>
 
                 <TextBlock  x:Name="BlockAX" 
-                        Text="16"
+                        Text="{Binding Path=GetAX}"
                         TextWrapping="WrapWithOverflow"
                         FontSize="16" 
                         Foreground="White" 
@@ -98,7 +98,7 @@
                 <Label Foreground="White" FontSize="16">BX =</Label>
 
                 <TextBlock  x:Name="BlockBX" 
-                        Text="17"
+                        Text="{Binding Path=GetBX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -111,7 +111,7 @@
                 <Label Foreground="White" FontSize="16">CX =</Label>
 
                 <TextBlock  x:Name="BlockCX" 
-                        Text="18"
+                        Text="{Binding Path=GetCX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -124,7 +124,7 @@
                 <Label Foreground="White" FontSize="16">DX =</Label>
 
                 <TextBlock  x:Name="BlockDX" 
-                        Text="255"
+                        Text="{Binding Path=GetDX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -166,16 +166,37 @@
                                  Margin="15,5,10,10" 
                                 Foreground="White"
                                  Checked="RadioButton_Checked">BIN</RadioButton>
-                    
+
                 </StackPanel>
             </Border>
 
-            <TextBlock Text="A"
-                   FontSize="16"
-                   Foreground="White"
-                   VerticalAlignment="Top"
-                   Margin="0,0,10,0">
-            </TextBlock>
+            <Border BorderThickness="1"
+                    BorderBrush="Gray"
+                    Margin="10,0,0,0">
+                <StackPanel
+                        Orientation="Vertical" 
+                        Background="#1F1F4D">
+
+                    <Label FontSize="12" 
+                           FontWeight="Bold" 
+                           Foreground="White">System of numeration:</Label>
+
+                    <RadioButton x:Name="DecRadio" 
+                                 IsChecked="True" 
+                                 Margin="15,5,10,0" 
+                                 Foreground="White"
+                                 Checked="RadioButton_Checked">DEC</RadioButton>
+                    <RadioButton x:Name="HexRadio" 
+                                 Margin="15,5,10,0" 
+                                Foreground="White"
+                                 Checked="RadioButton_Checked">HEX</RadioButton>
+                    <RadioButton x:Name="BinRadio" 
+                                 Margin="15,5,10,10" 
+                                Foreground="White"
+                                 Checked="RadioButton_Checked">BIN</RadioButton>
+
+                </StackPanel>
+            </Border>
 
         </StackPanel>
 

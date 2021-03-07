@@ -6,13 +6,21 @@ namespace Intel_8086
 {
     class RegistersView
     {
-        GeneralPurposeRegisters registers;
-        string numeralSystem = "Decimal";
+        MainWindow mainWindow;
         public string NumeralSystem => numeralSystem;
+        public string GetAX => axValue.ToString();
 
-        public RegistersView(GeneralPurposeRegisters registers)
+        private string numeralSystem = "Decimal";
+        private int axValue = 1000;
+
+        public RegistersView(GeneralPurposeRegisters registers, MainWindow mainWindow)
         {
-            this.registers = registers;
+            registers.RegistryChanged += RegistryChanged;
+        }
+
+        public void RegistryChanged(object sender, RegistryChangedEventArgs eventArgs)
+        {
+
         }
 
     }

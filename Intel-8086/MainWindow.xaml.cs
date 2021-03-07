@@ -28,9 +28,11 @@ namespace Intel_8086
 
             InitializeComponent();
             registers = new GeneralPurposeRegisters();
-            registersView = new RegistersView(registers);
+            registersView = new RegistersView(registers, this);
+            BlockAX.DataContext = registersView;
         }
 
+        public string GetAX => "ASD";
         private void RadioButton_Checked(object sender, RoutedEventArgs e)
         {
             
