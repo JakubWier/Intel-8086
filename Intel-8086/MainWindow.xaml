@@ -64,8 +64,8 @@
                 Grid.RowSpan="2">
 
             <ScrollViewer>
-                <TextBlock x:Name="A" 
-                           Text="Tekst Tekst Tekst Tekst AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" 
+                <TextBlock x:Name="Output" 
+                           Text="" 
                            TextWrapping="Wrap"  
                            FontSize="12" 
                            Background="#1F1F4D" 
@@ -190,22 +190,25 @@
                            Foreground="White">Set value to:</Label>
 
 
-                    <ComboBox Margin="10"
-                              ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:RegistryType}}}">
+                    <ComboBox x:Name="SelectedRegistry"
+                        Margin="10"
+                        ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:RegistryType}}}">
                     </ComboBox>
 
-                    <TextBox VerticalAlignment="Bottom"
-                             Margin="10"
-                             Text="0"
-                             Width="125"
-                             TextAlignment="Center">
+                    <TextBox x:Name="InputValue"
+                           VerticalAlignment="Bottom"
+                           Margin="10"
+                           Text="0"
+                           Width="125"
+                           TextAlignment="Center">
                     </TextBox>
 
                     <Button Content="SET"
                             Foreground="Black"
                             FontSize="14"
                             FontWeight="Bold"
-                            Margin="10">
+                            Margin="10"
+                            Click="ButtonSET_Click">
                     </Button>
                 </StackPanel>
 

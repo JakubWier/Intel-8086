@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks;*/
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+/*using System.Windows.Data;
+using System.Windows.Documents;*/
 using System.Windows.Input;
-using System.Windows.Media;
+/*using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Shapes;*/
 
 namespace Intel_8086
 {
@@ -22,6 +22,7 @@ namespace Intel_8086
     {
         GeneralPurposeRegisters registers;
         RegistersView registersView;
+        OutputLogger logger;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
@@ -29,6 +30,8 @@ namespace Intel_8086
             InitializeComponent();
             registers = new GeneralPurposeRegisters();
             registersView = new RegistersView(registers);
+            logger = new OutputLogger(Output);
+
             BlockAX.DataContext = registersView;
             BlockBX.DataContext = registersView;
             BlockCX.DataContext = registersView;
@@ -49,7 +52,25 @@ namespace Intel_8086
                     byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(((TextBox)sender).Text));
                     registers.SetBytes(RegistryType.AX, bytes);
                     ((TextBox)sender).Text = registersView.GetAX;
+                    logger.WriteLog(registersView.GetAX);
                 }
+
+            }
+        }
+
+        private void ButtonSET_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (registersView.NumeralSystem == NumeralSystem.Decimal)
+                {
+                    RegistryType registry = (RegistryType)SelectedRegistry.SelectedItem;
+                    byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(InputValue.Text));
+                    registers.SetBytes(registry, bytes);
+                    BlockAX.Text = registersView.GetAX;
+                }
+            } catch (FormatException ex)
+            {
 
             }
         }
