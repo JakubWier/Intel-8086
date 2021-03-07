@@ -77,19 +77,18 @@
                     Grid.RowSpan="2"
                     Orientation="Vertical" 
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Top"
-                    Margin="0,5,0,0">
+                    VerticalAlignment="Top">
 
             <StackPanel Orientation="Horizontal">
-                <Label Foreground="White" FontSize="16">AX =</Label>
+                <Label Foreground="White" 
+                       FontSize="16">AX =</Label>
 
                 <TextBlock  x:Name="BlockAX" 
                         Text="{Binding Path=GetAX}"
-                        TextWrapping="WrapWithOverflow"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
-                        Padding="0,5,0,0"
+                        Margin="0,4,0,0"
                         HorizontalAlignment="Center">
                 </TextBlock>
             </StackPanel>
@@ -102,7 +101,7 @@
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
-                        Padding="0,5,0,0"
+                        Margin="0,4,0,0"
                         HorizontalAlignment="Center">
                 </TextBlock>
             </StackPanel>
@@ -151,7 +150,7 @@
 
                     <Label FontSize="12" 
                            FontWeight="Bold" 
-                           Foreground="White">System of numeration:</Label>
+                           Foreground="White">Values format:</Label>
 
                     <RadioButton x:Name="DecRadio" 
                                  IsChecked="True" 
@@ -169,36 +168,60 @@
 
                 </StackPanel>
             </Border>
+        </StackPanel>
 
-            <Border BorderThickness="1"
-                    BorderBrush="Gray"
-                    Margin="10,0,0,0">
-                <StackPanel
-                        Orientation="Vertical" 
-                        Background="#1F1F4D">
+        <Border Grid.Row="1"
+                Grid.RowSpan="2"
+                Grid.Column="1"
+                BorderThickness="1"
+                BorderBrush="Gray"
+                VerticalAlignment="Top"
+                HorizontalAlignment="Left">
+            
+            <StackPanel Background="#1F1F4D"
+                    Orientation="Horizontal">
+
+                <StackPanel Orientation="Vertical">
 
                     <Label FontSize="12" 
                            FontWeight="Bold" 
-                           Foreground="White">System of numeration:</Label>
+                           Foreground="White">Set value to:</Label>
 
-                    <RadioButton x:Name="DecRadio" 
+                    <RadioButton x:Name="setterRadioAX" 
                                  IsChecked="True" 
                                  Margin="15,5,10,0" 
                                  Foreground="White"
-                                 Checked="RadioButton_Checked">DEC</RadioButton>
-                    <RadioButton x:Name="HexRadio" 
+                                 Checked="RadioButton_Checked">AX</RadioButton>
+                    <RadioButton x:Name="setterRadioBX" 
                                  Margin="15,5,10,0" 
                                 Foreground="White"
-                                 Checked="RadioButton_Checked">HEX</RadioButton>
-                    <RadioButton x:Name="BinRadio" 
+                                 Checked="RadioButton_Checked">BX</RadioButton>
+                    <RadioButton x:Name="setterRadioCX" 
+                                 Margin="15,5,10,0"
+                                Foreground="White"
+                                 Checked="RadioButton_Checked">CX</RadioButton>
+                    <RadioButton x:Name="setterRadioDX" 
                                  Margin="15,5,10,10" 
                                 Foreground="White"
-                                 Checked="RadioButton_Checked">BIN</RadioButton>
+                                 Checked="RadioButton_Checked">DX</RadioButton>
 
+                    <TextBox VerticalAlignment="Bottom"
+                             Width="100"
+                             Margin="0,0,0,5"
+                             Text="0" 
+                             TextAlignment="Center">
+                    </TextBox>
+
+                    <Button Content="SET"
+                            Foreground="Black"
+                            FontSize="14"
+                            FontWeight="Bold">
+                    </Button>
+                    
                 </StackPanel>
-            </Border>
 
-        </StackPanel>
+            </StackPanel>
+        </Border>
 
     </Grid>
 </Window>

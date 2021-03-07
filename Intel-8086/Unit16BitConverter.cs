@@ -6,9 +6,18 @@ namespace Intel_8086
 {
     class Unit16BitConverter
     {
-        public static string FromDecToHex(string DecimalNumber)
+        public static bool TryFromDecToHex(string DecimalNumber)
         {
-            return Convert.ToInt16(DecimalNumber).ToString("X");
+            return false;
+            //return Convert.ToInt16(DecimalNumber).ToString("X");
+        }
+        /// <summary>
+        /// Checks if number formatting is correct.
+        /// </summary>
+        /// <returns></returns>
+        public static bool CheckFormatting(string number, NumeralSystem numeralSystem)
+        {
+            return false;
         }
     }
 }
