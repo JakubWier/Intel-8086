@@ -17,3 +17,4 @@ C:\Users\Borwa\source\repos\Intel-8086\Intel-8086\obj\Debug\netcoreapp3.1\Intel-
 C:\Users\Borwa\source\repos\Intel-8086\Intel-8086\obj\Debug\netcoreapp3.1\Intel-8086.dll
 C:\Users\Borwa\source\repos\Intel-8086\Intel-8086\obj\Debug\netcoreapp3.1\Intel-8086.pdb
 C:\Users\Borwa\source\repos\Intel-8086\Intel-8086\obj\Debug\netcoreapp3.1\Intel-8086.genruntimeconfig.cache
+C:\Users\Borwa\source\repos\Intel-8086\Intel-8086\obj\Debug\netcoreapp3.1\GeneratedInternalTypeHelper.g.cs

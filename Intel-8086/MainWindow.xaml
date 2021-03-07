@@ -4,11 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Intel_8086"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" 
         FontFamily="Calibri"
         Background="#181735"
         >
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -187,37 +189,24 @@
                            FontWeight="Bold" 
                            Foreground="White">Set value to:</Label>
 
-                    <RadioButton x:Name="setterRadioAX" 
-                                 IsChecked="True" 
-                                 Margin="15,5,10,0" 
-                                 Foreground="White"
-                                 Checked="RadioButton_Checked">AX</RadioButton>
-                    <RadioButton x:Name="setterRadioBX" 
-                                 Margin="15,5,10,0" 
-                                Foreground="White"
-                                 Checked="RadioButton_Checked">BX</RadioButton>
-                    <RadioButton x:Name="setterRadioCX" 
-                                 Margin="15,5,10,0"
-                                Foreground="White"
-                                 Checked="RadioButton_Checked">CX</RadioButton>
-                    <RadioButton x:Name="setterRadioDX" 
-                                 Margin="15,5,10,10" 
-                                Foreground="White"
-                                 Checked="RadioButton_Checked">DX</RadioButton>
+
+                    <ComboBox Margin="10"
+                              ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:RegistryType}}}">
+                    </ComboBox>
 
                     <TextBox VerticalAlignment="Bottom"
-                             Width="100"
-                             Margin="0,0,0,5"
-                             Text="0" 
+                             Margin="10"
+                             Text="0"
+                             Width="125"
                              TextAlignment="Center">
                     </TextBox>
 
                     <Button Content="SET"
                             Foreground="Black"
                             FontSize="14"
-                            FontWeight="Bold">
+                            FontWeight="Bold"
+                            Margin="10">
                     </Button>
-                    
                 </StackPanel>
 
             </StackPanel>
