@@ -24,6 +24,8 @@ namespace Intel_8086
         RegistersView registersView;
         public MainWindow()
         {
+            Tests_Intel_8086.UTest.StartAllTests();
+
             InitializeComponent();
             registers = new GeneralPurposeRegisters();
             registersView = new RegistersView(registers);
