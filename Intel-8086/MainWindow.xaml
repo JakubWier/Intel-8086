@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Intel_8086"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" 
         FontFamily="Calibri"
@@ -48,13 +47,27 @@
                    FontFamily="Impact"
                    ></TextBlock>
 
+        <Border Grid.Row="1" 
+                Grid.Column="1" 
+                BorderThickness="1" 
+                BorderBrush="Gray">
+
+            <TextBlock x:Name="Description" 
+                           TextWrapping="Wrap"  
+                           FontSize="12" 
+                           Background="#1F1F4D" 
+                           Foreground="White" 
+                           Padding="5,0,5,0"
+                   ></TextBlock>
+        </Border>
+
         <TextBlock Grid.Column="2"
                        Text="Input" 
                        TextAlignment="Center"
                        FontSize="18" 
                        Foreground="White" 
                        Padding="0,5,0,0" 
-                       Background="#1F1F4D"/>
+                       Background="#0F0F2D"/>
 
         <Border Grid.Row="1" 
                 Grid.Column="2" 
@@ -62,22 +75,23 @@
                 BorderBrush="Gray">
 
                 <TextBox x:Name="Input" 
-                           Text="" 
-                           TextWrapping="Wrap"  
-                           FontSize="12" 
-                           Background="#1F1F4D" 
-                           Foreground="White" 
-                           Padding="5,0,5,0"
+                         Text="" 
+                         KeyDown="Input_Enter"
+                         TextWrapping="Wrap"  
+                         FontSize="14" 
+                         Background="#1F1F4D" 
+                         Foreground="White" 
+                         Padding="0,0,5,0"
                    ></TextBox>
         </Border>
 
         <TextBlock Grid.Column="3"
-                       Text="Console" 
+                       Text="Output" 
                        TextAlignment="Center"
                        FontSize="18" 
                        Foreground="White" 
                        Padding="0,5,0,0" 
-                       Background="#1F1F4D"/>
+                       Background="#0F0F2D"/>
 
         <Border Grid.Row="1" 
                 Grid.Column="3" 
@@ -89,7 +103,7 @@
                 <TextBlock x:Name="Output" 
                            Text="" 
                            TextWrapping="Wrap"  
-                           FontSize="12" 
+                           FontSize="14" 
                            Background="#1F1F4D" 
                            Foreground="White" 
                            Padding="5,0,5,0"
@@ -107,7 +121,7 @@
                        FontSize="16">AX =</Label>
 
                 <TextBlock  x:Name="BlockAX" 
-                        Text="{Binding Path=GetAX}"
+                        Text="0x0000"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -120,7 +134,7 @@
                 <Label Foreground="White" FontSize="16">BX =</Label>
 
                 <TextBlock  x:Name="BlockBX" 
-                        Text="{Binding Path=GetBX}"
+                        Text="0x0000"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -133,7 +147,7 @@
                 <Label Foreground="White" FontSize="16">CX =</Label>
 
                 <TextBlock  x:Name="BlockCX" 
-                        Text="{Binding Path=GetCX}"
+                        Text="0x0000"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -145,7 +159,7 @@
             <StackPanel Orientation="Horizontal">
                 <Label Foreground="White" FontSize="16">DX =</Label>
                 <TextBlock  x:Name="BlockDX" 
-                        Text="{Binding Path=GetDX}"
+                        Text="0x0000"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -164,28 +178,6 @@
 
             <Border BorderThickness="1"
                     BorderBrush="Gray">
-                <StackPanel
-                        Orientation="Vertical" 
-                        Background="#1F1F4D">
-
-                    <Label FontSize="12" 
-                           FontWeight="Bold" 
-                           Foreground="White">Values format:</Label>
-
-                    <RadioButton x:Name="DecRadio" 
-                                 IsChecked="True" 
-                                 Margin="15,5,10,0" 
-                                 Foreground="White"
-                                 Checked="RadioButton_Checked">DEC</RadioButton>
-                    <RadioButton x:Name="HexRadio" 
-                                 Margin="15,5,10,0" 
-                                Foreground="White"
-                                 Checked="RadioButton_Checked">HEX</RadioButton>
-                    <RadioButton x:Name="BinRadio" 
-                                 Margin="15,5,10,10" 
-                                Foreground="White"
-                                 Checked="RadioButton_Checked">BIN</RadioButton>
-                </StackPanel>
             </Border>
         </StackPanel>
     </Grid>

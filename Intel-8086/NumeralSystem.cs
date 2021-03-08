@@ -4,8 +4,9 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public enum NumeralSystem
+    public interface NumeralSystem
     {
-        Decimal, Hexadecimal, Binary
+        string GetName { get; }
+        string To16Bit(int number);
     }
 }
