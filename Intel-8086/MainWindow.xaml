@@ -20,12 +20,12 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="35"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="15"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="2" 
+        <TextBlock Grid.Row="3" 
                    Grid.ColumnSpan="4" 
                    Text="Jakub Wieroński" 
                    VerticalAlignment="Center" 
@@ -38,7 +38,7 @@
 
         <TextBlock Grid.Row="0" 
                    Grid.Column="0" 
-                   Grid.ColumnSpan="3" 
+                   Grid.ColumnSpan="2" 
                    Text="Intel 8086 Simulator" 
                    TextAlignment="Center"
                    FontSize="26" 
@@ -48,8 +48,31 @@
                    FontFamily="Impact"
                    ></TextBlock>
 
+        <TextBlock Grid.Column="2"
+                       Text="Input" 
+                       TextAlignment="Center"
+                       FontSize="18" 
+                       Foreground="White" 
+                       Padding="0,5,0,0" 
+                       Background="#1F1F4D"/>
+
+        <Border Grid.Row="1" 
+                Grid.Column="2" 
+                BorderThickness="1" 
+                BorderBrush="Gray">
+
+                <TextBox x:Name="Input" 
+                           Text="" 
+                           TextWrapping="Wrap"  
+                           FontSize="12" 
+                           Background="#1F1F4D" 
+                           Foreground="White" 
+                           Padding="5,0,5,0"
+                   ></TextBox>
+        </Border>
+
         <TextBlock Grid.Column="3"
-                       Text="Output logs" 
+                       Text="Console" 
                        TextAlignment="Center"
                        FontSize="18" 
                        Foreground="White" 
@@ -60,8 +83,7 @@
                 Grid.Column="3" 
                 BorderThickness="1" 
                 BorderBrush="Gray"
-                Grid.ColumnSpan="2"
-                Grid.RowSpan="2">
+                Grid.ColumnSpan="2">
 
             <ScrollViewer>
                 <TextBlock x:Name="Output" 
@@ -75,8 +97,7 @@
             </ScrollViewer>
         </Border>
 
-        <StackPanel Grid.Row="1" 
-                    Grid.RowSpan="2"
+        <StackPanel Grid.Row="1"
                     Orientation="Vertical" 
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top">
@@ -123,7 +144,6 @@
 
             <StackPanel Orientation="Horizontal">
                 <Label Foreground="White" FontSize="16">DX =</Label>
-
                 <TextBlock  x:Name="BlockDX" 
                         Text="{Binding Path=GetDX}"
                         FontSize="16" 
@@ -137,15 +157,13 @@
         </StackPanel>
 
         <StackPanel Grid.Row="1"
-                    Grid.RowSpan="2"
-                    Grid.Column="2"
+                    Grid.Column="1"
                     Orientation="Vertical"
                     Margin="0,0,10,0"
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Left">
 
             <Border BorderThickness="1"
-                    BorderBrush="Gray"
-                    Margin="10,0,0,0">
+                    BorderBrush="Gray">
                 <StackPanel
                         Orientation="Vertical" 
                         Background="#1F1F4D">
@@ -167,53 +185,8 @@
                                  Margin="15,5,10,10" 
                                 Foreground="White"
                                  Checked="RadioButton_Checked">BIN</RadioButton>
-
                 </StackPanel>
             </Border>
         </StackPanel>
-
-        <Border Grid.Row="1"
-                Grid.RowSpan="2"
-                Grid.Column="1"
-                BorderThickness="1"
-                BorderBrush="Gray"
-                VerticalAlignment="Top"
-                HorizontalAlignment="Left">
-            
-            <StackPanel Background="#1F1F4D"
-                    Orientation="Horizontal">
-
-                <StackPanel Orientation="Vertical">
-
-                    <Label FontSize="12" 
-                           FontWeight="Bold" 
-                           Foreground="White">Set value to:</Label>
-
-
-                    <ComboBox x:Name="SelectedRegistry"
-                        Margin="10"
-                        ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:RegistryType}}}">
-                    </ComboBox>
-
-                    <TextBox x:Name="InputValue"
-                           VerticalAlignment="Bottom"
-                           Margin="10"
-                           Text="0"
-                           Width="125"
-                           TextAlignment="Center">
-                    </TextBox>
-
-                    <Button Content="SET"
-                            Foreground="Black"
-                            FontSize="14"
-                            FontWeight="Bold"
-                            Margin="10"
-                            Click="ButtonSET_Click">
-                    </Button>
-                </StackPanel>
-
-            </StackPanel>
-        </Border>
-
     </Grid>
 </Window>

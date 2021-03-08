@@ -42,30 +42,14 @@ namespace Intel_8086
         {
             
         }
-
-        private void BlockAX_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                if (registersView.NumeralSystem == NumeralSystem.Decimal)
-                {
-                    byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(((TextBox)sender).Text));
-                    registers.SetBytes(RegistryType.AX, bytes);
-                    ((TextBox)sender).Text = registersView.GetAX;
-                    logger.WriteLog(registersView.GetAX);
-                }
-
-            }
-        }
-
-        private void ButtonSET_Click(object sender, RoutedEventArgs e)
+        /*private void ButtonSET_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 if (registersView.NumeralSystem == NumeralSystem.Decimal)
                 {
-                    RegistryType registry = (RegistryType)SelectedRegistry.SelectedItem;
-                    byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(InputValue.Text));
+                    //RegistryType registry = (RegistryType)SelectedRegistry.SelectedItem;
+                    //byte[] bytes = BitConverter.GetBytes(Convert.ToInt64(InputValue.Text));
                     registers.SetBytes(registry, bytes);
                     BlockAX.Text = registersView.GetAX;
                 }
@@ -73,6 +57,6 @@ namespace Intel_8086
             {
 
             }
-        }
+        }*/
     }
 }
