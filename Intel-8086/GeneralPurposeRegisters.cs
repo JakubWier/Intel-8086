@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Intel_8086
 {
     public delegate void RegistryChangedHandler(byte newValue);
-    class GeneralPurposeRegisters
+    class GeneralPurposeRegisters : IRegistry, IObservable
     {
+        private List<IObserver> observers;
         public GeneralPurposeRegisters()
         {
             registryBlock = new byte[4][];
@@ -12,37 +14,26 @@ namespace Intel_8086
             registryBlock[1] = new byte[2];
             registryBlock[2] = new byte[2];
             registryBlock[3] = new byte[2];
-        }
 
-        public event EventHandler<RegistryChangedEventArgs> RegistryChanged;
+            observers = new List<IObserver>();
+        }
 
         byte[][] registryBlock;
 
-        public byte[] GetAX => registryBlock[0];
-        public byte GetAH => registryBlock[0][1];
-        public byte GetAL => registryBlock[0][0];
-
-        public byte[] GetBX => registryBlock[1];
-        public byte GetBH => registryBlock[1][1];
-        public byte GetBL => registryBlock[1][0];
-
-        public byte[] GetCX => registryBlock[2];
-        public byte GetCH => registryBlock[2][1];
-        public byte GetCL => registryBlock[2][0];
-
-        public byte[] GetDX => registryBlock[3];
-        public byte GetDH => registryBlock[3][1];
-        public byte GetDL => registryBlock[3][0];
-
-        protected virtual void OnRegistryChanged(RegistryChangedEventArgs eventArgs)
+        public byte[] GetRegistry(RegistryType registryType) => registryType switch
         {
-            RegistryChanged?.Invoke(this, eventArgs);
-        }
+            RegistryType.AX => registryBlock[0],
+            RegistryType.BX => registryBlock[0],
+            RegistryType.CX => registryBlock[0],
+            RegistryType.DX => registryBlock[0],
+            _ => new byte[2]
+        };
+
         /// <summary>
         /// Sets passed bytes to selected register.
         /// Function intentionally simulates data loss if parameter "bytes" is too wide for 16bit registry or it's 8bit half. 
         /// </summary>
-        public void SetBytes(RegistryType registryType, params byte[] bytes)
+        public void SetBytesToRegistry(RegistryType registryType, params byte[] bytes)
         {
             if (bytes == null || registryType.Equals(null))
                 return;
@@ -61,13 +52,14 @@ namespace Intel_8086
                 registryIndex -= 4;
                 SetHighByte(registryIndex, bytes[0]);
             }
-            else
+            else if (registryType <= RegistryType.DL)
             {
                 registryIndex -= 8;
                 SetLowByte(registryIndex, bytes[0]);
             }
+            else
+                throw new ArgumentException("Not supported registry type");
 
-            OnRegistryChanged(new RegistryChangedEventArgs((RegistryType)registryIndex, registryBlock[registryIndex]));
             return;
         }
 
@@ -78,6 +70,21 @@ namespace Intel_8086
         private void SetLowByte(int registryIndex, byte singleByte)
         {
             registryBlock[registryIndex][0] = singleByte;
+        }
+
+        public void UpdateObservers()
+        {
+            foreach(IObserver observer in observers)
+        }
+
+        public void AddObserver(IObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        public void RemoveObserver(IObserver observer)
+        {
+            observers.Remove(observer);
         }
     }
 }

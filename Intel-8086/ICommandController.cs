@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public interface NumeralSystem
+    public interface ICommandController
     {
-        string GetName { get; }
-        string To16Bit(int number);
+        void InputCommand(string line);
     }
 }

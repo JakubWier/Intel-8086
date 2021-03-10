@@ -18,66 +18,43 @@ namespace Intel_8086
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, ICommandObserver
+    public partial class MainWindow : Window
     {
-        GeneralPurposeRegisters registers;
-        RegistersView registersView;
-        InputInterpreter inputInterpreter;
+        IRegistry registry;
+        ICommandController inputInterpreter;
+        RegistryView registersView;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
 
             InitializeComponent();
             BlockAX.DataContext = registersView;
-            registers = new GeneralPurposeRegisters();
-            registersView = new RegistersView(new HexParser());
-            inputInterpreter = new InputInterpreter(this);
+            registry = new GeneralPurposeRegisters();
+            inputInterpreter = new RegistryCommandInput(registry);
+            registersView = new RegistryView(new HexParser());
             Description.Text = "AX FF11";
 
-            registers.RegistryChanged += registersView.RegistryChanged;
+            registry.RegistryChanged += registersView.RegistryChanged;
         }
 
         public void SetBytesToRegistry(RegistryType registryType, string valueHex)
         {
             byte[] bytes = BitConverter.GetBytes(int.Parse(valueHex, System.Globalization.NumberStyles.HexNumber));
-            registers.SetBytes(registryType, bytes[0], bytes[1]);
-            WriteToRegistryUI(registryType);
-        }
-
-        private void WriteToRegistryUI(RegistryType registryType)
-        {
-            switch (registryType)
-            {
-                case RegistryType.AX:
-                case RegistryType.AL:
-                case RegistryType.AH:
-                    BlockAX.Text = registersView.GetFormattedValue(RegistryType.AX);
-                    break;
-                case RegistryType.BX:
-                case RegistryType.BL:
-                case RegistryType.BH:
-                    BlockBX.Text = registersView.GetFormattedValue(RegistryType.BX);
-                    break;
-                case RegistryType.CX:
-                case RegistryType.CL:
-                case RegistryType.CH:
-                    BlockCX.Text = registersView.GetFormattedValue(RegistryType.CX);
-                    break;
-                case RegistryType.DX:
-                case RegistryType.DL:
-                case RegistryType.DH:
-                    BlockDX.Text = registersView.GetFormattedValue(RegistryType.DX);
-                    break;
-            }
+            registry.SetBytes(registryType, bytes[0], bytes[1]);
         }
 
         private void Input_Enter(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
-                inputInterpreter.CommandLine(Input.Text);
+                inputInterpreter.InputCommand(Input.Text);
                 Input.Text = "";
             }
+        }
+
+        public void Error(string log)
+        {
+            Output.Text = log;
         }
     }
 

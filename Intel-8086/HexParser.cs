@@ -4,11 +4,11 @@ using System.Text;
 
 namespace Intel_8086
 {
-    class HexParser : NumeralSystem
+    class HexParser : NumeralConverter
     {
         public string GetName => "Hexadecimal";
 
-        public string To16Bit(int number)
+        public string IntToString(int number)
         {
             string result = number.ToString("X");
             result = result.PadLeft(4, '0');

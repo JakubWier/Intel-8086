@@ -6,19 +6,19 @@ using System.ComponentModel;
 
 namespace Intel_8086
 {
-    class RegistersView
+    class RegistryView
     {
         public string GetFormattedValue(RegistryType registry) => registry switch
         {
-            RegistryType.AX => numeralSystem.To16Bit(axValue),
-            RegistryType.BX => numeralSystem.To16Bit(bxValue),
-            RegistryType.CX => numeralSystem.To16Bit(cxValue),
-            RegistryType.DX => numeralSystem.To16Bit(dxValue)
+            RegistryType.AX => numeralSystem.IntToString(axValue),
+            RegistryType.BX => numeralSystem.IntToString(bxValue),
+            RegistryType.CX => numeralSystem.IntToString(cxValue),
+            RegistryType.DX => numeralSystem.IntToString(dxValue)
         };
-        public string AX => numeralSystem.To16Bit(axValue);
-        public string BX => numeralSystem.To16Bit(bxValue);
-        public string CX => numeralSystem.To16Bit(cxValue);
-        public string DX => numeralSystem.To16Bit(dxValue);
+        public string AX => numeralSystem.IntToString(axValue);
+        public string BX => numeralSystem.IntToString(bxValue);
+        public string CX => numeralSystem.IntToString(cxValue);
+        public string DX => numeralSystem.IntToString(dxValue);
         public string GetNumeralSystemName => numeralSystem.GetName;
 
         private NumeralSystem numeralSystem;
@@ -27,7 +27,7 @@ namespace Intel_8086
         private int cxValue = 0;
         private int dxValue = 0;
 
-        public RegistersView(NumeralSystem numeralSystem)
+        public RegistryView(NumeralSystem numeralSystem)
         {
             this.numeralSystem = numeralSystem;
         }
