@@ -22,7 +22,7 @@ namespace Intel_8086
     {
         IRegistryModel registry;
         ICommandInterpreter commandInterpreter;
-        RegistryViewer registersView;
+        RegistryView registersView;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
@@ -30,7 +30,7 @@ namespace Intel_8086
             InitializeComponent();
             registry = new GeneralPurposeRegisters();
             commandInterpreter = new GeneralRegistryCommand(registry, this);
-            registersView = new RegistryViewer(new HexParser());
+            registersView = new RegistryView(new HexParser());
             if (registry is IObservable observable)
                 observable.AddObserver(registersView);
             BlockAX.DataContext = registersView.AX;

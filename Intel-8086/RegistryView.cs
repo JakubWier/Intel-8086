@@ -5,10 +5,15 @@ namespace Intel_8086
 {
     class RegistryView : IObserver, INotifyPropertyChanged
     {
-        public string AX { get; set; }
-        public string BX { get; set; }
-        public string CX { get; set; }
-        public string DX { get; set; }
+        public string AX { get => ax; set { ax = value; OnPropertyChanged("AX"); } }
+        public string BX { get => bx; set { bx = value; OnPropertyChanged("BX"); } }
+        public string CX { get => cx; set { cx = value; OnPropertyChanged("CX"); } }
+        public string DX { get => dx; set { dx = value; OnPropertyChanged("DX"); } }
+
+        private string ax;
+        private string bx;
+        private string cx;
+        private string dx;
 
         private NumeralConverter numeralConverter;
 
