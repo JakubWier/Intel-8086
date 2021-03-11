@@ -121,7 +121,7 @@
                        FontSize="16">AX =</Label>
 
                 <TextBlock  x:Name="BlockAX" 
-                        Text="0x0000"
+                        Text="{Binding AX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"

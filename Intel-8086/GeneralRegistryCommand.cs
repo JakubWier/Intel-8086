@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Intel_8086
 {
-    class RegistryCommandInput : ICommandController
+    class GeneralRegistryCommand : ICommandInterpreter
     {
-        private IRegistry observer;
+        private IRegistryModel registryModel;
         private IOutputController output;
 
-        public RegistryCommandInput(IRegistry observer, IOutputController output) { 
-            this.observer = observer;
+        public GeneralRegistryCommand(IRegistryModel registryModel, IOutputController output) { 
+            this.registryModel = registryModel;
             this.output = output;
         }
 
@@ -39,15 +39,16 @@ namespace Intel_8086
             try
             {
                 byte[] bytes = BitConverter.GetBytes(int.Parse(valueHex, System.Globalization.NumberStyles.HexNumber));
-                observer.SetBytesToRegistry((RegistryType)Enum.Parse(typeof(RegistryType), registryName), bytes);
+                registryModel.SetBytesToRegistry((RegistryType)Enum.Parse(typeof(RegistryType), registryName), bytes);
             } catch(FormatException)
             {
-                output.ReplaceOutput($"Cannot parse {valueHex} as hexadecimal");
+                output.ReplaceOutput($"Cannot parse \"{valueHex}\" as hexadecimal!");
             }
             catch (ArgumentException arg)
             {
                 output.ReplaceOutput(arg.Message);
             }
+
 
         }
     }

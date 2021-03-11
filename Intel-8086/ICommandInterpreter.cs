@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public interface ICommandController
+    public interface ICommandInterpreter
     {
         void InputCommand(string line);
     }

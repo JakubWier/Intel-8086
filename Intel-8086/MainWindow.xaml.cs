@@ -18,43 +18,56 @@ namespace Intel_8086
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IOutputController
     {
-        IRegistry registry;
-        ICommandController inputInterpreter;
-        RegistryView registersView;
+        IRegistryModel registry;
+        ICommandInterpreter commandInterpreter;
+        RegistryViewer registersView;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
 
             InitializeComponent();
-            BlockAX.DataContext = registersView;
             registry = new GeneralPurposeRegisters();
-            inputInterpreter = new RegistryCommandInput(registry);
-            registersView = new RegistryView(new HexParser());
+            commandInterpreter = new GeneralRegistryCommand(registry, this);
+            registersView = new RegistryViewer(new HexParser());
+            if (registry is IObservable observable)
+                observable.AddObserver(registersView);
+            BlockAX.DataContext = registersView.AX;
             Description.Text = "AX FF11";
-
-            registry.RegistryChanged += registersView.RegistryChanged;
         }
 
-        public void SetBytesToRegistry(RegistryType registryType, string valueHex)
+        public void WriteToRegistryBlock(RegistryType registry, string lineToWrite) //Binding
         {
-            byte[] bytes = BitConverter.GetBytes(int.Parse(valueHex, System.Globalization.NumberStyles.HexNumber));
-            registry.SetBytes(registryType, bytes[0], bytes[1]);
+            switch (registry)
+            {
+                case RegistryType.AX:
+                    BlockAX.Text = lineToWrite;
+                    break;
+                case RegistryType.BX:
+                    BlockBX.Text = lineToWrite;
+                    break;
+                case RegistryType.CX:
+                    BlockCX.Text = lineToWrite;
+                    break;
+                case RegistryType.DX:
+                    BlockDX.Text = lineToWrite;
+                    break;
+            }
         }
 
         private void Input_Enter(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
-                inputInterpreter.InputCommand(Input.Text);
+                commandInterpreter.InputCommand(Input.Text);
                 Input.Text = "";
             }
         }
 
-        public void Error(string log)
+        public void ReplaceOutput(string line)
         {
-            Output.Text = log;
+            Output.Text = line;
         }
     }
 

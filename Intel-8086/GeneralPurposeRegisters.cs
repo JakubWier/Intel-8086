@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Intel_8086
 {
     public delegate void RegistryChangedHandler(byte newValue);
-    class GeneralPurposeRegisters : IRegistry, IObservable
+    class GeneralPurposeRegisters : IRegistryModel, IObservable
     {
         private List<IObserver> observers;
         public GeneralPurposeRegisters()
@@ -18,14 +18,25 @@ namespace Intel_8086
             observers = new List<IObserver>();
         }
 
+        public GeneralPurposeRegisters(params IObserver[] observer)
+        {
+            registryBlock = new byte[4][];
+            registryBlock[0] = new byte[2];
+            registryBlock[1] = new byte[2];
+            registryBlock[2] = new byte[2];
+            registryBlock[3] = new byte[2];
+
+            observers = new List<IObserver>(observer);
+        }
+
         byte[][] registryBlock;
 
         public byte[] GetRegistry(RegistryType registryType) => registryType switch
         {
             RegistryType.AX => registryBlock[0],
-            RegistryType.BX => registryBlock[0],
-            RegistryType.CX => registryBlock[0],
-            RegistryType.DX => registryBlock[0],
+            RegistryType.BX => registryBlock[1],
+            RegistryType.CX => registryBlock[2],
+            RegistryType.DX => registryBlock[3],
             _ => new byte[2]
         };
 
@@ -35,31 +46,31 @@ namespace Intel_8086
         /// </summary>
         public void SetBytesToRegistry(RegistryType registryType, params byte[] bytes)
         {
-            if (bytes == null || registryType.Equals(null))
-                return;
             int registryIndex = (int)registryType;
+            if (bytes == null || registryType.Equals(null) || registryIndex > 11)
+                return;
 
             if (registryType <= RegistryType.DX)
             {
                 registryBlock[registryIndex][0] = bytes[0];
                 if (bytes.Length > 1)
                     registryBlock[registryIndex][1] = bytes[1];
-                else
-                    registryBlock[registryIndex][1] = 0;
             }
             else if (registryType >= RegistryType.AH && registryType <= RegistryType.DH)
             {
                 registryIndex -= 4;
-                SetHighByte(registryIndex, bytes[0]);
+                if (bytes.Length > 1) // This condition makes possible to take higher byte if smb sends +2 byte length array to half registry.
+                    SetHighByte(registryIndex, bytes[1]);
+                else
+                    SetHighByte(registryIndex, bytes[0]);
             }
-            else if (registryType <= RegistryType.DL)
+            else
             {
                 registryIndex -= 8;
                 SetLowByte(registryIndex, bytes[0]);
             }
-            else
-                throw new ArgumentException("Not supported registry type");
-
+            (RegistryType reg, byte[] newValue) data = (registryType, registryBlock[registryIndex]);
+            UpdateObservers(data);
             return;
         }
 
@@ -72,9 +83,10 @@ namespace Intel_8086
             registryBlock[registryIndex][0] = singleByte;
         }
 
-        public void UpdateObservers()
+        public void UpdateObservers(object data)
         {
-            foreach(IObserver observer in observers)
+            foreach (IObserver observer in observers)
+                observer.Update(data);
         }
 
         public void AddObserver(IObserver observer)
