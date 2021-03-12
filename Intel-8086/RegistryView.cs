@@ -22,14 +22,33 @@ namespace Intel_8086
         public RegistryView(NumeralConverter numeralSystem)
         {
             this.numeralConverter = numeralSystem;
-            AX = "xD";
+            AX = numeralConverter.IntToString(0);
+            BX = numeralConverter.IntToString(0);
+            CX = numeralConverter.IntToString(0);
+            DX = numeralConverter.IntToString(0);
         }
 
         public void Update(object data)
         {
-            ValueTuple<RegistryType, byte[]> D = (ValueTuple<RegistryType , byte[]>) data;
-            int value = BitConverter.ToUInt16(D.Item2);
-            AX = numeralConverter.IntToString(value);
+            ValueTuple<RegistryType, byte[]> updateData = (ValueTuple<RegistryType , byte[]>) data;
+            int value = BitConverter.ToUInt16(updateData.Item2);
+            int registryIndex = ((int)updateData.Item1)%4;
+            switch (registryIndex)
+            {
+                case 0:
+                    AX = numeralConverter.IntToString(value);
+                    break;
+                case 1:
+                    BX = numeralConverter.IntToString(value);
+                    break;
+                case 2:
+                    CX = numeralConverter.IntToString(value);
+                    break;
+                case 3:
+                    DX = numeralConverter.IntToString(value);
+                    break;
+            }
+            
         }
 
         private void OnPropertyChanged(string propertyName)

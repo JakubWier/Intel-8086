@@ -33,33 +33,18 @@ namespace Intel_8086
             registersView = new RegistryView(new HexParser());
             if (registry is IObservable observable)
                 observable.AddObserver(registersView);
-            BlockAX.DataContext = registersView.AX;
+            BlockAX.DataContext = registersView;
+            BlockBX.DataContext = registersView;
+            BlockCX.DataContext = registersView;
+            BlockDX.DataContext = registersView;
             Description.Text = "AX FF11";
-        }
-
-        public void WriteToRegistryBlock(RegistryType registry, string lineToWrite) //Binding
-        {
-            switch (registry)
-            {
-                case RegistryType.AX:
-                    BlockAX.Text = lineToWrite;
-                    break;
-                case RegistryType.BX:
-                    BlockBX.Text = lineToWrite;
-                    break;
-                case RegistryType.CX:
-                    BlockCX.Text = lineToWrite;
-                    break;
-                case RegistryType.DX:
-                    BlockDX.Text = lineToWrite;
-                    break;
-            }
         }
 
         private void Input_Enter(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
+                Output.Text = "";
                 commandInterpreter.InputCommand(Input.Text);
                 Input.Text = "";
             }

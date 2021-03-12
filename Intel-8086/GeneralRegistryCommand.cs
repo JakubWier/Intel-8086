@@ -14,6 +14,11 @@ namespace Intel_8086
             this.output = output;
         }
 
+        /// <summary>
+        /// Converts command line into methods and executes them on registry model.
+        /// </summary>
+        /// <param name="line">Command line.</param>
+        /// <returns>Returns method interpreted name.</returns>
         public void InputCommand(string line)
         {
             string[] commandBlockBuffer = line.Split(' ');
@@ -38,11 +43,13 @@ namespace Intel_8086
                 valueHex = valueHex.Substring(valueHex.Length - 4, 4);
             try
             {
-                byte[] bytes = BitConverter.GetBytes(int.Parse(valueHex, System.Globalization.NumberStyles.HexNumber));
+                byte[] bytes = (valueHex.Length <= 2) ? new []{ Convert.ToByte(valueHex, 16) } : BitConverter.GetBytes(Convert.ToInt16(valueHex, 16));
                 registryModel.SetBytesToRegistry((RegistryType)Enum.Parse(typeof(RegistryType), registryName), bytes);
-            } catch(FormatException)
+                output.ReplaceOutput($"{ (valueHex.Length>2 ? valueHex.PadLeft(4,'0') : valueHex.PadLeft(2, '0') )} inserted into {registryName}");
+            }
+            catch (FormatException)
             {
-                output.ReplaceOutput($"Cannot parse \"{valueHex}\" as hexadecimal!");
+                output.ReplaceOutput($"Cannot parse \"{valueHex}\" as hexadecimal.");
             }
             catch (ArgumentException arg)
             {

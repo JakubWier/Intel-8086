@@ -134,7 +134,7 @@
                 <Label Foreground="White" FontSize="16">BX =</Label>
 
                 <TextBlock  x:Name="BlockBX" 
-                        Text="0x0000"
+                        Text="{Binding BX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -147,7 +147,7 @@
                 <Label Foreground="White" FontSize="16">CX =</Label>
 
                 <TextBlock  x:Name="BlockCX" 
-                        Text="0x0000"
+                        Text="{Binding CX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -159,7 +159,7 @@
             <StackPanel Orientation="Horizontal">
                 <Label Foreground="White" FontSize="16">DX =</Label>
                 <TextBlock  x:Name="BlockDX" 
-                        Text="0x0000"
+                        Text="{Binding DX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
