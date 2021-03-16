@@ -9,8 +9,34 @@ namespace Tests_Intel_8086
     {
         public void StartAllTests()
         {
-            TestSetFixedValueToRegistry();
+            TestAssignToRegistry();
+            TestMOV();
             TestInvalidCommand();
+        }
+        public void TestAssignToRegistry()
+        {
+            GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
+            LoggerMock loggerMock = new LoggerMock();
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+            registryCommand.InputCommand("AL 1");
+            Assert(registersMock.number == 1 && loggerMock.outputResult == "01 assigned into AL.");
+            registryCommand.InputCommand("AH F");
+            Assert(registersMock.number == 15 && loggerMock.outputResult == "0F assigned into AH.");
+            registryCommand.InputCommand("AX 123");
+            Assert(registersMock.number == 291 && loggerMock.outputResult == "0123 assigned into AX.");
+        }
+
+        public void TestMOV()
+        {
+            GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
+            LoggerMock loggerMock = new LoggerMock();
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+
+            registryCommand.InputCommand("MoV AL,16");
+            registryCommand.InputCommand("MOV Ch,255");
+            registryCommand.InputCommand("mOV Ax,DX");
+            registryCommand.InputCommand("MOV cL,bL");
+            registryCommand.InputCommand("mov DH,AH");
         }
 
         public void TestInvalidCommand()
@@ -25,18 +51,6 @@ namespace Tests_Intel_8086
             Assert(loggerMock.outputResult == "Invalid command line.");
             registryCommand.InputCommand("][/]'/]['");
             Assert(loggerMock.outputResult == "Invalid command line.");
-        }
-        public void TestSetFixedValueToRegistry()
-        {
-            GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
-            LoggerMock loggerMock = new LoggerMock();
-            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
-            registryCommand.InputCommand("AL 1");
-            Assert(registersMock.number == 1 && loggerMock.outputResult == "01 inserted into AL");
-            registryCommand.InputCommand("AH F");
-            Assert(registersMock.number == 15 && loggerMock.outputResult == "0F inserted into AH");
-            registryCommand.InputCommand("AX 123");
-            Assert(registersMock.number == 291 && loggerMock.outputResult == "0123 inserted into AX");
         }
 
         private class GeneralPurposeRegistersMock : IRegistryModel
