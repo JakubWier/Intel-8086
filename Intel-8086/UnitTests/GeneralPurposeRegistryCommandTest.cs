@@ -22,7 +22,7 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("");
             Assert(loggerMock.outputResult == "");
             registryCommand.InputCommand(" ");
-            Assert(loggerMock.outputResult == "");
+            Assert(loggerMock.outputResult == "Invalid command line.");
             registryCommand.InputCommand("][/]'/]['");
             Assert(loggerMock.outputResult == "Invalid command line.");
         }
@@ -31,17 +31,17 @@ namespace Tests_Intel_8086
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
             GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
-            Byte[] test;
             registryCommand.InputCommand("AL 1");
-            Assert(loggerMock.outputResult == "01 inserted into AL");
+            Assert(registersMock.number == 1 && loggerMock.outputResult == "01 inserted into AL");
             registryCommand.InputCommand("AH F");
-            Assert(loggerMock.outputResult == "0F inserted into AH");
+            Assert(registersMock.number == 15 && loggerMock.outputResult == "0F inserted into AH");
             registryCommand.InputCommand("AX 123");
-            Assert(loggerMock.outputResult == "0123 inserted into AX");
+            Assert(registersMock.number == 291 && loggerMock.outputResult == "0123 inserted into AX");
         }
 
         private class GeneralPurposeRegistersMock : IRegistryModel
         {
+            public int number;
             public byte[] GetRegistry(RegistryType registryType)
             {
                 return null;
@@ -49,7 +49,9 @@ namespace Tests_Intel_8086
 
             public void SetBytesToRegistry(RegistryType registryType, params byte[] bytes)
             {
-
+                if (bytes.Length == 1)
+                    bytes = new byte[] { bytes[0], 0 };
+                number = BitConverter.ToInt16(bytes);
             }
         }
 

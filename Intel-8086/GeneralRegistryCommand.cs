@@ -22,8 +22,14 @@ namespace Intel_8086
         public void InputCommand(string line)
         {
             string[] commandBlockBuffer = line.Split(' ');
+            if (line.Length == 0)
+                return;
             if (IsCommandSetFixedToRegistry(commandBlockBuffer[0]))
+            {
                 TryParseSetFixedToRegistry(commandBlockBuffer[0], commandBlockBuffer[1]);
+                return;
+            }
+            output.ReplaceOutput("Invalid command line.");
         }
 
         private bool IsCommandSetFixedToRegistry(string potentialRegistryName)
@@ -45,7 +51,7 @@ namespace Intel_8086
             {
                 byte[] bytes = (valueHex.Length <= 2) ? new []{ Convert.ToByte(valueHex, 16) } : BitConverter.GetBytes(Convert.ToInt16(valueHex, 16));
                 registryModel.SetBytesToRegistry((RegistryType)Enum.Parse(typeof(RegistryType), registryName), bytes);
-                output.ReplaceOutput($"{ (valueHex.Length>2 ? valueHex.PadLeft(4,'0') : valueHex.PadLeft(2, '0') )} inserted into {registryName}");
+                output.ReplaceOutput($"{ (valueHex.Length>2 ? valueHex.PadLeft(4,'0') : valueHex.PadLeft(2, '0') )} assigned into {registryName}.");
             }
             catch (FormatException)
             {

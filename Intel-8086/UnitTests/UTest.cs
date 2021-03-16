@@ -6,6 +6,13 @@
         {
             TestGeneralPurposeRegisters();
             TestGeneralRegistryCommand();
+            TestRegistryView();
+        }
+
+        public static void TestRegistryView()
+        {
+            RegistryViewTest registryViewTest = new RegistryViewTest();
+            registryViewTest.StartAllTests();
         }
 
         public static void TestGeneralRegistryCommand()
