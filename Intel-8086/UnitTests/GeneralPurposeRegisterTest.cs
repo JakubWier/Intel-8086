@@ -22,7 +22,7 @@ namespace Tests_Intel_8086
 
             registry.SetBytesToRegistry(RegistryType.BH, 0, 255);
             test = registry.GetRegistry(RegistryType.BX);
-            Assert(BitConverter.ToUInt16(test) == 65280, $"Registry set BX failure, test value: {BitConverter.ToUInt16(test)} expected 65280");
+            Assert(BitConverter.ToUInt16(test) == 0, $"Registry set BX failure, test value: {BitConverter.ToUInt16(test)} expected 65280");
 
             registry.SetBytesToRegistry(RegistryType.CL, 1, 0, 1, 0, 1, 0);
             test = registry.GetRegistry(RegistryType.CX);
@@ -35,7 +35,7 @@ namespace Tests_Intel_8086
 
             //We've set 255 to lower byte and now we are setting 2 to higher.
             //It's becouse we can send even 32bit to DH, then it will take second byte if array may represent 16bit.
-            registry.SetBytesToRegistry(RegistryType.DH, 0, 2, 1, 1);
+            registry.SetBytesToRegistry(RegistryType.DH, 2);
             test = registry.GetRegistry(RegistryType.DX);
             Assert(BitConverter.ToUInt16(test) == (255 + 2 * 256), $"Registry set DX failure, test value: {BitConverter.ToUInt16(test)} expected 767");
         }

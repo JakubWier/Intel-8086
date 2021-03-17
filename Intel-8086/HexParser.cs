@@ -10,7 +10,7 @@ namespace Intel_8086
 
         public string IntToString(int number)
         {
-            string result = number.ToString("X");
+            string result = number.ToString("X").ToUpper();
             result = result.PadLeft(4, '0');
             result = result.Insert(0, "0x");
             return result;

@@ -6,12 +6,13 @@ namespace Intel_8086.CommandInterpreter
 {
     class AssignToRegistry : IProcedureHandling
     {
+        public IProcedureHandling NextHandler { get; set; }
         IRegistryModel registryModel;
-        public AssignToRegistry(IProcedureHandling NextHandler, IRegistryModel registry)
+        public AssignToRegistry(IProcedureHandling next, IRegistryModel registry)
         {
             registryModel = registry;
+            NextHandler = next;
         }
-        public IProcedureHandling NextHandler { get; set; }
 
         public string HandleOperation(string[] args)
         {
@@ -19,6 +20,7 @@ namespace Intel_8086.CommandInterpreter
             {
                 return TryParseSetFixedToRegistry(args[0], args[1]);
             }
+
             if (NextHandler != null)
                 return NextHandler.HandleOperation(args);
             else
@@ -46,7 +48,7 @@ namespace Intel_8086.CommandInterpreter
             {
                 byte[] bytes = (valueHex.Length <= 2) ? new[] { Convert.ToByte(valueHex, 16) } : BitConverter.GetBytes(Convert.ToInt16(valueHex, 16));
                 registryModel.SetBytesToRegistry((RegistryType)Enum.Parse(typeof(RegistryType), registryName), bytes);
-                return $"{ (valueHex.Length > 2 ? valueHex.PadLeft(4, '0') : valueHex.PadLeft(2, '0'))} assigned into {registryName}.";
+                return $"{ (valueHex.Length > 2 ? valueHex.PadLeft(4, '0') : valueHex.PadLeft(2, '0')).ToUpper()} assigned into {registryName}.";
             }
             catch (FormatException)
             {

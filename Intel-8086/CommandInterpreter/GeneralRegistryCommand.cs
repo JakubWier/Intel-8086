@@ -8,7 +8,9 @@ namespace Intel_8086
         private IProcedureHandling procedureHandling;
 
         public GeneralRegistryCommand(IRegistryModel registryModel, IOutputController output) {
-            procedureHandling = new AssignToRegistry(null, registryModel);
+            MOV mov = new MOV(null, registryModel);
+            AssignToRegistry assignTo = new AssignToRegistry(mov, registryModel);
+            procedureHandling = assignTo;
             this.output = output;
         }
 
@@ -19,11 +21,16 @@ namespace Intel_8086
         /// <returns>Returns method interpreted name.</returns>
         public void InputCommand(string line)
         {
-            string[] commandBlockBuffer = line.Split(' ');
             if (line.Length == 0)
                 return;
 
+            string[] commandBlockBuffer = line.Split(' ');
+
+            for(int i=0; i<commandBlockBuffer.Length;i++)
+                commandBlockBuffer[i] = commandBlockBuffer[i].ToLower();
+
             string outputResult = procedureHandling.HandleOperation(commandBlockBuffer);
+
             if (outputResult?.Length != 0)
                 output.ReplaceOutput(outputResult);
             else

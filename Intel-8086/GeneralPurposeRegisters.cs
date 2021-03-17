@@ -31,14 +31,23 @@ namespace Intel_8086
 
         byte[][] registryBlock;
 
-        public byte[] GetRegistry(RegistryType registryType) => registryType switch
+        public byte[] GetRegistry(RegistryType registryType)
         {
-            RegistryType.AX => registryBlock[0],
-            RegistryType.BX => registryBlock[1],
-            RegistryType.CX => registryBlock[2],
-            RegistryType.DX => registryBlock[3],
-            _ => new byte[2]
-        };
+            int regIndex = (int)registryType % 4;
+            switch (regIndex)
+            {
+                case 0:
+                    return registryBlock[0];
+                case 1:
+                    return registryBlock[1];
+                case 2:
+                    return registryBlock[2];
+                case 3:
+                    return registryBlock[3];
+                default:
+                    return null;
+            }
+        }
 
         /// <summary>
         /// Sets passed bytes to selected register.
@@ -55,14 +64,13 @@ namespace Intel_8086
                 registryBlock[registryIndex][0] = bytes[0];
                 if (bytes.Length > 1)
                     registryBlock[registryIndex][1] = bytes[1];
+                else
+                    registryBlock[registryIndex][1] = 0;
             }
             else if (registryType >= RegistryType.AH && registryType <= RegistryType.DH)
             {
                 registryIndex -= 4;
-                if (bytes.Length > 1) // This condition makes possible to take higher byte if smb sends +2 byte length array to half registry.
-                    SetHighByte(registryIndex, bytes[1]);
-                else
-                    SetHighByte(registryIndex, bytes[0]);
+                SetHighByte(registryIndex, bytes[0]);
             }
             else
             {
