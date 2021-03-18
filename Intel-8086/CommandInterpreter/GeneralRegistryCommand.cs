@@ -23,11 +23,12 @@ namespace Intel_8086
         {
             if (line.Length == 0)
                 return;
+            line = line.Trim();
 
             string[] commandBlockBuffer = line.Split(' ');
 
             for(int i=0; i<commandBlockBuffer.Length;i++)
-                commandBlockBuffer[i] = commandBlockBuffer[i].ToLower();
+                commandBlockBuffer[i] = commandBlockBuffer[i].ToUpper();
 
             string outputResult = procedureHandling.HandleOperation(commandBlockBuffer);
 

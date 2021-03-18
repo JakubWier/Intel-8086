@@ -44,15 +44,18 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("MOV bx,65535");
             Assert(registersMock.number == 65535 && loggerMock.outputResult == "FFFF moved into BX.");
 
+            registryCommand.InputCommand("MOV bx, 65536");
+            Assert(registersMock.number == 65535 && loggerMock.outputResult == "Input value was too big.\nAssigned max value.\nFFFF moved into BX.");
+
             registryCommand.InputCommand("mOV Bx,AX");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "AX moved into BX.");
 
             registryCommand.InputCommand("MOV bL,cL");
             Assert(registersMock.number == 255 && loggerMock.outputResult == "CL moved into BL.");
 
-            registryCommand.InputCommand("mov DH,1");
+            registryCommand.InputCommand("mov DH, 1");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "01 moved into DH.");
-            registryCommand.InputCommand("mov AH,DL");
+            registryCommand.InputCommand("mov AH, DL");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "DL moved into AH.");
         }
 
