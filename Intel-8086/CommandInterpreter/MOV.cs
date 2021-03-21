@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Intel_8086.CommandInterpreter
@@ -18,10 +17,10 @@ namespace Intel_8086.CommandInterpreter
 
         public string HandleOperation(string[] args)
         {
-            outputLogBuilder = new StringBuilder();
             if (args.Length > 1)
                 if (IsCommandMOV(args[0]))
                 {
+                    outputLogBuilder = new StringBuilder();
                     args[1] = args[1].Replace(',', ' ');
                     args[1] = args[1].Trim();
                     string[] movArguments = args[1].Split(' ');
@@ -93,7 +92,7 @@ namespace Intel_8086.CommandInterpreter
         {
             if (registryPostfix == 'L' || registryPostfix == 'H')
             {
-                if (value > 255)
+                if (value > byte.MaxValue)
                 {
                     value = 255;
                     outputLogBuilder.Append("Input value was too big.\nAssigned max value.\n");
@@ -101,7 +100,7 @@ namespace Intel_8086.CommandInterpreter
             }
             else
             {
-                if (value > 65535)
+                if (value > ushort.MaxValue)
                 {
                     value = 65535;
                     outputLogBuilder.Append("Input value was too big.\nAssigned max value.\n");
@@ -152,10 +151,23 @@ namespace Intel_8086.CommandInterpreter
 
         private bool IsValue(string arg, out int value)
         {
-            if(int.TryParse(arg, out int result))
+            if (!arg.StartsWith("0X"))
             {
-                value = result;
-                return true;
+                if (int.TryParse(arg, out int result))
+                {
+                    outputLogBuilder.Append("Parsing value from decimal.\n");
+                    value = result;
+                    return true;
+                }
+            }
+            else
+            {
+                if (int.TryParse(arg.Remove(0, 2), System.Globalization.NumberStyles.HexNumber, null, out int resultFromHex))
+                {
+                    outputLogBuilder.Append("Parsing value from hexadecimal.\n");
+                    value = resultFromHex;
+                    return true;
+                }
             }
             value = int.MinValue;
             return false;
@@ -163,18 +175,15 @@ namespace Intel_8086.CommandInterpreter
 
         private bool IsCommandMOV(string potentialMovKeyword)
         {
-            if (potentialMovKeyword.ToLower() == "mov")
-                return true;
-            return false;
+            return potentialMovKeyword == "MOV" ? true : false;
         }
 
         private bool IsRegistryName(string potentialRegistryName)
         {
-            potentialRegistryName = potentialRegistryName.ToLower();
             if (potentialRegistryName.Length == 2)
                 foreach (string reg in Enum.GetNames(typeof(RegistryType)))
                 {
-                    if (potentialRegistryName == reg.ToLower())
+                    if (potentialRegistryName == reg)
                         return true;
                 }
             return false;

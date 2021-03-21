@@ -8,7 +8,8 @@ namespace Intel_8086
         private IProcedureHandling procedureHandling;
 
         public GeneralRegistryCommand(IRegistryModel registryModel, IOutputController output) {
-            MOV mov = new MOV(null, registryModel);
+            XCHG xchg = new XCHG(null, registryModel);
+            MOV mov = new MOV(xchg, registryModel);
             AssignToRegistry assignTo = new AssignToRegistry(mov, registryModel);
             procedureHandling = assignTo;
             this.output = output;
