@@ -11,7 +11,8 @@ namespace Tests_Intel_8086
         {
             TestAssignToRegistry();
             TestMOV();
-            TestInvalidCommand();
+            TestXCHG();
+            TestInvalidCommands();
         }
         public void TestAssignToRegistry()
         {
@@ -27,6 +28,34 @@ namespace Tests_Intel_8086
 
             registryCommand.InputCommand("AX 123");
             Assert(registersMock.number == 291 && loggerMock.outputResult == "0123 assigned into AX.");
+        }
+
+        public void TestXCHG()
+        {
+            GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
+            LoggerMock loggerMock = new LoggerMock();
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+
+            registersMock.SetBytesToRegistry(RegistryType.AX, BitConverter.GetBytes(Convert.ToUInt16(256)));
+            registersMock.SetBytesToRegistry(RegistryType.BX, BitConverter.GetBytes(Convert.ToUInt16(255)));
+            registryCommand.InputCommand("XchG aX,Bx");
+            Assert(registersMock.ax == 255 && registersMock.bx == 256 && loggerMock.outputResult == "AX exchanged with BX.");
+
+            registryCommand.InputCommand("xchG al,cl");
+            Assert(registersMock.GetRegistry(RegistryType.AX)[0] == 0 && registersMock.GetRegistry(RegistryType.CX)[0] == 255 && loggerMock.outputResult == "AL exchanged with CL.");
+
+            registersMock.SetBytesToRegistry(RegistryType.DX, BitConverter.GetBytes(Convert.ToUInt16(65535)));
+            registryCommand.InputCommand("XchG bh,dh");
+            Assert(registersMock.GetRegistry(RegistryType.BX)[1] == 255 && registersMock.GetRegistry(RegistryType.DX)[1] == 1 && loggerMock.outputResult == "BH exchanged with DH.");
+
+            registryCommand.InputCommand("xchg cx, dx");
+            byte[] cx = registersMock.GetRegistry(RegistryType.CX);
+            byte[] dx = registersMock.GetRegistry(RegistryType.DX);
+            Assert(cx[1] == 1 && cx[0] == 255 && dx[1] == 1 && dx[0] == 0 && loggerMock.outputResult == "CX exchanged with DX.");
+
+            registryCommand.InputCommand("xchG dl, ch");
+            Assert(registersMock.GetRegistry(RegistryType.DX)[0] == 1 && registersMock.GetRegistry(RegistryType.CH)[1] == 0 && loggerMock.outputResult == "DL exchanged with CH.");
+
         }
 
         public void TestMOV()
@@ -59,7 +88,7 @@ namespace Tests_Intel_8086
             Assert(registersMock.number == 1 && loggerMock.outputResult == "DL moved into AH.");
         }
 
-        public void TestInvalidCommand()
+        public void TestInvalidCommands()
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
@@ -79,10 +108,10 @@ namespace Tests_Intel_8086
         {
             public int number;
 
-            int ax;
-            int bx;
-            int cx;
-            int dx;
+            public ushort ax;
+            public ushort bx;
+            public ushort cx;
+            public ushort dx;
             public byte[] GetRegistry(RegistryType registryType)
             {
                 int regIndex = (int)registryType % 4;

@@ -23,6 +23,7 @@ namespace Intel_8086.CommandInterpreter
                 if (IsCommandMOV(args[0]))
                 {
                     args[1] = args[1].Replace(',', ' ');
+                    args[1] = args[1].Trim();
                     string[] movArguments = args[1].Split(' ');
                     if (IsRegistryName(movArguments[0]))
                     {
@@ -121,7 +122,7 @@ namespace Intel_8086.CommandInterpreter
                     return true;
                 }
             }
-            for (int i = 1; i < commandBuffer.Length; i++)
+            for (int i = 2; i < commandBuffer.Length; i++)
             {
                 if (IsRegistryName(commandBuffer[i]))//"mov reg, reg2"
                 {
