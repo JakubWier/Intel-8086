@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Intel_8086
 {
@@ -7,6 +6,8 @@ namespace Intel_8086
     class GeneralPurposeRegisters : IRegistryModel, IObservable
     {
         private List<IObserver> observers;
+
+        byte[][] registryBlock;
         public GeneralPurposeRegisters()
         {
             registryBlock = new byte[4][];
@@ -29,9 +30,7 @@ namespace Intel_8086
             observers = new List<IObserver>(observer);
         }
 
-        byte[][] registryBlock;
-
-        public byte[] GetRegistry(RegistryType registryType)
+        public byte[] GetRegistry(GeneralPurposeRegistryType registryType)
         {
             int regIndex = (int)registryType % 4;
             switch (regIndex)
@@ -53,13 +52,13 @@ namespace Intel_8086
         /// Sets passed bytes to selected register.
         /// Function intentionally simulates data loss if parameter "bytes" is too wide for 16bit registry or it's 8bit half. 
         /// </summary>
-        public void SetBytesToRegistry(RegistryType registryType, params byte[] bytes)
+        public void SetBytesToRegistry(GeneralPurposeRegistryType registryType, params byte[] bytes)
         {
             int registryIndex = (int)registryType;
             if (bytes == null || registryType.Equals(null) || registryIndex > 11)
                 return;
 
-            if (registryType <= RegistryType.DX)
+            if (registryType <= GeneralPurposeRegistryType.DX)
             {
                 registryBlock[registryIndex][0] = bytes[0];
                 if (bytes.Length > 1)
@@ -67,7 +66,7 @@ namespace Intel_8086
                 else
                     registryBlock[registryIndex][1] = 0;
             }
-            else if (registryType >= RegistryType.AH && registryType <= RegistryType.DH)
+            else if (registryType >= GeneralPurposeRegistryType.AH && registryType <= GeneralPurposeRegistryType.DH)
             {
                 registryIndex -= 4;
                 SetHighByte(registryIndex, bytes[0]);
@@ -77,7 +76,7 @@ namespace Intel_8086
                 registryIndex -= 8;
                 SetLowByte(registryIndex, bytes[0]);
             }
-            (RegistryType reg, byte[] newValue) data = (registryType, registryBlock[registryIndex]);
+            (GeneralPurposeRegistryType reg, byte[] newValue) data = (registryType, registryBlock[registryIndex]);
             UpdateObservers(data);
             return;
         }

@@ -29,6 +29,7 @@ namespace Intel_8086
 
             InitializeComponent();
 
+            MemoryModel memory = new MemoryModel(20);
             registry = new GeneralPurposeRegisters();
             commandInterpreter = new GeneralRegistryCommand(registry, this);
             registersView = new RegistryView(new HexParser());
@@ -61,20 +62,20 @@ namespace Intel_8086
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            registry.SetBytesToRegistry(RegistryType.AX, 0);
-            registry.SetBytesToRegistry(RegistryType.BX, 0);
-            registry.SetBytesToRegistry(RegistryType.CX, 0);
-            registry.SetBytesToRegistry(RegistryType.DX, 0);
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, 0);
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.BX, 0);
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.CX, 0);
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, 0);
             Output.Text = "Registers cleared.";
         }
         private void Random_Click(object sender, RoutedEventArgs e)
         {
             Random registryValueRandomizer = new Random();
 
-            registry.SetBytesToRegistry(RegistryType.AX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(RegistryType.BX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(RegistryType.CX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(RegistryType.DX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.BX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.CX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
             Output.Text = "Registers randomized.";
         }
     }

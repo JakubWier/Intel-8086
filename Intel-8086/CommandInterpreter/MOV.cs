@@ -65,7 +65,7 @@ namespace Intel_8086.CommandInterpreter
         private void SetValueToRegistry(string destinatedRegName, int value)
         {
             byte[] bytes = value > 255 ? BitConverter.GetBytes(Convert.ToUInt16(value)) : new[] { Convert.ToByte(value) };
-            RegistryType registryType = (RegistryType)Enum.Parse(typeof(RegistryType), destinatedRegName);
+            GeneralPurposeRegistryType registryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegName);
             registryModel.SetBytesToRegistry(registryType, bytes);
         }
 
@@ -82,20 +82,28 @@ namespace Intel_8086.CommandInterpreter
 
         private void CheckAndReduceOverflow(ref int value, char registryPostfix)
         {
-            if (registryPostfix == 'L' || registryPostfix == 'H')
+            if (registryPostfix == 'L')
             {
                 if (value > byte.MaxValue)
                 {
-                    value = 255;
-                    outputLogBuilder.Append("Input value was too big.\nAssigned max value.\n");
+                    value = BitConverter.GetBytes(value)[0]; //255;
+                    outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\nMoving first byte.\n");
+                }
+            } else if(registryPostfix == 'H')
+            {
+                if (value > byte.MaxValue)
+                {
+                    value = BitConverter.GetBytes(value)[1]; //255;
+                    outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\nMoving first byte.\n");
                 }
             }
             else
             {
                 if (value > ushort.MaxValue)
                 {
-                    value = 65535;
-                    outputLogBuilder.Append("Input value was too big.\nAssigned max value.\n");
+                    byte[] convert = BitConverter.GetBytes(value);
+                    value = convert[1]*256 + convert[0];
+                    outputLogBuilder.Append("Expected 16bit value.\nData loss due to conversion.\nMoving first two bytes.\n");
                 }
             }
         }
@@ -114,8 +122,8 @@ namespace Intel_8086.CommandInterpreter
 
         private void SetRegistryToRegistry(string destinatedRegistry, string sourcedRegistry)
         {
-            RegistryType destinatedRegistryType = (RegistryType)Enum.Parse(typeof(RegistryType), destinatedRegistry);
-            RegistryType sourcedRegistryType = (RegistryType)Enum.Parse(typeof(RegistryType), sourcedRegistry);
+            GeneralPurposeRegistryType destinatedRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegistry);
+            GeneralPurposeRegistryType sourcedRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), sourcedRegistry);
             byte[] bytes = registryModel.GetRegistry(sourcedRegistryType);
 
             if (sourcedRegistry.EndsWith('H'))
@@ -128,7 +136,7 @@ namespace Intel_8086.CommandInterpreter
 
         private bool IsValue(string arg, out int value)
         {
-            if (!arg.StartsWith("0X"))
+            if (!arg.EndsWith("H"))
             {
                 if (int.TryParse(arg, out int result))
                 {
@@ -139,7 +147,7 @@ namespace Intel_8086.CommandInterpreter
             }
             else
             {
-                if (int.TryParse(arg.Remove(0, 2), System.Globalization.NumberStyles.HexNumber, null, out int resultFromHex))
+                if (int.TryParse(arg.Remove(arg.Length-1, 1), System.Globalization.NumberStyles.HexNumber, null, out int resultFromHex))
                 {
                     outputLogBuilder.Append("Parsing value from hexadecimal.\n");
                     value = resultFromHex;
@@ -158,7 +166,7 @@ namespace Intel_8086.CommandInterpreter
         private bool IsRegistryName(string potentialRegistryName)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (string reg in Enum.GetNames(typeof(RegistryType)))
+                foreach (string reg in Enum.GetNames(typeof(GeneralPurposeRegistryType)))
                 {
                     if (potentialRegistryName == reg)
                         return true;

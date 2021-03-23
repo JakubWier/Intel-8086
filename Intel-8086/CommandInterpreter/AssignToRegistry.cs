@@ -31,7 +31,7 @@ namespace Intel_8086.CommandInterpreter
         {
             potentialRegistryName = potentialRegistryName.ToLower();
             if (potentialRegistryName.Length == 2)
-                foreach (string reg in Enum.GetNames(typeof(RegistryType)))
+                foreach (string reg in Enum.GetNames(typeof(GeneralPurposeRegistryType)))
                 {
                     if (potentialRegistryName == reg.ToLower())
                         return true;
@@ -47,7 +47,7 @@ namespace Intel_8086.CommandInterpreter
             try
             {
                 byte[] bytes = (valueHex.Length <= 2) ? new[] { Convert.ToByte(valueHex, 16) } : BitConverter.GetBytes(Convert.ToInt16(valueHex, 16));
-                registryModel.SetBytesToRegistry((RegistryType)Enum.Parse(typeof(RegistryType), registryName), bytes);
+                registryModel.SetBytesToRegistry((GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), registryName), bytes);
                 return $"{ (valueHex.Length > 2 ? valueHex.PadLeft(4, '0') : valueHex.PadLeft(2, '0')).ToUpper()} assigned into {registryName}.";
             }
             catch (FormatException)

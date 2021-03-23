@@ -50,7 +50,7 @@ namespace Intel_8086.CommandInterpreter
         private bool IsRegistryName(string potentialRegistryName)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (string reg in Enum.GetNames(typeof(RegistryType)))
+                foreach (string reg in Enum.GetNames(typeof(GeneralPurposeRegistryType)))
                 {
                     if (potentialRegistryName == reg)
                         return true;
@@ -80,8 +80,8 @@ namespace Intel_8086.CommandInterpreter
 
         private void ExchangeRegisters(string firstRegistry, string secondRegistry)
         {
-            RegistryType firstRegistryType = (RegistryType)Enum.Parse(typeof(RegistryType), firstRegistry);
-            RegistryType secondRegistryType = (RegistryType)Enum.Parse(typeof(RegistryType), secondRegistry);
+            GeneralPurposeRegistryType firstRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), firstRegistry);
+            GeneralPurposeRegistryType secondRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), secondRegistry);
             char registryPostfix;
 
             byte[] firstRegistryBytes = registryModel.GetRegistry(firstRegistryType);

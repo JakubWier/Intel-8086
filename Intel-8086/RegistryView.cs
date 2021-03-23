@@ -30,7 +30,7 @@ namespace Intel_8086
 
         public void Update(object data)
         {
-            ValueTuple<RegistryType, byte[]> updateData = (ValueTuple<RegistryType , byte[]>) data;
+            ValueTuple<GeneralPurposeRegistryType, byte[]> updateData = (ValueTuple<GeneralPurposeRegistryType , byte[]>) data;
             int value = BitConverter.ToUInt16(updateData.Item2);
             int registryIndex = ((int)updateData.Item1)%4;
             switch (registryIndex)
