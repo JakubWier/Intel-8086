@@ -41,20 +41,20 @@ namespace Tests_Intel_8086
 
             registersMock.SetBytesToRegistry(RegistryType.AX, BitConverter.GetBytes(Convert.ToUInt16(256)));
             registersMock.SetBytesToRegistry(RegistryType.BX, BitConverter.GetBytes(Convert.ToUInt16(255)));
-            registryCommand.InputCommand("XchG aX,Bx");
+            registryCommand.InputCommand("XchG aX, Bx");
             first = registersMock.GetRegistry(RegistryType.AX);
             second = registersMock.GetRegistry(RegistryType.BX);
             Assert(first[0] == 255 && first[1] == 0 && second[0] == 0 && second[1] == 1);
             Assert(loggerMock.outputResult == "AX exchanged with BX.");
 
-            registryCommand.InputCommand("xchG al,cl");
+            registryCommand.InputCommand("xchG al, cl");
             first = registersMock.GetRegistry(RegistryType.AX);
             second = registersMock.GetRegistry(RegistryType.CX);
             Assert(first[0] == 0 && first[1] == 0 && second[0] == 255 && second[1] == 0);
             Assert(loggerMock.outputResult == "AL exchanged with CL.");
 
             registersMock.SetBytesToRegistry(RegistryType.DX, BitConverter.GetBytes(Convert.ToUInt16(65535)));
-            registryCommand.InputCommand("XchG bh,dh");
+            registryCommand.InputCommand("XchG bh, dh");
             first = registersMock.GetRegistry(RegistryType.BX);
             second = registersMock.GetRegistry(RegistryType.DX);
             Assert(first[0] == 0 && first[1] == 255 && second[0] == 255 && second[1] == 1);
@@ -79,22 +79,22 @@ namespace Tests_Intel_8086
             LoggerMock loggerMock = new LoggerMock();
             GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
 
-            registryCommand.InputCommand("MoV AL,16");
+            registryCommand.InputCommand("MoV AL, 16");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "Parsing value from decimal.\n10 moved into AL.");
 
-            registryCommand.InputCommand("MOV Ch,255");
+            registryCommand.InputCommand("MOV Ch, 255");
             Assert(registersMock.number == 255 && loggerMock.outputResult == "Parsing value from decimal.\nFF moved into CH.");
 
-            registryCommand.InputCommand("MOV bx,65535");
+            registryCommand.InputCommand("MOV bx, 65535");
             Assert(registersMock.number == 65535 && loggerMock.outputResult == "Parsing value from decimal.\nFFFF moved into BX.");
 
             registryCommand.InputCommand("MOV bx, 65536");
             Assert(registersMock.number == 65535 && loggerMock.outputResult == "Parsing value from decimal.\nInput value was too big.\nAssigned max value.\nFFFF moved into BX.");
 
-            registryCommand.InputCommand("mOV Bx,AX");
+            registryCommand.InputCommand("mOV Bx, AX");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "AX moved into BX.");
 
-            registryCommand.InputCommand("MOV bL,cL");
+            registryCommand.InputCommand("MOV bL, cL");
             Assert(registersMock.number == 255 && loggerMock.outputResult == "CL moved into BL.");
 
             registryCommand.InputCommand("mov DH, 1");
@@ -102,7 +102,7 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("mov AH, DL");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "DL moved into AH.");
 
-            registryCommand.InputCommand("mov AX,0xff11");
+            registryCommand.InputCommand("mov AX, 0xff11");
             Assert(registersMock.number == 65297 && loggerMock.outputResult == "Parsing value from hexadecimal.\nFF11 moved into AX.");
         }
 
@@ -121,17 +121,30 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("][/]'/]['");
             Assert(loggerMock.outputResult == "Invalid command line.");
 
-            registryCommand.InputCommand("mov ak,bh");
+            registryCommand.InputCommand("mov ak, bh");
             Assert(loggerMock.outputResult == "AK is unknown registry name.");
 
-            registryCommand.InputCommand("mov ah,bk");
-            Assert(loggerMock.outputResult == "Invalid MOV command arguments.");
+            registryCommand.InputCommand("mov ah, bk");
+            Assert(loggerMock.outputResult == "BK is unknown registry name.");
 
-            registryCommand.InputCommand("xchg ak,bh");
+            registryCommand.InputCommand("mov ah bk");
+            Assert(loggerMock.outputResult == "MOV arguments must separated by comma.");
+
+            registryCommand.InputCommand("xchg ak, bx");
             Assert(loggerMock.outputResult == "AK is unknown registry name.");
 
-            registryCommand.InputCommand("xchg ah,bk");
-            Assert(loggerMock.outputResult == "Invalid XCHG command arguments.");
+            registryCommand.InputCommand("xchg ah, bk");
+            Assert(loggerMock.outputResult == "BK is unknown registry name.");
+
+            registryCommand.InputCommand("xchg ah bk");
+            Assert(loggerMock.outputResult == "XCHG arguments must separated by comma.");
+
+            registryCommand.InputCommand("mov ch,");
+            Assert(loggerMock.outputResult == "Too few arguments to function MOV.");
+
+            registryCommand.InputCommand("xchg dh");
+            Assert(loggerMock.outputResult == "Too few arguments to function XCHG.");
+
         }
 
         private class GeneralPurposeRegistersMock : IRegistryModel

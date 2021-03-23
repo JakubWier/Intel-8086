@@ -17,20 +17,23 @@ namespace Intel_8086.CommandInterpreter
 
         public string HandleOperation(string[] args)
         {
-            if (args.Length > 1)
-                if (IsCommandXCHG(args[0]))
+            if (IsCommandXCHG(args[0]))
+                if (args.Length > 2)
                 {
                     outputLogBuilder = new StringBuilder();
-                    args[1] = args[1].Replace(',', ' ');
-                    args[1] = args[1].Trim();
-                    string[] xchgArguments = args[1].Split(' ');
-                    if (IsRegistryName(xchgArguments[0]))
-                    {
-                        if (TryExchangeRegisters(xchgArguments, args))
-                            return outputLogBuilder.ToString();
-                        return "Invalid XCHG command arguments.";
-                    }
-                    return $"{xchgArguments[0]} is unknown registry name.";
+
+                    int argSeparatorPos = args[1].IndexOf(',');
+                    if (argSeparatorPos == -1)
+                        return "XCHG arguments must separated by comma.";
+                    args[1] = args[1].Remove(argSeparatorPos, 1);
+
+                    TryExchangeRegisters(args[1], args[2]);
+
+                    return outputLogBuilder.ToString();
+                }
+                else
+                {
+                    return "Too few arguments to function XCHG.";
                 }
 
             if (NextHandler != null)
@@ -52,34 +55,27 @@ namespace Intel_8086.CommandInterpreter
                     if (potentialRegistryName == reg)
                         return true;
                 }
+
             return false;
         }
 
-        private bool TryExchangeRegisters(string[] movArguments, string[] commandBuffer)
+        private bool TryExchangeRegisters(string firstRegistry, string secondRegistry)
         {
-            for (int i = 1; i < movArguments.Length; i++)
+            if (!IsRegistryName(firstRegistry))
             {
-                if (IsRegistryName(movArguments[i]))//"xchg reg,reg2"
-                {
-                    string firstRegistry = movArguments[0];
-                    string secondRegistry = movArguments[1];
-                    ExchangeRegisters(firstRegistry, secondRegistry);
-                    outputLogBuilder.Append($"{firstRegistry} exchanged with {secondRegistry}.");
-                    return true;
-                }
+                outputLogBuilder.Append($"{firstRegistry} is unknown registry name.");
+                return false;
             }
-            for (int i = 2; i < commandBuffer.Length; i++)
+
+            if (!IsRegistryName(secondRegistry))
             {
-                if (IsRegistryName(commandBuffer[i]))//"xchg reg, reg2"
-                {
-                    string firstRegistry = movArguments[0];
-                    string secondRegistry = commandBuffer[i];
-                    ExchangeRegisters(firstRegistry, secondRegistry);
-                    outputLogBuilder.Append($"{firstRegistry} exchanged with {secondRegistry}."); 
-                    return true;
-                }
+                outputLogBuilder.Append($"{secondRegistry} is unknown registry name.");
+                return false;
             }
-            return false;
+
+            ExchangeRegisters(firstRegistry, secondRegistry);
+            outputLogBuilder.Append($"{firstRegistry} exchanged with {secondRegistry}.");
+            return true;
         }
 
         private void ExchangeRegisters(string firstRegistry, string secondRegistry)

@@ -17,22 +17,28 @@ namespace Intel_8086.CommandInterpreter
 
         public string HandleOperation(string[] args)
         {
-            if (args.Length > 1)
-                if (IsCommandMOV(args[0]))
+            if (IsCommandMOV(args[0]))
+                if (args.Length > 2)
                 {
                     outputLogBuilder = new StringBuilder();
-                    args[1] = args[1].Replace(',', ' ');
-                    args[1] = args[1].Trim();
-                    string[] movArguments = args[1].Split(' ');
-                    if (IsRegistryName(movArguments[0]))
-                    {
-                        if (TrySetValueToRegistry(movArguments, args))
-                            return outputLogBuilder.ToString();
-                        if (TrySetRegistryToRegistry(movArguments, args))
-                            return outputLogBuilder.ToString();
-                        return "Invalid MOV command arguments.";
-                    }
-                    return $"{movArguments[0]} is unknown registry name.";
+
+                    int argSeparatorPos = args[1].IndexOf(',');
+                    if (argSeparatorPos == -1)
+                        return "MOV arguments must separated by comma.";
+                    args[1] = args[1].Remove(argSeparatorPos, 1);
+
+                    if (!IsRegistryName(args[1]))
+                        return $"{args[1]} is unknown registry name.";
+
+                    if (TrySetValueToRegistry(args[1], args[2]))
+                        return outputLogBuilder.ToString();
+                    if (TrySetRegistryToRegistry(args[1], args[2]))
+                        return outputLogBuilder.ToString();
+                    return outputLogBuilder.ToString();
+                }
+                else
+                {
+                    return "Too few arguments to function MOV.";
                 }
 
             if (NextHandler!=null)
@@ -41,29 +47,18 @@ namespace Intel_8086.CommandInterpreter
                 return "";
         }
 
-        private bool TrySetValueToRegistry(string[] movArguments, string[] commandBuffer)
+        private bool TrySetValueToRegistry(string destinatedRegistry, string potentialValue)
         {
-            string destinatedRegistryName = movArguments[0];
-
-            if (TryFindValueArgument(movArguments, out int valueArg))
+            if (IsValue(potentialValue, out int valueArg))
             {
-                char regPostfix = destinatedRegistryName[destinatedRegistryName.Length - 1];
+                char regPostfix = destinatedRegistry[destinatedRegistry.Length - 1];
                 CheckAndReduceOverflow(ref valueArg, regPostfix);
-                SetValueToRegistry(movArguments[0], valueArg);
+                SetValueToRegistry(destinatedRegistry, valueArg);
                 string valueHex = valueArg.ToString("X");
-                outputLogBuilder.Append($"{(valueHex.Length <= 2 ? valueHex.PadLeft(2, '0') : valueHex.PadLeft(4, '0')) } moved into {destinatedRegistryName}.");
+                outputLogBuilder.Append($"{(valueHex.Length <= 2 ? valueHex.PadLeft(2, '0') : valueHex.PadLeft(4, '0')) } moved into {destinatedRegistry}.");
                 return true;
             }
 
-            if (TryFindValueArgument(commandBuffer, out int valueArgBuffer))
-            {
-                char regPostfix = destinatedRegistryName[destinatedRegistryName.Length - 1];
-                CheckAndReduceOverflow(ref valueArgBuffer, regPostfix);
-                SetValueToRegistry(movArguments[0], valueArgBuffer);
-                string valueHex = valueArgBuffer.ToString("X");
-                outputLogBuilder.Append($"{(valueHex.Length <= 2 ? valueHex.PadLeft(2, '0') : valueHex.PadLeft(4, '0')) } moved into {destinatedRegistryName}.");
-                return true;
-            }
             return false;
         }
 
@@ -74,19 +69,16 @@ namespace Intel_8086.CommandInterpreter
             registryModel.SetBytesToRegistry(registryType, bytes);
         }
 
-        private bool TryFindValueArgument(string[] argumentBuffer, out int valueArg)
+        /*private bool IsValueArgument(string argument, out int valueArg)
         {
-            for (int i = 1; i < argumentBuffer.Length; i++)
+            if (IsValue(argument, out int value)) //"mov reg,value"
             {
-                if (IsValue(argumentBuffer[i], out int value)) //"mov reg,value"
-                {
-                    valueArg = value;
-                    return true;
-                }
+                valueArg = value;
+                return true;
             }
             valueArg = int.MinValue;
             return false;
-        }
+        }*/
 
         private void CheckAndReduceOverflow(ref int value, char registryPostfix)
         {
@@ -108,30 +100,15 @@ namespace Intel_8086.CommandInterpreter
             }
         }
 
-        private bool TrySetRegistryToRegistry(string[] movArguments, string[] commandBuffer)
+        private bool TrySetRegistryToRegistry(string destinatedRegistry, string potentialSourcedRegistry)
         {
-            for (int i = 1; i < movArguments.Length; i++)
+            if (IsRegistryName(potentialSourcedRegistry))//"mov reg,reg2"
             {
-                if (IsRegistryName(movArguments[i]))//"mov reg,reg2"
-                {
-                    string destinatedRegistry = movArguments[0];
-                    string sourcedRegistry = movArguments[1];
-                    SetRegistryToRegistry(destinatedRegistry, sourcedRegistry);
-                    outputLogBuilder.Append($"{sourcedRegistry} moved into {destinatedRegistry}.");
-                    return true;
-                }
+                SetRegistryToRegistry(destinatedRegistry, potentialSourcedRegistry);
+                outputLogBuilder.Append($"{potentialSourcedRegistry} moved into {destinatedRegistry}.");
+                return true;
             }
-            for (int i = 2; i < commandBuffer.Length; i++)
-            {
-                if (IsRegistryName(commandBuffer[i]))//"mov reg, reg2"
-                {
-                    string destinatedRegistry = movArguments[0];
-                    string sourcedRegistry = commandBuffer[i];
-                    SetRegistryToRegistry(destinatedRegistry, sourcedRegistry);
-                    outputLogBuilder.Append($"{sourcedRegistry} moved into {destinatedRegistry}.");
-                    return true;
-                }
-            }
+            outputLogBuilder.Append($"{potentialSourcedRegistry} is unknown registry name.");
             return false;
         }
 

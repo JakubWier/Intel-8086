@@ -1,4 +1,5 @@
 ﻿using Intel_8086.CommandInterpreter;
+using System.Text;
 
 namespace Intel_8086
 {
