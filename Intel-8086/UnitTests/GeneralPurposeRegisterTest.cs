@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using static System.Diagnostics.Debug;
+﻿using static System.Diagnostics.Debug;
 using System;
-using Intel_8086;
+using Intel_8086.Registers;
 
 namespace Tests_Intel_8086
 {

@@ -1,7 +1,6 @@
-﻿using Intel_8086.CommandInterpreter;
-using System.Text;
+﻿using Intel_8086.Registers;
 
-namespace Intel_8086
+namespace Intel_8086.CommandInterpreter
 {
     class GeneralRegistryCommand : ICommandInterpreter
     {

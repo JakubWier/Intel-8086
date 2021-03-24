@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Intel_8086.Registers;
+using Intel_8086.CommandInterpreter;
 using static System.Diagnostics.Debug;
 using System;
 using Intel_8086;

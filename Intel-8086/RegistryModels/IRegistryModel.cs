@@ -1,4 +1,4 @@
-﻿namespace Intel_8086
+﻿namespace Intel_8086.Registers
 {
     public interface IRegistryModel
     {

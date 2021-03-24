@@ -12,6 +12,9 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;*/
+using Intel_8086.Registers;
+using Intel_8086.Memory;
+using Intel_8086.CommandInterpreter;
 
 namespace Intel_8086
 {

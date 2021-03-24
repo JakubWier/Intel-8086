@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Intel_8086
+namespace Intel_8086.Registers
 {
     public delegate void RegistryChangedHandler(byte newValue);
     class GeneralPurposeRegisters : IRegistryModel, IObservable

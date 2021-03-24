@@ -111,64 +111,124 @@
             </ScrollViewer>
         </Border>
 
-        <StackPanel Grid.Row="1"
+        <Border BorderThickness="1"
+                BorderBrush="Gray"
+                Grid.Row="1"
+                Grid.RowSpan="2"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top">
+            
+            <StackPanel 
                     Orientation="Vertical" 
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Top">
+                    Background="#1F1F4D">
 
-            <StackPanel Orientation="Horizontal">
-                <Label Foreground="White" 
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" 
                        FontSize="16">AX =</Label>
 
-                <TextBlock  x:Name="BlockAX" 
+                    <TextBlock  x:Name="BlockAX" 
                         Text="{Binding AX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
-                        Margin="0,4,0,0"
+                        Margin="0,4,4,0"
                         HorizontalAlignment="Center">
-                </TextBlock>
-            </StackPanel>
+                    </TextBlock>
+                </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <Label Foreground="White" FontSize="16">BX =</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">BX =</Label>
 
-                <TextBlock  x:Name="BlockBX" 
+                    <TextBlock  x:Name="BlockBX" 
                         Text="{Binding BX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
                         Margin="0,4,0,0"
                         HorizontalAlignment="Center">
-                </TextBlock>
-            </StackPanel>
+                    </TextBlock>
+                </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <Label Foreground="White" FontSize="16">CX =</Label>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">CX =</Label>
 
-                <TextBlock  x:Name="BlockCX" 
+                    <TextBlock  x:Name="BlockCX" 
                         Text="{Binding CX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
-                        Padding="0,5,0,0"
+                        Padding="0,4,0,0"
                         HorizontalAlignment="Center">
-                </TextBlock>
-            </StackPanel>
+                    </TextBlock>
+                </StackPanel>
 
-            <StackPanel Orientation="Horizontal">
-                <Label Foreground="White" FontSize="16">DX =</Label>
-                <TextBlock  x:Name="BlockDX" 
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">DX =</Label>
+                    <TextBlock  x:Name="BlockDX" 
                         Text="{Binding DX}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
-                        Padding="0,5,0,0"
+                        Padding="0,4,0,0"
                         HorizontalAlignment="Center">
-                </TextBlock>
-            </StackPanel>
+                    </TextBlock>
+                </StackPanel>
 
-        </StackPanel>
+                <Border BorderThickness="0,2,0,0"
+                    BorderBrush="Gray">
+                    <StackPanel Orientation="Horizontal">
+
+                        <Label Foreground="White" FontSize="16">SI =</Label>
+                        <TextBlock  x:Name="BlockSI" 
+                        Text="{Binding DX}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                        </TextBlock>
+
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">DI =</Label>
+                    <TextBlock  x:Name="BlockDI" 
+                        Text="{Binding DX}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">BP =</Label>
+                    <TextBlock  x:Name="BlockBP" 
+                        Text="{Binding DX}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">SP =</Label>
+                    <TextBlock  x:Name="BlockSP" 
+                        Text="{Binding DX}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+
+            </StackPanel>
+        </Border>
 
         <StackPanel Grid.Row="1" 
                     Orientation="Vertical"

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Intel_8086.Registers;
 
 namespace Intel_8086
 {

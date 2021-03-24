@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Intel_8086.Registers;
 
 namespace Intel_8086.CommandInterpreter
 {
