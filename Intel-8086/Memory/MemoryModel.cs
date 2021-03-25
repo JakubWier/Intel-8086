@@ -24,7 +24,7 @@ namespace Intel_8086.Memory
             ES = 12;
         }
 
-        public byte GetMemoryCell(int adress)
+        public byte GetCell(int adress)
         {
             return memoryBlock[adress];
         }

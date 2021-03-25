@@ -2,19 +2,19 @@
 using System.Text;
 using Intel_8086.Registers;
 
-namespace Intel_8086.CommandInterpreter
+namespace Intel_8086.Console
 {
-    class MOV : IProcedureHandling
+    class MOV : ProcedureHandler
     {
-        IRegistryModel registryModel;
+        RegistryOperator[] registryOperators;
         StringBuilder outputLogBuilder;
-        public MOV(IProcedureHandling nextHandler, IRegistryModel registry)
+        public MOV(ProcedureHandler nextHandler, params RegistryOperator[] containers)
         {
             NextHandler = nextHandler;
-            registryModel = registry;
+            registryOperators = containers;
         }
 
-        public IProcedureHandling NextHandler { get; set; }
+        public ProcedureHandler NextHandler { get; set; }
 
         public string HandleOperation(string[] args)
         {
@@ -25,10 +25,11 @@ namespace Intel_8086.CommandInterpreter
 
                     int argSeparatorPos = args[1].IndexOf(',');
                     if (argSeparatorPos == -1)
-                        return "MOV arguments must separated by comma.";
+                        return "MOV arguments must be separated by comma.";
+
                     args[1] = args[1].Remove(argSeparatorPos, 1);
 
-                    if (!IsRegistryName(args[1]))
+                    if (!IsRegistryName(args[1], out RegistryOperator registryOperator))
                         return $"{args[1]} is unknown registry name.";
 
                     if (TrySetValueToRegistry(args[1], args[2]))
@@ -67,7 +68,7 @@ namespace Intel_8086.CommandInterpreter
         {
             byte[] bytes = value > 255 ? BitConverter.GetBytes(Convert.ToUInt16(value)) : new[] { Convert.ToByte(value) };
             GeneralPurposeRegistryType registryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegName);
-            registryModel.SetBytesToRegistry(registryType, bytes);
+            //registryModel.SetBytesToRegistry(registryType, bytes);
         }
 
         /*private bool IsValueArgument(string argument, out int valueArg)
@@ -113,7 +114,7 @@ namespace Intel_8086.CommandInterpreter
         {
             if (IsRegistryName(potentialSourcedRegistry))//"mov reg,reg2"
             {
-                SetRegistryToRegistry(destinatedRegistry, potentialSourcedRegistry);
+                //SetRegistryToRegistry(destinatedRegistry, potentialSourcedRegistry);
                 outputLogBuilder.Append($"{potentialSourcedRegistry} moved into {destinatedRegistry}.");
                 return true;
             }
@@ -121,19 +122,19 @@ namespace Intel_8086.CommandInterpreter
             return false;
         }
 
-        private void SetRegistryToRegistry(string destinatedRegistry, string sourcedRegistry)
+        /*private void SetRegistryToRegistry(string destinatedRegistry, string sourcedRegistry)
         {
             GeneralPurposeRegistryType destinatedRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegistry);
             GeneralPurposeRegistryType sourcedRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), sourcedRegistry);
-            byte[] bytes = registryModel.GetRegistry(sourcedRegistryType);
+            byte[] bytes = registryContainers.GetRegistry(sourcedRegistryType);
 
             if (sourcedRegistry.EndsWith('H'))
-                registryModel.SetBytesToRegistry(destinatedRegistryType, bytes[1]);
+                registryContainers.SetBytesToRegistry(destinatedRegistryType, bytes[1]);
             else if (sourcedRegistry.EndsWith('L'))
-                registryModel.SetBytesToRegistry(destinatedRegistryType, bytes[0]);
+                registryContainers.SetBytesToRegistry(destinatedRegistryType, bytes[0]);
             else
-                registryModel.SetBytesToRegistry(destinatedRegistryType, bytes);
-        }
+                registryContainers.SetBytesToRegistry(destinatedRegistryType, bytes);
+        }*/
 
         private bool IsValue(string arg, out int value)
         {
@@ -164,14 +165,20 @@ namespace Intel_8086.CommandInterpreter
             return potentialMovKeyword == "MOV" ? true : false;
         }
 
-        private bool IsRegistryName(string potentialRegistryName)
+        private bool IsRegistryName(string potentialRegistryName, out RegistryOperator registryOperator)
         {
-            if (potentialRegistryName.Length == 2)
-                foreach (string reg in Enum.GetNames(typeof(GeneralPurposeRegistryType)))
+            registryContainer = null;
+
+            if (potentialRegistryName.Length != 2)
+                return false;
+
+            foreach (RegistryOperator container in registryOperators)
+                if (container.Contains(potentialRegistryName))
                 {
-                    if (potentialRegistryName == reg)
-                        return true;
+                    registryContainer = container;
+                    return true;
                 }
+
             return false;
         }
     }

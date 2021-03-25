@@ -4,10 +4,10 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public interface IObservable
+    public interface Observable
     {
         public void UpdateObservers(object data);
-        void AddObserver(IObserver observer);
-        void RemoveObserver(IObserver observer);
+        void AddObserver(Observer observer);
+        void RemoveObserver(Observer observer);
     }
 }
