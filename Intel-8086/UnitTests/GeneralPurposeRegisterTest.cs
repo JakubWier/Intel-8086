@@ -11,7 +11,7 @@ namespace Tests_Intel_8086
             TestSetAndReadBytes();
         }
 
-        public void TestSetAndReadBytes()
+        public void TestSetAndReadBytes() //MOV AL, BH
         {
             byte[] test;
             IRegistryModel registry = new GeneralPurposeRegisters();
