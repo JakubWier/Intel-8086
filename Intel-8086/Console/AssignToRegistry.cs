@@ -8,19 +8,20 @@ namespace Intel_8086.Console
     {
         StringBuilder outputLog;
         public ProcedureHandler NextHandler { get; set; }
-        RegistryOperator[] registryContainers;
-        public AssignToRegistry(ProcedureHandler next, params RegistryOperator[] registers)
+        Registry[] registries;
+        public AssignToRegistry(ProcedureHandler next, params Registry[] supportedRegistries)
         {
-            registryContainers = registers;
+            registries = supportedRegistries;
             NextHandler = next;
         }
 
         public string HandleOperation(string[] args)
         {
-            if (IsCommandSetFixedToGeneralRegistry(args[0], out RegistryOperator registryContainer))
+            if (IsRegistryExists(args[0], out Registry registry))
             {
-                outputLog = new StringBuilder();
-                return TrySetFixedToGeneralRegistry(registryContainer, args[0], args[1]);
+                outputLog = new StringBuilder(); //369
+                if (TryParseValue(args[1], out int value))
+                    return SetFixedToRegistry(registry, (ushort)value);
             }
 
             if (NextHandler != null)
@@ -29,50 +30,55 @@ namespace Intel_8086.Console
                 return "";
         }
 
-        private bool IsCommandSetFixedToGeneralRegistry(string potentialRegistryName, out RegistryOperator registryContainer)
+        private bool IsRegistryExists(string potentialRegistryName, out Registry registry)
         {
-            registryContainer = null;
+            registry = null;
 
-            if (potentialRegistryName.Length != 2)
+            if (potentialRegistryName?.Length == 0)
                 return false;
 
-            foreach(RegistryOperator container in registryContainers)
-                if (container.Contains(potentialRegistryName))
+            foreach (Registry reg in registries)
+                if (reg.IsRegistry(potentialRegistryName, out Registry foundRegistry))
                 {
-                    registryContainer = container;
+                    registry = foundRegistry;
                     return true;
                 }
 
             return false;
         }
 
-        private string TrySetFixedToGeneralRegistry(RegistryOperator registryContainer, string registryName, string valueHex)
+        private bool TryParseValue(string valueHex, out int value)
         {
             CutIfOverflow(ref valueHex);
 
-            try
+            if (int.TryParse(valueHex, System.Globalization.NumberStyles.HexNumber, null, out int result))
             {
-                byte[] bytes = (valueHex.Length <= 2) ? new[] { Convert.ToByte(valueHex, 16) } : BitConverter.GetBytes(Convert.ToInt16(valueHex, 16));
-                registryContainer.TrySetBytesToRegistry(registryName, bytes);
-                outputLog.AppendLine($"{ (valueHex.Length > 2 ? valueHex.PadLeft(4, '0') : valueHex.PadLeft(2, '0')).ToUpper()}H assigned into {registryName}.");
-                return outputLog.ToString();
-            }
-            catch (FormatException)
-            {
-                return $"Cannot parse \"{valueHex}\" as hexadecimal.";
-            }
-            catch (ArgumentException arg)
-            {
-                return arg.Message;
+                value = result;
+                return true;
             }
 
+            outputLog.Append($"Cannot parse \"{valueHex}\" as hexadecimal.");
+            value = int.MaxValue;
+
+            return false;
+        }
+
+        private string SetFixedToRegistry(Registry registry, ushort value)
+        {
+
+            byte[] bytes = BitConverter.GetBytes(value);
+            registry.TrySetBytes(bytes: bytes);
+            string valueHex = value.ToString("X");
+            outputLog.AppendLine($"{ (valueHex.Length > 2 ? valueHex.PadLeft(4, '0') : valueHex.PadLeft(2, '0')).ToUpper()}h assigned into {registry.Name}.");
+
+            return outputLog.ToString();
         }
 
         private void CutIfOverflow(ref string valueHex)
         {
             if (valueHex.Length > 4)
             {
-                outputLog.AppendLine($"Value {valueHex}H is too big and will cause overflow.");
+                outputLog.AppendLine($"Value {valueHex}h is too big and will cause overflow.");
                 valueHex = valueHex.Substring(valueHex.Length - 4, 4);
                 outputLog.AppendLine($"Data loss due to conversion to 16bit type.");
             }

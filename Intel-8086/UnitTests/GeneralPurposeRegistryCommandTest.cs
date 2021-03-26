@@ -19,7 +19,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, registersMock);
+            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
 
             registryCommand.InputCommand("AL 1");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "01 assigned into AL.");
@@ -35,7 +35,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, registersMock);
+            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
 
             byte[] first;
             byte[] second;
@@ -78,7 +78,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, registersMock);
+            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
 
             registryCommand.InputCommand("MoV AL, 16");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "Parsing value from decimal.\n10 moved into AL.");
@@ -111,7 +111,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, registersMock);
+            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
 
             registryCommand.InputCommand("");
             Assert(loggerMock.outputResult == "");

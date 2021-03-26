@@ -6,12 +6,12 @@ namespace Intel_8086.Console
 {
     class MOV : ProcedureHandler
     {
-        RegistryOperator[] registryOperators;
+        Registry[] registries;
         StringBuilder outputLogBuilder;
-        public MOV(ProcedureHandler nextHandler, params RegistryOperator[] containers)
+        public MOV(ProcedureHandler nextHandler, params Registry[] registries)
         {
             NextHandler = nextHandler;
-            registryOperators = containers;
+            this.registries = registries;
         }
 
         public ProcedureHandler NextHandler { get; set; }
@@ -29,13 +29,18 @@ namespace Intel_8086.Console
 
                     args[1] = args[1].Remove(argSeparatorPos, 1);
 
-                    if (!IsRegistryName(args[1], out RegistryOperator registryOperator))
+                    if (!IsRegistry(args[1], out Registry registry))
                         return $"{args[1]} is unknown registry name.";
 
-                    if (TrySetValueToRegistry(args[1], args[2]))
+                    if (IsValue(args[2], out int value))
+                    {
+                        SetValueToRegistry(registry, value);
                         return outputLogBuilder.ToString();
-                    if (TrySetRegistryToRegistry(args[1], args[2]))
-                        return outputLogBuilder.ToString();
+                    }
+
+                    //if (TrySetRegistryToRegistry(args[1], args[2]))
+                        //return outputLogBuilder.ToString();
+
                     return outputLogBuilder.ToString();
                 }
                 else
@@ -49,12 +54,11 @@ namespace Intel_8086.Console
                 return "";
         }
 
-        private bool TrySetValueToRegistry(string destinatedRegistry, string potentialValue)
+        private bool TrySetValueToRegistry(Registry destinatedRegistry, string potentialValue)
         {
             if (IsValue(potentialValue, out int valueArg))
             {
-                char regPostfix = destinatedRegistry[destinatedRegistry.Length - 1];
-                CheckAndReduceOverflow(ref valueArg, regPostfix);
+                CheckAndReduceOverflow(ref valueArg, destinatedRegistry.Name[destinatedRegistry.Name.Length-1]);
                 SetValueToRegistry(destinatedRegistry, valueArg);
                 string valueHex = valueArg.ToString("X");
                 outputLogBuilder.Append($"{(valueHex.Length <= 2 ? valueHex.PadLeft(2, '0') : valueHex.PadLeft(4, '0')) } moved into {destinatedRegistry}.");
@@ -64,23 +68,11 @@ namespace Intel_8086.Console
             return false;
         }
 
-        private void SetValueToRegistry(string destinatedRegName, int value)
+        private void SetValueToRegistry(Registry registry, int value)
         {
             byte[] bytes = value > 255 ? BitConverter.GetBytes(Convert.ToUInt16(value)) : new[] { Convert.ToByte(value) };
-            GeneralPurposeRegistryType registryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegName);
-            //registryModel.SetBytesToRegistry(registryType, bytes);
+            registry.TrySetBytes(bytes: bytes);
         }
-
-        /*private bool IsValueArgument(string argument, out int valueArg)
-        {
-            if (IsValue(argument, out int value)) //"mov reg,value"
-            {
-                valueArg = value;
-                return true;
-            }
-            valueArg = int.MinValue;
-            return false;
-        }*/
 
         private void CheckAndReduceOverflow(ref int value, char registryPostfix)
         {
@@ -95,7 +87,7 @@ namespace Intel_8086.Console
             {
                 if (value > byte.MaxValue)
                 {
-                    value = BitConverter.GetBytes(value)[1]; //255;
+                    value = BitConverter.GetBytes(value)[0]; //255;
                     outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\nMoving first byte.\n");
                 }
             }
@@ -110,31 +102,17 @@ namespace Intel_8086.Console
             }
         }
 
-        private bool TrySetRegistryToRegistry(string destinatedRegistry, string potentialSourcedRegistry)
+        private bool TrySetRegistryToRegistry(Registry destinatedRegistry, string potentialSourcedRegistry)
         {
-            if (IsRegistryName(potentialSourcedRegistry))//"mov reg,reg2"
+            if (IsRegistry(potentialSourcedRegistry, out Registry sourcedRegistry))//"mov reg,reg2"
             {
                 //SetRegistryToRegistry(destinatedRegistry, potentialSourcedRegistry);
-                outputLogBuilder.Append($"{potentialSourcedRegistry} moved into {destinatedRegistry}.");
+                outputLogBuilder.Append($"{sourcedRegistry} moved into {destinatedRegistry.Name}.");
                 return true;
             }
-            outputLogBuilder.Append($"{potentialSourcedRegistry} is unknown registry name.");
+            outputLogBuilder.Append($"{sourcedRegistry} is unknown registry name.");
             return false;
         }
-
-        /*private void SetRegistryToRegistry(string destinatedRegistry, string sourcedRegistry)
-        {
-            GeneralPurposeRegistryType destinatedRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegistry);
-            GeneralPurposeRegistryType sourcedRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), sourcedRegistry);
-            byte[] bytes = registryContainers.GetRegistry(sourcedRegistryType);
-
-            if (sourcedRegistry.EndsWith('H'))
-                registryContainers.SetBytesToRegistry(destinatedRegistryType, bytes[1]);
-            else if (sourcedRegistry.EndsWith('L'))
-                registryContainers.SetBytesToRegistry(destinatedRegistryType, bytes[0]);
-            else
-                registryContainers.SetBytesToRegistry(destinatedRegistryType, bytes);
-        }*/
 
         private bool IsValue(string arg, out int value)
         {
@@ -165,20 +143,22 @@ namespace Intel_8086.Console
             return potentialMovKeyword == "MOV" ? true : false;
         }
 
-        private bool IsRegistryName(string potentialRegistryName, out RegistryOperator registryOperator)
+        private bool IsRegistry(string potentialRegistryName, out Registry registry)
         {
-            registryContainer = null;
-
-            if (potentialRegistryName.Length != 2)
+            if (potentialRegistryName == null || potentialRegistryName.Length == 0)
+            {
+                registry = null;
                 return false;
+            }
 
-            foreach (RegistryOperator container in registryOperators)
-                if (container.Contains(potentialRegistryName))
+            foreach (Registry reg in registries)
+                if (reg.Equals(potentialRegistryName))
                 {
-                    registryContainer = container;
+                    registry = reg;
                     return true;
                 }
 
+            registry = null;
             return false;
         }
     }

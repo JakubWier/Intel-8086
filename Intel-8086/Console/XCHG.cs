@@ -6,12 +6,12 @@ namespace Intel_8086.Console
 {
     class XCHG : ProcedureHandler
     {
-        RegistryOperator[] registryModel;
+        Registry[] registries;
         StringBuilder outputLogBuilder;
-        public XCHG(ProcedureHandler nextHandler, params RegistryOperator[] registry)
+        public XCHG(ProcedureHandler nextHandler, params Registry[] registries)
         {
             NextHandler = nextHandler;
-            registryModel = registry;
+            this.registries = registries;
         }
 
         public ProcedureHandler NextHandler { get; set; }

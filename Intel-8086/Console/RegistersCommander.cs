@@ -7,10 +7,10 @@ namespace Intel_8086.Console
         private OutputController output;
         private ProcedureHandler procedureHandling;
 
-        public RegistersCommander(OutputController output, params RegistryOperator[] registerContainers) {
-            XCHG xchg = new XCHG(null, registerContainers);
-            MOV mov = new MOV(xchg, registerContainers);
-            AssignToRegistry assignTo = new AssignToRegistry(mov, registerContainers);
+        public RegistersCommander(OutputController output, params Registry[] registries) {
+            XCHG xchg = new XCHG(null, registries);
+            MOV mov = new MOV(xchg, registries);
+            AssignToRegistry assignTo = new AssignToRegistry(mov, registries);
             procedureHandling = assignTo;
             this.output = output;
         }

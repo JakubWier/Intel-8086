@@ -68,8 +68,9 @@ namespace Intel_8086.Registers
             if (bytes == null)
                 throw new System.NullReferenceException("Byte array cannot be null.");
 
+            registry.TrySetBytes(bytes: bytes);
 
-            if (registryName.EndsWith('L'))
+            /*if (registryName.EndsWith('L'))
                 registry[0] = bytes[0];
             else if (registryName.EndsWith('H'))
                 registry[1] = bytes[0];
@@ -80,7 +81,7 @@ namespace Intel_8086.Registers
                     registry[1] = bytes[1];
                 else
                     registry[1] = 0;
-            }
+            }*/
             UpdateObservers(registry);
             return true;
         }

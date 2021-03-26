@@ -23,8 +23,7 @@ namespace Intel_8086
     /// </summary>
     public partial class MainWindow : Window, OutputController
     {
-        Registry[] registers;
-        RegistryOperator registry;
+        Registry[] registries;
         CommandInterpreter commandInterpreter;
         RegistryView registersView;
         public MainWindow()
@@ -33,15 +32,14 @@ namespace Intel_8086
 
             InitializeComponent();
 
-            registers = InitializeGeneralPurposeRegisters();
+            registries = InitializeGeneralPurposeRegisters();
 
             MemoryModel memory = new MemoryModel(20);
             registersView = new RegistryView(new HexParser());
-            registry = new GeneralPurposeRegisters(registers, registersView);
-            commandInterpreter = new RegistersCommander(this, registry);
+            commandInterpreter = new RegistersCommander(this, registries);
 
-            if (registry is Observable observable)
-                observable.AddObserver(registersView);
+            foreach (Observable registry in registries)
+                registry.AddObserver(registersView);
 
             BlockAX.DataContext = registersView;
             BlockBX.DataContext = registersView;
@@ -88,10 +86,10 @@ namespace Intel_8086
         private Registry[] InitializeGeneralPurposeRegisters()
         {
             return new[] {
-                new HalfRegistry("AX", 2),
-                new HalfRegistry("BX", 2),
-                new HalfRegistry("CX", 2),
-                new HalfRegistry("DX", 2)
+                new DoubleRegistry("AX", new CommonRegistry("AL", 1), new CommonRegistry("AH", 1)),
+                new DoubleRegistry("BX", new CommonRegistry("BL", 1), new CommonRegistry("BH", 1)),
+                new DoubleRegistry("CX", new CommonRegistry("CL", 1), new CommonRegistry("CH", 1)),
+                new DoubleRegistry("DX", new CommonRegistry("DL", 1), new CommonRegistry("DH", 1))
             };
         }
     }
