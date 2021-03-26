@@ -1,5 +1,5 @@
 ﻿using Intel_8086.Registers;
-using Intel_8086.Console;
+using Intel_8086.CommandInterpreter;
 using static System.Diagnostics.Debug;
 using System;
 using Intel_8086;
@@ -11,15 +11,15 @@ namespace Tests_Intel_8086
         public void StartAllTests()
         {
             TestAssignToRegistry();
-            //TestMOV();
-            //TestXCHG();
-            //TestInvalidCommands();
+            TestMOV();
+            TestXCHG();
+            TestInvalidCommands();
         }
         public void TestAssignToRegistry()
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
 
             registryCommand.InputCommand("AL 1");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "01 assigned into AL.");
@@ -35,7 +35,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
 
             byte[] first;
             byte[] second;
@@ -78,7 +78,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
 
             registryCommand.InputCommand("MoV AL, 16");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "Parsing value from decimal.\n10 moved into AL.");
@@ -111,7 +111,7 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            RegistersCommander registryCommand = new RegistersCommander(loggerMock, null);
+            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
 
             registryCommand.InputCommand("");
             Assert(loggerMock.outputResult == "");
@@ -148,7 +148,7 @@ namespace Tests_Intel_8086
 
         }
 
-        private class GeneralPurposeRegistersMock : RegistryOperator
+        private class GeneralPurposeRegistersMock : IRegistryModel
         {
             public int number;
 
@@ -156,12 +156,6 @@ namespace Tests_Intel_8086
             public ushort bx;
             public ushort cx;
             public ushort dx;
-
-            public bool Contains(string registryName)
-            {
-                throw new NotImplementedException();
-            }
-
             public byte[] GetRegistry(GeneralPurposeRegistryType registryType)
             {
                 int regIndex = (int)registryType % 4;
@@ -213,14 +207,9 @@ namespace Tests_Intel_8086
                 }
                 number = BitConverter.ToUInt16(bytes);
             }
-
-            public bool TrySetBytesToRegistry(string registryName, params byte[] bytes)
-            {
-                throw new NotImplementedException();
-            }
         }
 
-        private class LoggerMock : OutputController
+        private class LoggerMock : IOutputController
         {
             public string outputResult = "";
             public void ReplaceOutput(string line)

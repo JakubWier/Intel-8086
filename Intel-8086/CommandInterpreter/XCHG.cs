@@ -2,19 +2,19 @@
 using System.Text;
 using Intel_8086.Registers;
 
-namespace Intel_8086.Console
+namespace Intel_8086.CommandInterpreter
 {
-    class XCHG : ProcedureHandler
+    class XCHG : IProcedureHandling
     {
-        Registry[] registries;
+        IRegistryModel registryModel;
         StringBuilder outputLogBuilder;
-        public XCHG(ProcedureHandler nextHandler, params Registry[] registries)
+        public XCHG(IProcedureHandling nextHandler, IRegistryModel registry)
         {
             NextHandler = nextHandler;
-            this.registries = registries;
+            registryModel = registry;
         }
 
-        public ProcedureHandler NextHandler { get; set; }
+        public IProcedureHandling NextHandler { get; set; }
 
         public string HandleOperation(string[] args)
         {
@@ -85,19 +85,19 @@ namespace Intel_8086.Console
             GeneralPurposeRegistryType secondRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), secondRegistry);
             char registryPostfix;
 
-            //byte[] firstRegistryBytes = registryModel.GetRegistry(firstRegistryType);
-            //byte[] secondRegistryBytes = registryModel.GetRegistry(secondRegistryType);
+            byte[] firstRegistryBytes = registryModel.GetRegistry(firstRegistryType);
+            byte[] secondRegistryBytes = registryModel.GetRegistry(secondRegistryType);
 
             registryPostfix = firstRegistry[firstRegistry.Length - 1];
-            //int firstValue = RegistryBytesToInt16(firstRegistryBytes, registryPostfix);
+            int firstValue = RegistryBytesToInt16(firstRegistryBytes, registryPostfix);
 
             registryPostfix = secondRegistry[secondRegistry.Length - 1];
-            //int secondValue = RegistryBytesToInt16(secondRegistryBytes, registryPostfix);
+            int secondValue = RegistryBytesToInt16(secondRegistryBytes, registryPostfix);
 
-            //SwapInPlace(ref firstValue, ref secondValue);
+            SwapInPlace(ref firstValue, ref secondValue);
 
-            //registryModel.SetBytesToRegistry(firstRegistryType, BitConverter.GetBytes((ushort)firstValue));
-            //registryModel.SetBytesToRegistry(secondRegistryType, BitConverter.GetBytes((ushort)secondValue));
+            registryModel.SetBytesToRegistry(firstRegistryType, BitConverter.GetBytes((ushort)firstValue));
+            registryModel.SetBytesToRegistry(secondRegistryType, BitConverter.GetBytes((ushort)secondValue));
         }
 
         private void SwapInPlace(ref int firstValue, ref int secondValue)

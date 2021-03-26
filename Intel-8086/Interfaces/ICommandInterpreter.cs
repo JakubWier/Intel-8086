@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public interface OutputController
+    public interface ICommandInterpreter
     {
-        public void ReplaceOutput(string line);
+        void InputCommand(string line);
     }
 }

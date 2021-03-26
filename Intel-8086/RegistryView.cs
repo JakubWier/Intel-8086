@@ -4,7 +4,7 @@ using Intel_8086.Registers;
 
 namespace Intel_8086
 {
-    class RegistryView : Observer, INotifyPropertyChanged
+    class RegistryView : IObserver, INotifyPropertyChanged
     {
         public string AX { get => ax; set { ax = value; OnPropertyChanged("AX"); } }
         public string BX { get => bx; set { bx = value; OnPropertyChanged("BX"); } }
@@ -31,20 +31,21 @@ namespace Intel_8086
 
         public void Update(object data)
         {
-            Registry registryUpdateData = data as Registry;
-            int value = BitConverter.ToUInt16(registryUpdateData.Bytes);
-            switch (registryUpdateData.Name)
+            ValueTuple<GeneralPurposeRegistryType, byte[]> updateData = (ValueTuple<GeneralPurposeRegistryType , byte[]>) data;
+            int value = BitConverter.ToUInt16(updateData.Item2);
+            int registryIndex = ((int)updateData.Item1)%4;
+            switch (registryIndex)
             {
-                case "AX":
+                case 0:
                     AX = numeralConverter.IntToString(value);
                     break;
-                case "BX":
+                case 1:
                     BX = numeralConverter.IntToString(value);
                     break;
-                case "CX":
+                case 2:
                     CX = numeralConverter.IntToString(value);
                     break;
-                case "DX":
+                case 3:
                     DX = numeralConverter.IntToString(value);
                     break;
             }

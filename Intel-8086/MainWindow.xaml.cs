@@ -14,32 +14,31 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;*/
 using Intel_8086.Registers;
 using Intel_8086.Memory;
-using Intel_8086.Console;
+using Intel_8086.CommandInterpreter;
 
 namespace Intel_8086
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, OutputController
+    public partial class MainWindow : Window, IOutputController
     {
-        Registry[] registries;
-        CommandInterpreter commandInterpreter;
+        IRegistryModel registry;
+        ICommandInterpreter commandInterpreter;
         RegistryView registersView;
         public MainWindow()
         {
-            //Tests_Intel_8086.UTest.StartAllTests();
+            Tests_Intel_8086.UTest.StartAllTests();
 
             InitializeComponent();
 
-            registries = InitializeGeneralPurposeRegisters();
-
             MemoryModel memory = new MemoryModel(20);
+            registry = new GeneralPurposeRegisters();
+            commandInterpreter = new GeneralRegistryCommand(registry, this);
             registersView = new RegistryView(new HexParser());
-            commandInterpreter = new RegistersCommander(this, registries);
 
-            foreach (Observable registry in registries)
-                registry.AddObserver(registersView);
+            if (registry is IObservable observable)
+                observable.AddObserver(registersView);
 
             BlockAX.DataContext = registersView;
             BlockBX.DataContext = registersView;
@@ -66,31 +65,21 @@ namespace Intel_8086
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            /*registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, 0);
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, 0);
             registry.SetBytesToRegistry(GeneralPurposeRegistryType.BX, 0);
             registry.SetBytesToRegistry(GeneralPurposeRegistryType.CX, 0);
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, 0);*/
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, 0);
             Output.Text = "Registers cleared.";
         }
         private void Random_Click(object sender, RoutedEventArgs e)
         {
             Random registryValueRandomizer = new Random();
 
-            /*registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
             registry.SetBytesToRegistry(GeneralPurposeRegistryType.BX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
             registry.SetBytesToRegistry(GeneralPurposeRegistryType.CX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));*/
+            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
             Output.Text = "Registers randomized.";
-        }
-
-        private Registry[] InitializeGeneralPurposeRegisters()
-        {
-            return new[] {
-                new DoubleRegistry("AX", new CommonRegistry("AL", 1), new CommonRegistry("AH", 1)),
-                new DoubleRegistry("BX", new CommonRegistry("BL", 1), new CommonRegistry("BH", 1)),
-                new DoubleRegistry("CX", new CommonRegistry("CL", 1), new CommonRegistry("CH", 1)),
-                new DoubleRegistry("DX", new CommonRegistry("DL", 1), new CommonRegistry("DH", 1))
-            };
         }
     }
 
