@@ -4,7 +4,7 @@ using Intel_8086.Registers;
 
 namespace Intel_8086
 {
-    class RegistryView : IObserver, INotifyPropertyChanged
+    class RegistryView : Observer, INotifyPropertyChanged
     {
         public string AX { get => ax; set { ax = value; OnPropertyChanged("AX"); } }
         public string BX { get => bx; set { bx = value; OnPropertyChanged("BX"); } }

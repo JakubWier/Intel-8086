@@ -8,10 +8,10 @@ namespace Intel_8086.Memory
         byte[] memoryBlock;
         BitArray adressBus;
 
-        readonly Int16 CS;
-        readonly Int16 SS;
-        readonly Int16 DS;
-        readonly Int16 ES;
+        public Int16 CS { get; }
+        public Int16 SS { get; }
+        public Int16 DS { get; }
+        public Int16 ES { get; }
 
         public MemoryModel(int adressBusLength)
         {

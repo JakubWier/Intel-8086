@@ -2,19 +2,19 @@
 using System.Text;
 using Intel_8086.Registers;
 
-namespace Intel_8086.CommandInterpreter
+namespace Intel_8086.Console
 {
-    class MOV : IProcedureHandling
+    class MOV : ProcedureHandler
     {
-        IRegistryModel registryModel;
+        RegistryContainer registryModel;
         StringBuilder outputLogBuilder;
-        public MOV(IProcedureHandling nextHandler, IRegistryModel registry)
+        public MOV(ProcedureHandler nextHandler, RegistryContainer registry)
         {
             NextHandler = nextHandler;
             registryModel = registry;
         }
 
-        public IProcedureHandling NextHandler { get; set; }
+        public ProcedureHandler NextHandler { get; set; }
 
         public string HandleOperation(string[] args)
         {
@@ -33,8 +33,10 @@ namespace Intel_8086.CommandInterpreter
 
                     if (TrySetValueToRegistry(args[1], args[2]))
                         return outputLogBuilder.ToString();
+
                     if (TrySetRegistryToRegistry(args[1], args[2]))
                         return outputLogBuilder.ToString();
+
                     return outputLogBuilder.ToString();
                 }
                 else
@@ -50,7 +52,7 @@ namespace Intel_8086.CommandInterpreter
 
         private bool TrySetValueToRegistry(string destinatedRegistry, string potentialValue)
         {
-            if (IsValue(potentialValue, out int valueArg))
+            if (IsValue(potentialValue, out Int64 valueArg))
             {
                 char regPostfix = destinatedRegistry[destinatedRegistry.Length - 1];
                 CheckAndReduceOverflow(ref valueArg, regPostfix);
@@ -63,39 +65,22 @@ namespace Intel_8086.CommandInterpreter
             return false;
         }
 
-        private void SetValueToRegistry(string destinatedRegName, int value)
+        private void SetValueToRegistry(string destinatedRegName, Int64 value)
         {
             byte[] bytes = value > 255 ? BitConverter.GetBytes(Convert.ToUInt16(value)) : new[] { Convert.ToByte(value) };
             GeneralPurposeRegistryType registryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), destinatedRegName);
             registryModel.SetBytesToRegistry(registryType, bytes);
         }
 
-        /*private bool IsValueArgument(string argument, out int valueArg)
-        {
-            if (IsValue(argument, out int value)) //"mov reg,value"
-            {
-                valueArg = value;
-                return true;
-            }
-            valueArg = int.MinValue;
-            return false;
-        }*/
 
-        private void CheckAndReduceOverflow(ref int value, char registryPostfix)
+        private void CheckAndReduceOverflow(ref Int64 value, char registryPostfix)
         {
-            if (registryPostfix == 'L')
+            if (registryPostfix == 'L' || registryPostfix == 'H')
             {
                 if (value > byte.MaxValue)
                 {
                     value = BitConverter.GetBytes(value)[0]; //255;
-                    outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\nMoving first byte.\n");
-                }
-            } else if(registryPostfix == 'H')
-            {
-                if (value > byte.MaxValue)
-                {
-                    value = BitConverter.GetBytes(value)[1]; //255;
-                    outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\nMoving first byte.\n");
+                    outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\n");
                 }
             }
             else
@@ -104,7 +89,7 @@ namespace Intel_8086.CommandInterpreter
                 {
                     byte[] convert = BitConverter.GetBytes(value);
                     value = convert[1]*256 + convert[0];
-                    outputLogBuilder.Append("Expected 16bit value.\nData loss due to conversion.\nMoving first two bytes.\n");
+                    outputLogBuilder.Append("Expected 16bit value.\nData loss due to conversion.\n");
                 }
             }
         }
@@ -135,11 +120,11 @@ namespace Intel_8086.CommandInterpreter
                 registryModel.SetBytesToRegistry(destinatedRegistryType, bytes);
         }
 
-        private bool IsValue(string arg, out int value)
+        private bool IsValue(string arg, out Int64 value)
         {
-            if (!arg.EndsWith("H"))
+            if (!arg.StartsWith("0X"))
             {
-                if (int.TryParse(arg, out int result))
+                if (Int64.TryParse(arg, out Int64 result))
                 {
                     outputLogBuilder.Append("Parsing value from decimal.\n");
                     value = result;
@@ -148,7 +133,7 @@ namespace Intel_8086.CommandInterpreter
             }
             else
             {
-                if (int.TryParse(arg.Remove(arg.Length-1, 1), System.Globalization.NumberStyles.HexNumber, null, out int resultFromHex))
+                if (Int64.TryParse(arg.Remove(0, 2), System.Globalization.NumberStyles.HexNumber, null, out Int64 resultFromHex))
                 {
                     outputLogBuilder.Append("Parsing value from hexadecimal.\n");
                     value = resultFromHex;

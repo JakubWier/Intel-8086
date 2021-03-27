@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Intel_8086
 {
-    public interface IOutputController
+    public interface Observer
     {
-        public void ReplaceOutput(string line);
+        void Update(object update);
     }
 }

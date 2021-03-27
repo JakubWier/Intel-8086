@@ -14,7 +14,7 @@ namespace Tests_Intel_8086
         public void TestSetAndReadBytes() //MOV AL, BH
         {
             byte[] test;
-            IRegistryModel registry = new GeneralPurposeRegisters();
+            RegistryContainer registry = new GeneralPurposeRegisters();
             registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, 0, 1);
             test = registry.GetRegistry(GeneralPurposeRegistryType.AX);
             Assert(BitConverter.ToUInt16(test) == 256, $"Registry set AX failure, test value: {BitConverter.ToUInt16(test)} expected 256");

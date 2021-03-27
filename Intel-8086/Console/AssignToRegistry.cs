@@ -1,13 +1,13 @@
 ﻿using System;
 using Intel_8086.Registers;
 
-namespace Intel_8086.CommandInterpreter
+namespace Intel_8086.Console
 {
-    class AssignToRegistry : IProcedureHandling
+    class AssignToRegistry : ProcedureHandler
     {
-        public IProcedureHandling NextHandler { get; set; }
-        IRegistryModel registryModel;
-        public AssignToRegistry(IProcedureHandling next, IRegistryModel registry)
+        public ProcedureHandler NextHandler { get; set; }
+        RegistryContainer registryModel;
+        public AssignToRegistry(ProcedureHandler next, RegistryContainer registry)
         {
             registryModel = registry;
             NextHandler = next;

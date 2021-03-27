@@ -1,13 +1,13 @@
 ﻿using Intel_8086.Registers;
 
-namespace Intel_8086.CommandInterpreter
+namespace Intel_8086.Console
 {
-    class GeneralRegistryCommand : ICommandInterpreter
+    class GeneralRegistryCommand : CommandInterpreter
     {
-        private IOutputController output;
-        private IProcedureHandling procedureHandling;
+        private OutputController output;
+        private ProcedureHandler procedureHandling;
 
-        public GeneralRegistryCommand(IRegistryModel registryModel, IOutputController output) {
+        public GeneralRegistryCommand(RegistryContainer registryModel, OutputController output) {
             XCHG xchg = new XCHG(null, registryModel);
             MOV mov = new MOV(xchg, registryModel);
             AssignToRegistry assignTo = new AssignToRegistry(mov, registryModel);

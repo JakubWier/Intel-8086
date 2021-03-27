@@ -14,17 +14,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;*/
 using Intel_8086.Registers;
 using Intel_8086.Memory;
-using Intel_8086.CommandInterpreter;
+using Intel_8086.Console;
 
 namespace Intel_8086
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IOutputController
+    public partial class MainWindow : Window, OutputController
     {
-        IRegistryModel registry;
-        ICommandInterpreter commandInterpreter;
+        RegistryContainer registry;
+        CommandInterpreter commandInterpreter;
         RegistryView registersView;
         public MainWindow()
         {
@@ -37,7 +37,7 @@ namespace Intel_8086
             commandInterpreter = new GeneralRegistryCommand(registry, this);
             registersView = new RegistryView(new HexParser());
 
-            if (registry is IObservable observable)
+            if (registry is Observable observable)
                 observable.AddObserver(registersView);
 
             BlockAX.DataContext = registersView;

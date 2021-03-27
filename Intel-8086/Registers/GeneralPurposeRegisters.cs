@@ -2,10 +2,9 @@
 
 namespace Intel_8086.Registers
 {
-    public delegate void RegistryChangedHandler(byte newValue);
-    class GeneralPurposeRegisters : IRegistryModel, IObservable
+    class GeneralPurposeRegisters : RegistryContainer, Observable
     {
-        private List<IObserver> observers;
+        private List<Observer> observers;
 
         byte[][] registryBlock;
         public GeneralPurposeRegisters()
@@ -16,10 +15,10 @@ namespace Intel_8086.Registers
             registryBlock[2] = new byte[2];
             registryBlock[3] = new byte[2];
 
-            observers = new List<IObserver>();
+            observers = new List<Observer>();
         }
 
-        public GeneralPurposeRegisters(params IObserver[] observer)
+        public GeneralPurposeRegisters(params Observer[] observer)
         {
             registryBlock = new byte[4][];
             registryBlock[0] = new byte[2];
@@ -27,7 +26,7 @@ namespace Intel_8086.Registers
             registryBlock[2] = new byte[2];
             registryBlock[3] = new byte[2];
 
-            observers = new List<IObserver>(observer);
+            observers = new List<Observer>(observer);
         }
 
         public byte[] GetRegistry(GeneralPurposeRegistryType registryType)
@@ -92,16 +91,16 @@ namespace Intel_8086.Registers
 
         public void UpdateObservers(object data)
         {
-            foreach (IObserver observer in observers)
+            foreach (Observer observer in observers)
                 observer.Update(data);
         }
 
-        public void AddObserver(IObserver observer)
+        public void AddObserver(Observer observer)
         {
             observers.Add(observer);
         }
 
-        public void RemoveObserver(IObserver observer)
+        public void RemoveObserver(Observer observer)
         {
             observers.Remove(observer);
         }

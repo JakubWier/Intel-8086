@@ -2,19 +2,19 @@
 using System.Text;
 using Intel_8086.Registers;
 
-namespace Intel_8086.CommandInterpreter
+namespace Intel_8086.Console
 {
-    class XCHG : IProcedureHandling
+    class XCHG : ProcedureHandler
     {
-        IRegistryModel registryModel;
+        RegistryContainer registryModel;
         StringBuilder outputLogBuilder;
-        public XCHG(IProcedureHandling nextHandler, IRegistryModel registry)
+        public XCHG(ProcedureHandler nextHandler, RegistryContainer registry)
         {
             NextHandler = nextHandler;
             registryModel = registry;
         }
 
-        public IProcedureHandling NextHandler { get; set; }
+        public ProcedureHandler NextHandler { get; set; }
 
         public string HandleOperation(string[] args)
         {
