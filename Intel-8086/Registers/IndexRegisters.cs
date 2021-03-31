@@ -2,7 +2,7 @@
 
 namespace Intel_8086.Registers
 {
-    class IndexRegisters : Observable
+    class IndexRegisters : RegistryController, Observable
     {
         private List<Observer> observers;
 
@@ -25,29 +25,16 @@ namespace Intel_8086.Registers
             observers = new List<Observer>(observer);
         }
 
-        public byte[] GetRegistry(IndexRegistryType registryType)
+        public byte[] GetRegistry(string registryName)
         {
-            int regIndex = (int)registryType % 4;
-            
-            switch (regIndex)
-            {
-                case 0:
-                    return registryBlock[0];
-                case 1:
-                    return registryBlock[1];
-                default:
-                    return null;
-            }
+            int regIndex = ToRegistryIndex(registryName);
+            return registryBlock[regIndex];
         }
 
-        /// <summary>
-        /// Sets passed bytes to selected register.
-        /// Function intentionally simulates data loss if parameter "bytes" is too wide for 16bit registry or it's 8bit half. 
-        /// </summary>
-        public void SetBytesToRegistry(IndexRegistryType registryType, params byte[] bytes)
+        public void SetBytesToRegistry(string registryName, params byte[] bytes)
         {
-            int registryIndex = (int)registryType;
-            if (bytes == null || registryType.Equals(null) || registryIndex > 11)
+            int registryIndex = ToRegistryIndex(registryName);
+            if (bytes == null || registryName.Equals(null) || registryIndex > 11)
                 return;
 
             registryBlock[registryIndex][0] = bytes[0];
@@ -57,10 +44,17 @@ namespace Intel_8086.Registers
                 registryBlock[registryIndex][1] = 0;
 
 
-            (IndexRegistryType reg, byte[] newValue) data = (registryType, registryBlock[registryIndex]);
+            (string regName, byte[] newValue) data = (registryName, registryBlock[registryIndex]);
             UpdateObservers(data);
             return;
         }
+
+        private int ToRegistryIndex(string registryName) => registryName switch
+        {
+            "SI" => 0,
+            "DI" => 1,
+            _ => -1
+        };
 
         public void UpdateObservers(object data)
         {
@@ -76,6 +70,13 @@ namespace Intel_8086.Registers
         public void RemoveObserver(Observer observer)
         {
             observers.Remove(observer);
+        }
+
+        public bool Contains(string registryName)
+        {
+            if (ToRegistryIndex(registryName) != -1)
+                return true;
+            return false;
         }
     }
 }

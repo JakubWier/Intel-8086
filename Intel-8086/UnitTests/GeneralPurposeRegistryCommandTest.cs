@@ -19,7 +19,15 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+            
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
 
             registryCommand.InputCommand("AL 1");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "01 assigned into AL.");
@@ -35,41 +43,49 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
 
             byte[] first;
             byte[] second;
 
-            registersMock.SetBytesToRegistry(GeneralPurposeRegistryType.AX, BitConverter.GetBytes(Convert.ToUInt16(256)));
-            registersMock.SetBytesToRegistry(GeneralPurposeRegistryType.BX, BitConverter.GetBytes(Convert.ToUInt16(255)));
+            registersMock.SetBytesToRegistry("AX", BitConverter.GetBytes(Convert.ToUInt16(256)));
+            registersMock.SetBytesToRegistry("BX", BitConverter.GetBytes(Convert.ToUInt16(255)));
             registryCommand.InputCommand("XchG aX, Bx");
-            first = registersMock.GetRegistry(GeneralPurposeRegistryType.AX);
-            second = registersMock.GetRegistry(GeneralPurposeRegistryType.BX);
+            first = registersMock.GetRegistry("AX");
+            second = registersMock.GetRegistry("BX");
             Assert(first[0] == 255 && first[1] == 0 && second[0] == 0 && second[1] == 1);
             Assert(loggerMock.outputResult == "AX exchanged with BX.");
 
             registryCommand.InputCommand("xchG al, cl");
-            first = registersMock.GetRegistry(GeneralPurposeRegistryType.AX);
-            second = registersMock.GetRegistry(GeneralPurposeRegistryType.CX);
+            first = registersMock.GetRegistry("AX");
+            second = registersMock.GetRegistry("CX");
             Assert(first[0] == 0 && first[1] == 0 && second[0] == 255 && second[1] == 0);
             Assert(loggerMock.outputResult == "AL exchanged with CL.");
 
-            registersMock.SetBytesToRegistry(GeneralPurposeRegistryType.DX, BitConverter.GetBytes(Convert.ToUInt16(65535)));
+            registersMock.SetBytesToRegistry("DX", BitConverter.GetBytes(Convert.ToUInt16(65535)));
             registryCommand.InputCommand("XchG bh, dh");
-            first = registersMock.GetRegistry(GeneralPurposeRegistryType.BX);
-            second = registersMock.GetRegistry(GeneralPurposeRegistryType.DX);
+            first = registersMock.GetRegistry("BX");
+            second = registersMock.GetRegistry("DX");
             Assert(first[0] == 0 && first[1] == 255 && second[0] == 255 && second[1] == 1);
             Assert(loggerMock.outputResult == "BH exchanged with DH.");
 
             registryCommand.InputCommand("xchg cx, dx");
-            first = registersMock.GetRegistry(GeneralPurposeRegistryType.CX);
-            second = registersMock.GetRegistry(GeneralPurposeRegistryType.DX);
+            first = registersMock.GetRegistry("CX");
+            second = registersMock.GetRegistry("DX");
             Assert(first[0] == 255 && first[1] == 1 && second[0] == 255 && second[1] == 0);
             Assert(loggerMock.outputResult == "CX exchanged with DX.");
 
             registryCommand.InputCommand("xchG dl, ch");
-            first = registersMock.GetRegistry(GeneralPurposeRegistryType.DX);
-            second = registersMock.GetRegistry(GeneralPurposeRegistryType.CX);
+            first = registersMock.GetRegistry("DX");
+            second = registersMock.GetRegistry("CX");
             Assert(first[0] == 1 && first[1] == 0 && second[0] == 255 && second[1] == 255);
             Assert(loggerMock.outputResult == "DL exchanged with CH.");
         }
@@ -78,7 +94,15 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
 
             registryCommand.InputCommand("MoV AL, 16");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "Parsing value from decimal.\n10 moved into AL.");
@@ -111,7 +135,15 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
-            GeneralRegistryCommand registryCommand = new GeneralRegistryCommand(registersMock, loggerMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
 
             registryCommand.InputCommand("");
             Assert(loggerMock.outputResult == "");
@@ -148,7 +180,7 @@ namespace Tests_Intel_8086
 
         }
 
-        private class GeneralPurposeRegistersMock : RegistryContainer
+        private class GeneralPurposeRegistersMock : RegistryController
         {
             public int number;
 
@@ -156,9 +188,17 @@ namespace Tests_Intel_8086
             public ushort bx;
             public ushort cx;
             public ushort dx;
-            public byte[] GetRegistry(GeneralPurposeRegistryType registryType)
+
+            public bool Contains(string registryName)
             {
-                int regIndex = (int)registryType % 4;
+                if (ToRegistryIndex(registryName) != -1)
+                    return true;
+                return false;
+            }
+
+            public byte[] GetRegistry(string registryName)
+            {
+                int regIndex = ToRegistryIndex(registryName);
                 switch (regIndex)
                 {
                     case 0:
@@ -174,21 +214,21 @@ namespace Tests_Intel_8086
                 }
             }
 
-            public void SetBytesToRegistry(GeneralPurposeRegistryType registryType, params byte[] bytes)
+            public void SetBytesToRegistry(string registryName, params byte[] bytes)
             {
                 if (bytes.Length == 1)
                     bytes = new byte[] { bytes[0], 0 };
                 else
                 {
-                    if (registryType.ToString().EndsWith('L'))
+                    if (registryName.ToString().EndsWith('L'))
                     {
-                        bytes = new byte[] { bytes[0], GetRegistry(registryType)[1] };
-                    } else if (registryType.ToString().EndsWith('H'))
+                        bytes = new byte[] { bytes[0], GetRegistry(registryName)[1] };
+                    } else if (registryName.ToString().EndsWith('H'))
                     {
-                        bytes = new byte[] { GetRegistry(registryType)[0], bytes[0] };
+                        bytes = new byte[] { GetRegistry(registryName)[0], bytes[0] };
                     }
                 }
-                int regIndex = (int)registryType % 4;
+                int regIndex = ToRegistryIndex(registryName);
                 switch (regIndex)
                 {
                     case 0:
@@ -207,6 +247,23 @@ namespace Tests_Intel_8086
                 }
                 number = BitConverter.ToUInt16(bytes);
             }
+
+            private int ToRegistryIndex(string registryName) => registryName switch
+            {
+                "AX" => 0,
+                "AH" => 0,
+                "AL" => 0,
+                "BX" => 1,
+                "BH" => 1,
+                "BL" => 1,
+                "CX" => 2,
+                "CH" => 2,
+                "CL" => 2,
+                "DX" => 3,
+                "DH" => 3,
+                "DL" => 3,
+                _ => -1
+            };
         }
 
         private class LoggerMock : OutputController

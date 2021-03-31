@@ -3,50 +3,52 @@ using Intel_8086.Registers;
 
 namespace Intel_8086.Console
 {
-    class AssignToRegistry : ProcedureHandler
+    class AssignToRegistry : RegistryCommandHandler
     {
-        public ProcedureHandler NextHandler { get; set; }
-        RegistryContainer registryModel;
-        public AssignToRegistry(ProcedureHandler next, RegistryContainer registry)
-        {
-            registryModel = registry;
-            NextHandler = next;
-        }
+        public RegistryCommandHandler NextHandler { get; set; }
+        private RegistryController[] processedRegisters;
 
-        public string HandleOperation(string[] args)
+        public string HandleOperation(string[] args, params RegistryController[] registryControllers)
         {
-            if (IsCommandSetFixedToRegistry(args[0]))
+            processedRegisters = registryControllers;
+
+            if (IsCommandSetFixedToRegistry(args[0], out RegistryController controller))
             {
-                return TryParseSetFixedToRegistry(args[0], args[1]);
+                return TrySetFixedToRegistry(controller, args[0], args[1]);
             }
 
             if (NextHandler != null)
-                return NextHandler.HandleOperation(args);
+                return NextHandler.HandleOperation(args, processedRegisters);
             else
                 return "";
         }
 
-        private bool IsCommandSetFixedToRegistry(string potentialRegistryName)
+        private bool IsCommandSetFixedToRegistry(string potentialRegistryName, out RegistryController controller)
         {
-            potentialRegistryName = potentialRegistryName.ToLower();
             if (potentialRegistryName.Length == 2)
-                foreach (string reg in Enum.GetNames(typeof(GeneralPurposeRegistryType)))
+                foreach (RegistryController container in processedRegisters)
                 {
-                    if (potentialRegistryName == reg.ToLower())
+                    if (container.Contains(potentialRegistryName))
+                    {
+                        controller = container;
                         return true;
+                    }
                 }
+
+            controller = null;
             return false;
         }
 
-        private string TryParseSetFixedToRegistry(string registryName, string valueHex)
+        private string TrySetFixedToRegistry(RegistryController controller, string registryName, string valueHex)
         {
             registryName = registryName.ToUpper();
             if (valueHex.Length > 4)
                 valueHex = valueHex.Substring(valueHex.Length - 4, 4);
+
             try
             {
                 byte[] bytes = (valueHex.Length <= 2) ? new[] { Convert.ToByte(valueHex, 16) } : BitConverter.GetBytes(Convert.ToInt16(valueHex, 16));
-                registryModel.SetBytesToRegistry((GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), registryName), bytes);
+                controller.SetBytesToRegistry(registryName, bytes);
                 return $"{ (valueHex.Length > 2 ? valueHex.PadLeft(4, '0') : valueHex.PadLeft(2, '0')).ToUpper()} assigned into {registryName}.";
             }
             catch (FormatException)

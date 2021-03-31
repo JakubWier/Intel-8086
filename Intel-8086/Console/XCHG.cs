@@ -4,20 +4,17 @@ using Intel_8086.Registers;
 
 namespace Intel_8086.Console
 {
-    class XCHG : ProcedureHandler
+    class XCHG : RegistryCommandHandler
     {
-        RegistryContainer registryModel;
-        StringBuilder outputLogBuilder;
-        public XCHG(ProcedureHandler nextHandler, RegistryContainer registry)
-        {
-            NextHandler = nextHandler;
-            registryModel = registry;
-        }
+        private StringBuilder outputLogBuilder;
+        private RegistryController[] processedRegisters;
 
-        public ProcedureHandler NextHandler { get; set; }
+        public RegistryCommandHandler NextHandler { get; set; }
 
-        public string HandleOperation(string[] args)
+        public string HandleOperation(string[] args, params RegistryController[] registryControllers)
         {
+            processedRegisters = registryControllers;
+
             if (IsCommandXCHG(args[0]))
                 if (args.Length > 2)
                 {
@@ -38,55 +35,54 @@ namespace Intel_8086.Console
                 }
 
             if (NextHandler != null)
-                return NextHandler.HandleOperation(args);
+                return NextHandler.HandleOperation(args, processedRegisters);
             else
                 return "";
         }
 
-        private bool IsCommandXCHG(string potentialXchgKeyword)
-        {
-            return potentialXchgKeyword == "XCHG" ? true : false;
-        }
+        private bool IsCommandXCHG(string potentialXchgKeyword) => potentialXchgKeyword == "XCHG";
 
-        private bool IsRegistryName(string potentialRegistryName)
+        private bool IsRegistryName(string potentialRegistryName, out RegistryController registryController)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (string reg in Enum.GetNames(typeof(GeneralPurposeRegistryType)))
+                foreach (RegistryController container in processedRegisters)
                 {
-                    if (potentialRegistryName == reg)
+                    if (container.Contains(potentialRegistryName))
+                    {
+                        registryController = container;
                         return true;
+                    }
                 }
 
+            registryController = null;
             return false;
         }
 
         private bool TryExchangeRegisters(string firstRegistry, string secondRegistry)
         {
-            if (!IsRegistryName(firstRegistry))
+            if (!IsRegistryName(firstRegistry, out RegistryController firstController))
             {
                 outputLogBuilder.Append($"{firstRegistry} is unknown registry name.");
                 return false;
             }
 
-            if (!IsRegistryName(secondRegistry))
+            if (!IsRegistryName(secondRegistry, out RegistryController secondController))
             {
                 outputLogBuilder.Append($"{secondRegistry} is unknown registry name.");
                 return false;
             }
 
-            ExchangeRegisters(firstRegistry, secondRegistry);
+            ExchangeRegisters(firstController, secondController, firstRegistry, secondRegistry);
             outputLogBuilder.Append($"{firstRegistry} exchanged with {secondRegistry}.");
             return true;
         }
 
-        private void ExchangeRegisters(string firstRegistry, string secondRegistry)
+        private void ExchangeRegisters(RegistryController firstController, RegistryController secondController, string firstRegistry, string secondRegistry)
         {
-            GeneralPurposeRegistryType firstRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), firstRegistry);
-            GeneralPurposeRegistryType secondRegistryType = (GeneralPurposeRegistryType)Enum.Parse(typeof(GeneralPurposeRegistryType), secondRegistry);
             char registryPostfix;
 
-            byte[] firstRegistryBytes = registryModel.GetRegistry(firstRegistryType);
-            byte[] secondRegistryBytes = registryModel.GetRegistry(secondRegistryType);
+            byte[] firstRegistryBytes = firstController.GetRegistry(firstRegistry);
+            byte[] secondRegistryBytes = secondController.GetRegistry(secondRegistry);
 
             registryPostfix = firstRegistry[firstRegistry.Length - 1];
             int firstValue = RegistryBytesToInt16(firstRegistryBytes, registryPostfix);
@@ -96,8 +92,8 @@ namespace Intel_8086.Console
 
             SwapInPlace(ref firstValue, ref secondValue);
 
-            registryModel.SetBytesToRegistry(firstRegistryType, BitConverter.GetBytes((ushort)firstValue));
-            registryModel.SetBytesToRegistry(secondRegistryType, BitConverter.GetBytes((ushort)secondValue));
+            secondController.SetBytesToRegistry(firstRegistry, BitConverter.GetBytes((ushort)firstValue));
+            firstController.SetBytesToRegistry(secondRegistry, BitConverter.GetBytes((ushort)secondValue));
         }
 
         private void SwapInPlace(ref int firstValue, ref int secondValue)

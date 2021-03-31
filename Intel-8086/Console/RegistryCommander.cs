@@ -2,17 +2,15 @@
 
 namespace Intel_8086.Console
 {
-    class GeneralRegistryCommand : CommandInterpreter
+    class RegistryCommander : CommandInterpreter
     {
         private OutputController output;
-        private ProcedureHandler procedureHandling;
+        private RegistryCommandHandler commandHandler;
+        private RegistryController[] supportedRegisters;
 
-        public GeneralRegistryCommand(RegistryContainer registryModel, OutputController output) {
-            XCHG xchg = new XCHG(null, registryModel);
-            MOV mov = new MOV(xchg, registryModel);
-            AssignToRegistry assignTo = new AssignToRegistry(mov, registryModel);
-            procedureHandling = assignTo;
+        public RegistryCommander(OutputController output, params RegistryController[] supportedRegisters) {
             this.output = output;
+            this.supportedRegisters = supportedRegisters;
         }
 
         /// <summary>
@@ -31,12 +29,18 @@ namespace Intel_8086.Console
             for(int i=0; i<commandBlockBuffer.Length;i++)
                 commandBlockBuffer[i] = commandBlockBuffer[i].ToUpper();
 
-            string outputResult = procedureHandling.HandleOperation(commandBlockBuffer);
+            string outputResult = commandHandler.HandleOperation(commandBlockBuffer, supportedRegisters);
 
             if (outputResult?.Length != 0)
                 output.ReplaceOutput(outputResult);
             else
                 output.ReplaceOutput("Invalid command line.");
+        }
+
+        public void AddHandler(RegistryCommandHandler handler)
+        {
+            handler.NextHandler = commandHandler;
+            commandHandler = handler;
         }
     }
 }

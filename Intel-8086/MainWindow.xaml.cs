@@ -23,27 +23,31 @@ namespace Intel_8086
     /// </summary>
     public partial class MainWindow : Window, OutputController
     {
-        RegistryContainer registry;
+        RegistryController generalPurposeRegisters;
+        RegistryController indexRegisters;
         CommandInterpreter commandInterpreter;
-        RegistryView registersView;
+        MemoryModel memory;
+        RegistryView registryView;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
-
             InitializeComponent();
 
-            MemoryModel memory = new MemoryModel(20);
-            registry = new GeneralPurposeRegisters();
-            commandInterpreter = new GeneralRegistryCommand(registry, this);
-            registersView = new RegistryView(new HexParser());
+            memory = new MemoryModel(20);
+            generalPurposeRegisters = new GeneralPurposeRegisters();
+            indexRegisters = new IndexRegisters();
 
-            if (registry is Observable observable)
-                observable.AddObserver(registersView);
+            commandInterpreter = InitDefaultRegistryCommander(generalPurposeRegisters, indexRegisters);
 
-            BlockAX.DataContext = registersView;
-            BlockBX.DataContext = registersView;
-            BlockCX.DataContext = registersView;
-            BlockDX.DataContext = registersView;
+            registryView = new RegistryView(new HexParser());
+
+            if (generalPurposeRegisters is Observable observableRegistry)
+                observableRegistry.AddObserver(registryView);
+
+            BlockAX.DataContext = registryView;
+            BlockBX.DataContext = registryView;
+            BlockCX.DataContext = registryView;
+            BlockDX.DataContext = registryView;
 
             Description.Text = "AX FF11";
         }
@@ -65,21 +69,36 @@ namespace Intel_8086
 
         private void Reset_Click(object sender, RoutedEventArgs e)
         {
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, 0);
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.BX, 0);
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.CX, 0);
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, 0);
+            generalPurposeRegisters.SetBytesToRegistry("AX", 0);
+            generalPurposeRegisters.SetBytesToRegistry("BX", 0);
+            generalPurposeRegisters.SetBytesToRegistry("CX", 0);
+            generalPurposeRegisters.SetBytesToRegistry("DX", 0);
             Output.Text = "Registers cleared.";
         }
         private void Random_Click(object sender, RoutedEventArgs e)
         {
             Random registryValueRandomizer = new Random();
 
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.AX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.BX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.CX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
-            registry.SetBytesToRegistry(GeneralPurposeRegistryType.DX, BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            generalPurposeRegisters.SetBytesToRegistry("AX", BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            generalPurposeRegisters.SetBytesToRegistry("BX", BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            generalPurposeRegisters.SetBytesToRegistry("CX", BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
+            generalPurposeRegisters.SetBytesToRegistry("DX", BitConverter.GetBytes(registryValueRandomizer.Next(0, 65536)));
             Output.Text = "Registers randomized.";
+        }
+
+        private CommandInterpreter InitDefaultRegistryCommander(params RegistryController[] registries)
+        {
+            RegistryCommander commander = new RegistryCommander(this, registries);
+
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            commander.AddHandler(xchg);
+            commander.AddHandler(mov);
+            commander.AddHandler(assignTo);
+
+            return commander;
         }
     }
 

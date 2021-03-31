@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
-using Intel_8086.Registers;
 
-namespace Intel_8086
+namespace Intel_8086.Registers
 {
     class RegistryView : Observer, INotifyPropertyChanged
     {
@@ -31,21 +30,21 @@ namespace Intel_8086
 
         public void Update(object data)
         {
-            ValueTuple<GeneralPurposeRegistryType, byte[]> updateData = (ValueTuple<GeneralPurposeRegistryType , byte[]>) data;
+            ValueTuple<string, byte[]> updateData = (ValueTuple<string , byte[]>) data;
             int value = BitConverter.ToUInt16(updateData.Item2);
-            int registryIndex = ((int)updateData.Item1)%4;
-            switch (registryIndex)
+
+            switch (updateData.Item1)
             {
-                case 0:
+                case "AX":
                     AX = numeralConverter.IntToString(value);
                     break;
-                case 1:
+                case "BX":
                     BX = numeralConverter.IntToString(value);
                     break;
-                case 2:
+                case "CX":
                     CX = numeralConverter.IntToString(value);
                     break;
-                case 3:
+                case "DX":
                     DX = numeralConverter.IntToString(value);
                     break;
             }

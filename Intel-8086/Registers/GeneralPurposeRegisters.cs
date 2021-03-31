@@ -2,7 +2,7 @@
 
 namespace Intel_8086.Registers
 {
-    class GeneralPurposeRegisters : RegistryContainer, Observable
+    class GeneralPurposeRegisters : RegistryController, Observable
     {
         private List<Observer> observers;
 
@@ -29,35 +29,23 @@ namespace Intel_8086.Registers
             observers = new List<Observer>(observer);
         }
 
-        public byte[] GetRegistry(GeneralPurposeRegistryType registryType)
+        public byte[] GetRegistry(string registryName)
         {
-            int regIndex = (int)registryType % 4;
-            switch (regIndex)
-            {
-                case 0:
-                    return registryBlock[0];
-                case 1:
-                    return registryBlock[1];
-                case 2:
-                    return registryBlock[2];
-                case 3:
-                    return registryBlock[3];
-                default:
-                    return null;
-            }
+            int regIndex = ToRegistryIndex(registryName);
+            return registryBlock[regIndex];
         }
 
         /// <summary>
         /// Sets passed bytes to selected register.
         /// Function intentionally simulates data loss if parameter "bytes" is too wide for 16bit registry or it's 8bit half. 
         /// </summary>
-        public void SetBytesToRegistry(GeneralPurposeRegistryType registryType, params byte[] bytes)
+        public void SetBytesToRegistry(string registryName, params byte[] bytes)
         {
-            int registryIndex = (int)registryType;
-            if (bytes == null || registryType.Equals(null) || registryIndex > 11)
+            int registryIndex = ToRegistryIndex(registryName);
+            if (bytes == null || registryName.Equals(null) || registryIndex > 11)
                 return;
 
-            if (registryType <= GeneralPurposeRegistryType.DX)
+            if (registryName.EndsWith('X'))
             {
                 registryBlock[registryIndex][0] = bytes[0];
                 if (bytes.Length > 1)
@@ -65,20 +53,36 @@ namespace Intel_8086.Registers
                 else
                     registryBlock[registryIndex][1] = 0;
             }
-            else if (registryType >= GeneralPurposeRegistryType.AH && registryType <= GeneralPurposeRegistryType.DH)
+            else if (registryName.EndsWith('H'))
             {
-                registryIndex -= 4;
                 SetHighByte(registryIndex, bytes[0]);
             }
-            else
+            else if(registryName.EndsWith('L'))
             {
-                registryIndex -= 8;
                 SetLowByte(registryIndex, bytes[0]);
             }
-            (GeneralPurposeRegistryType reg, byte[] newValue) data = (registryType, registryBlock[registryIndex]);
+
+            (string regName, byte[] newValue) data = (new string(registryName[0] + "X"), registryBlock[registryIndex]);
             UpdateObservers(data);
             return;
         }
+
+        private int ToRegistryIndex(string registryName) => registryName switch
+        {
+            "AX" => 0,
+            "AH" => 0,
+            "AL" => 0,
+            "BX" => 1,
+            "BH" => 1,
+            "BL" => 1,
+            "CX" => 2,
+            "CH" => 2,
+            "CL" => 2,
+            "DX" => 3,
+            "DH" => 3,
+            "DL" => 3,
+            _ => -1
+        };
 
         private void SetHighByte(int registryIndex, byte singleByte)
         {
@@ -87,6 +91,13 @@ namespace Intel_8086.Registers
         private void SetLowByte(int registryIndex, byte singleByte)
         {
             registryBlock[registryIndex][0] = singleByte;
+        }
+
+        public bool Contains(string registryName)
+        {
+            if (ToRegistryIndex(registryName) != -1)
+                return true;
+            return false;
         }
 
         public void UpdateObservers(object data)
