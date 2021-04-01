@@ -23,11 +23,14 @@ namespace Intel_8086
     /// </summary>
     public partial class MainWindow : Window, OutputController
     {
-        RegistryController generalPurposeRegisters;
-        RegistryController indexRegisters;
+        RegistersController generalPurposeRegisters;
+        RegistersController indexRegisters;
+        RegistersController pointerRegisters;
         CommandInterpreter commandInterpreter;
         MemoryModel memory;
-        RegistryView registryView;
+        GeneralPurposeRegistersView generalPurposeRegistersView;
+        IndexRegistersView indexRegistersView;
+        PointerRegistersView pointerRegistersView;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
@@ -36,18 +39,31 @@ namespace Intel_8086
             memory = new MemoryModel(20);
             generalPurposeRegisters = new GeneralPurposeRegisters();
             indexRegisters = new IndexRegisters();
+            pointerRegisters = new PointerRegisters();
 
             commandInterpreter = InitDefaultRegistryCommander(generalPurposeRegisters, indexRegisters);
 
-            registryView = new RegistryView(new HexParser());
+            generalPurposeRegistersView = new GeneralPurposeRegistersView(new HexParser());
+            indexRegistersView = new IndexRegistersView(new HexParser());
+            pointerRegistersView = new PointerRegistersView(new HexParser());
 
-            if (generalPurposeRegisters is Observable observableRegistry)
-                observableRegistry.AddObserver(registryView);
+            if (generalPurposeRegisters is Observable observableGeneralPurposeReg)
+                observableGeneralPurposeReg.AddObserver(generalPurposeRegistersView);
+            if (indexRegisters is Observable observableIndexReg)
+                observableIndexReg.AddObserver(indexRegistersView);
+            if (pointerRegisters is Observable observablePointersReg)
+                observablePointersReg.AddObserver(pointerRegistersView);
 
-            BlockAX.DataContext = registryView;
-            BlockBX.DataContext = registryView;
-            BlockCX.DataContext = registryView;
-            BlockDX.DataContext = registryView;
+            BlockAX.DataContext = generalPurposeRegistersView;
+            BlockBX.DataContext = generalPurposeRegistersView;
+            BlockCX.DataContext = generalPurposeRegistersView;
+            BlockDX.DataContext = generalPurposeRegistersView;
+
+            BlockSI.DataContext = indexRegistersView;
+            BlockDI.DataContext = indexRegistersView;
+
+            BlockBP.DataContext = pointerRegistersView;
+            BlockSP.DataContext = pointerRegistersView;
 
             Description.Text = "AX FF11";
         }
@@ -86,7 +102,7 @@ namespace Intel_8086
             Output.Text = "Registers randomized.";
         }
 
-        private CommandInterpreter InitDefaultRegistryCommander(params RegistryController[] registries)
+        private CommandInterpreter InitDefaultRegistryCommander(params RegistersController[] registries)
         {
             RegistryCommander commander = new RegistryCommander(this, registries);
 

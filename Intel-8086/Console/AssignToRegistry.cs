@@ -6,13 +6,13 @@ namespace Intel_8086.Console
     class AssignToRegistry : RegistryCommandHandler
     {
         public RegistryCommandHandler NextHandler { get; set; }
-        private RegistryController[] processedRegisters;
+        private RegistersController[] processedRegisters;
 
-        public string HandleOperation(string[] args, params RegistryController[] registryControllers)
+        public string HandleOperation(string[] args, params RegistersController[] registryControllers)
         {
             processedRegisters = registryControllers;
 
-            if (IsCommandSetFixedToRegistry(args[0], out RegistryController controller))
+            if (IsCommandSetFixedToRegistry(args[0], out RegistersController controller))
             {
                 return TrySetFixedToRegistry(controller, args[0], args[1]);
             }
@@ -23,10 +23,10 @@ namespace Intel_8086.Console
                 return "";
         }
 
-        private bool IsCommandSetFixedToRegistry(string potentialRegistryName, out RegistryController controller)
+        private bool IsCommandSetFixedToRegistry(string potentialRegistryName, out RegistersController controller)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (RegistryController container in processedRegisters)
+                foreach (RegistersController container in processedRegisters)
                 {
                     if (container.Contains(potentialRegistryName))
                     {
@@ -39,7 +39,7 @@ namespace Intel_8086.Console
             return false;
         }
 
-        private string TrySetFixedToRegistry(RegistryController controller, string registryName, string valueHex)
+        private string TrySetFixedToRegistry(RegistersController controller, string registryName, string valueHex)
         {
             registryName = registryName.ToUpper();
             if (valueHex.Length > 4)

@@ -3,23 +3,23 @@ using System.ComponentModel;
 
 namespace Intel_8086.Registers
 {
-    class IndexRegistersView : Observer, INotifyPropertyChanged
+    class PointerRegistersView : Observer, INotifyPropertyChanged
     {
-        public string SI { get => si; set { si = value; OnPropertyChanged("SI"); } }
-        public string DI { get => di; set { di = value; OnPropertyChanged("DI"); } }
+        public string BP { get => bP; set { bP = value; OnPropertyChanged("BP"); } }
+        public string SP { get => sP; set { sP = value; OnPropertyChanged("SP"); } }
 
-        private string si;
-        private string di;
+        private string bP;
+        private string sP;
 
         private NumeralConverter numeralConverter;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public IndexRegistersView(NumeralConverter numeralSystem)
+        public PointerRegistersView(NumeralConverter numeralSystem)
         {
             numeralConverter = numeralSystem;
-            SI = numeralConverter.IntToString(0);
-            DI = numeralConverter.IntToString(0);
+            BP = numeralConverter.IntToString(0);
+            SP = numeralConverter.IntToString(0);
         }
 
         public void Update(object data)
@@ -29,11 +29,11 @@ namespace Intel_8086.Registers
 
             switch (updateData.Item1)
             {
-                case "SI":
-                    SI = numeralConverter.IntToString(value);
+                case "BP":
+                    BP = numeralConverter.IntToString(value);
                     break;
-                case "DI":
-                    DI = numeralConverter.IntToString(value);
+                case "SP":
+                    SP = numeralConverter.IntToString(value);
                     break;
             }
 

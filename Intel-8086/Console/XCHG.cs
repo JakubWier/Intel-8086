@@ -7,11 +7,11 @@ namespace Intel_8086.Console
     class XCHG : RegistryCommandHandler
     {
         private StringBuilder outputLogBuilder;
-        private RegistryController[] processedRegisters;
+        private RegistersController[] processedRegisters;
 
         public RegistryCommandHandler NextHandler { get; set; }
 
-        public string HandleOperation(string[] args, params RegistryController[] registryControllers)
+        public string HandleOperation(string[] args, params RegistersController[] registryControllers)
         {
             processedRegisters = registryControllers;
 
@@ -42,10 +42,10 @@ namespace Intel_8086.Console
 
         private bool IsCommandXCHG(string potentialXchgKeyword) => potentialXchgKeyword == "XCHG";
 
-        private bool IsRegistryName(string potentialRegistryName, out RegistryController registryController)
+        private bool IsRegistryName(string potentialRegistryName, out RegistersController registryController)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (RegistryController container in processedRegisters)
+                foreach (RegistersController container in processedRegisters)
                 {
                     if (container.Contains(potentialRegistryName))
                     {
@@ -60,13 +60,13 @@ namespace Intel_8086.Console
 
         private bool TryExchangeRegisters(string firstRegistry, string secondRegistry)
         {
-            if (!IsRegistryName(firstRegistry, out RegistryController firstController))
+            if (!IsRegistryName(firstRegistry, out RegistersController firstController))
             {
                 outputLogBuilder.Append($"{firstRegistry} is unknown registry name.");
                 return false;
             }
 
-            if (!IsRegistryName(secondRegistry, out RegistryController secondController))
+            if (!IsRegistryName(secondRegistry, out RegistersController secondController))
             {
                 outputLogBuilder.Append($"{secondRegistry} is unknown registry name.");
                 return false;
@@ -77,7 +77,7 @@ namespace Intel_8086.Console
             return true;
         }
 
-        private void ExchangeRegisters(RegistryController firstController, RegistryController secondController, string firstRegistry, string secondRegistry)
+        private void ExchangeRegisters(RegistersController firstController, RegistersController secondController, string firstRegistry, string secondRegistry)
         {
             char registryPostfix;
 

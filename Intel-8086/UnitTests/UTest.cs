@@ -5,14 +5,21 @@
         public static void StartAllTests()
         {
             TestGeneralPurposeRegisters();
+            TestIndexRegisters();
             TestGeneralRegistryCommand();
             TestRegistryView();
         }
 
         public static void TestRegistryView()
         {
-            RegistryViewTest registryViewTest = new RegistryViewTest();
+            GeneralPurposeRegistryViewTest registryViewTest = new GeneralPurposeRegistryViewTest();
             registryViewTest.StartAllTests();
+        }
+
+        public static void TestIndexRegisters()
+        {
+            IndexRegistersTest indexRegistersTest = new IndexRegistersTest();
+            indexRegistersTest.StartAllTests();
         }
 
         public static void TestGeneralRegistryCommand()

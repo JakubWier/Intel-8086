@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Intel_8086.Registers
 {
-    class RegistryView : Observer, INotifyPropertyChanged
+    class GeneralPurposeRegistersView : Observer, INotifyPropertyChanged
     {
         public string AX { get => ax; set { ax = value; OnPropertyChanged("AX"); } }
         public string BX { get => bx; set { bx = value; OnPropertyChanged("BX"); } }
@@ -19,9 +19,9 @@ namespace Intel_8086.Registers
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public RegistryView(NumeralConverter numeralSystem)
+        public GeneralPurposeRegistersView(NumeralConverter numeralSystem)
         {
-            this.numeralConverter = numeralSystem;
+            numeralConverter = numeralSystem;
             AX = numeralConverter.IntToString(0);
             BX = numeralConverter.IntToString(0);
             CX = numeralConverter.IntToString(0);

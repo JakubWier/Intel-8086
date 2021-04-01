@@ -114,7 +114,7 @@ namespace Tests_Intel_8086
             Assert(registersMock.number == 65535 && loggerMock.outputResult == "Parsing value from decimal.\nFFFF moved into BX.");
 
             registryCommand.InputCommand("MOV bx, 65536");
-            Assert(registersMock.number == 0 && loggerMock.outputResult == "Parsing value from decimal.\nExpected 16bit value.\nData loss due to conversion.\n00 moved into BX.");
+            Assert(registersMock.number == 0 && loggerMock.outputResult == "Parsing value from decimal.\nExpected 16bit value.\nData loss due to conversion.\nMoving first and second byte of value.\n00 moved into BX.");
 
             registryCommand.InputCommand("mOV Bx, AX");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "AX moved into BX.");
@@ -127,7 +127,7 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("mov AH, DL");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "DL moved into AH.");
 
-            registryCommand.InputCommand("mov AX, 0xff11");
+            registryCommand.InputCommand("mov AX, ff11H");
             Assert(registersMock.number == 65297 && loggerMock.outputResult == "Parsing value from hexadecimal.\nFF11 moved into AX.");
         }
 
@@ -180,7 +180,7 @@ namespace Tests_Intel_8086
 
         }
 
-        private class GeneralPurposeRegistersMock : RegistryController
+        private class GeneralPurposeRegistersMock : RegistersController
         {
             public int number;
 

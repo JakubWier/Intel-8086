@@ -1,6 +1,6 @@
 ﻿namespace Intel_8086.Registers
 {
-    public interface RegistryController
+    public interface RegistersController
     {
         bool Contains(string registryName);
         byte[] GetRegistry(string registryName);

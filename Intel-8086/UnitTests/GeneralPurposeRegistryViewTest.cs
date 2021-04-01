@@ -5,7 +5,7 @@ using Intel_8086.Registers;
 
 namespace Tests_Intel_8086
 {
-    class RegistryViewTest
+    class GeneralPurposeRegistryViewTest
     {
         public void StartAllTests()
         {
@@ -14,7 +14,7 @@ namespace Tests_Intel_8086
 
         public void TestUpdateAndFields()
         {
-            RegistryView registryView = new RegistryView(new HexParser());
+            GeneralPurposeRegistersView registryView = new GeneralPurposeRegistersView(new HexParser());
             ValueTuple<string, byte[]> tupleMock = new ValueTuple<string, byte[]>();
 
             tupleMock.Item1 = "AX";

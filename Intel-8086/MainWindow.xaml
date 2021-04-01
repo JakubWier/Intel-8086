@@ -180,11 +180,11 @@
 
                         <Label Foreground="White" FontSize="16">SI =</Label>
                         <TextBlock  x:Name="BlockSI" 
-                        Text="{Binding DX}"
+                        Text="{Binding SI}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
-                        Padding="0,4,0,0"
+                        Padding="2,4,0,0"
                         HorizontalAlignment="Center">
                         </TextBlock>
 
@@ -194,7 +194,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Foreground="White" FontSize="16">DI =</Label>
                     <TextBlock  x:Name="BlockDI" 
-                        Text="{Binding DX}"
+                        Text="{Binding DI}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -206,7 +206,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Foreground="White" FontSize="16">BP =</Label>
                     <TextBlock  x:Name="BlockBP" 
-                        Text="{Binding DX}"
+                        Text="{Binding BP}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"
@@ -218,7 +218,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Label Foreground="White" FontSize="16">SP =</Label>
                     <TextBlock  x:Name="BlockSP" 
-                        Text="{Binding DX}"
+                        Text="{Binding SP}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"

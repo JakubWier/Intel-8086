@@ -6,9 +6,9 @@ namespace Intel_8086.Console
     {
         private OutputController output;
         private RegistryCommandHandler commandHandler;
-        private RegistryController[] supportedRegisters;
+        private RegistersController[] supportedRegisters;
 
-        public RegistryCommander(OutputController output, params RegistryController[] supportedRegisters) {
+        public RegistryCommander(OutputController output, params RegistersController[] supportedRegisters) {
             this.output = output;
             this.supportedRegisters = supportedRegisters;
         }

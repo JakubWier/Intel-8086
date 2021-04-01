@@ -2,7 +2,7 @@
 
 namespace Intel_8086.Registers
 {
-    class GeneralPurposeRegisters : RegistryController, Observable
+    class GeneralPurposeRegisters : RegistersController, Observable
     {
         private List<Observer> observers;
 
@@ -16,17 +16,6 @@ namespace Intel_8086.Registers
             registryBlock[3] = new byte[2];
 
             observers = new List<Observer>();
-        }
-
-        public GeneralPurposeRegisters(params Observer[] observer)
-        {
-            registryBlock = new byte[4][];
-            registryBlock[0] = new byte[2];
-            registryBlock[1] = new byte[2];
-            registryBlock[2] = new byte[2];
-            registryBlock[3] = new byte[2];
-
-            observers = new List<Observer>(observer);
         }
 
         public byte[] GetRegistry(string registryName)

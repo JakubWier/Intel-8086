@@ -2,12 +2,12 @@
 
 namespace Intel_8086.Registers
 {
-    class IndexRegisters : RegistersController, Observable
+    class PointerRegisters : RegistersController, Observable
     {
         private List<Observer> observers;
 
         byte[][] registryBlock;
-        public IndexRegisters()
+        public PointerRegisters()
         {
             registryBlock = new byte[2][];
             registryBlock[0] = new byte[2];
@@ -42,8 +42,8 @@ namespace Intel_8086.Registers
 
         private int ToRegistryIndex(string registryName) => registryName switch
         {
-            "SI" => 0,
-            "DI" => 1,
+            "BP" => 0,
+            "SP" => 1,
             _ => -1
         };
 
