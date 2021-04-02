@@ -4,12 +4,12 @@ using Intel_8086.Registers;
 
 namespace Intel_8086.Console
 {
-    class XCHG : RegistryCommandHandler
+    class XCHG : CommandHandler
     {
         private StringBuilder outputLogBuilder;
         private RegistersController[] processedRegisters;
 
-        public RegistryCommandHandler NextHandler { get; set; }
+        public CommandHandler NextHandler { get; set; }
 
         public string HandleOperation(string[] args, params RegistersController[] registryControllers)
         {

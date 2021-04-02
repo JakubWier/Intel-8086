@@ -2,9 +2,9 @@
 
 namespace Intel_8086.Console
 {
-    public interface RegistryCommandHandler
+    public interface CommandHandler
     {
-        RegistryCommandHandler NextHandler { get; set; }
+        CommandHandler NextHandler { get; set; }
         string HandleOperation(string[] args, params RegistersController[] supportedRegisters);
     }
 }

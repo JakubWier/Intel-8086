@@ -3,6 +3,6 @@
     public interface CommandInterpreter
     {
         void InputCommand(string line);
-        void AddHandler(RegistryCommandHandler handler);
+        void AddHandler(CommandHandler handler);
     }
 }

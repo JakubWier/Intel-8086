@@ -111,6 +111,29 @@
             </ScrollViewer>
         </Border>
 
+        <StackPanel Orientation="Vertical"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="2">
+
+            <TextBlock Text="Memory" 
+                   TextAlignment="Center"
+                   VerticalAlignment="Top"
+                   FontSize="18" 
+                   Foreground="White" 
+                   Background="#0F0F2D"
+                   Height="25"/>
+            <DockPanel>
+            <TextBlock x:Name="MemoryView" 
+                           Text="0100" 
+                           TextWrapping="NoWrap"  
+                           FontSize="16" 
+                           Background="#1F1F4D" 
+                           Foreground="White" 
+                           Padding="2,0,5,0"/>
+            </DockPanel>
+        </StackPanel>
+
         <Border BorderThickness="1"
                 BorderBrush="Gray"
                 Grid.Row="1"
@@ -219,6 +242,57 @@
                     <Label Foreground="White" FontSize="16">SP =</Label>
                     <TextBlock  x:Name="BlockSP" 
                         Text="{Binding SP}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+
+                <Border BorderThickness="0,2,0,0"
+                    BorderBrush="Gray">
+                    <StackPanel Orientation="Horizontal">
+                        <Label Foreground="White" FontSize="16">CS =</Label>
+                        <TextBlock  x:Name="BlockCS" 
+                        Text="{Binding CS}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">SS =</Label>
+                    <TextBlock  x:Name="BlockSS" 
+                        Text="{Binding SS}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">DS =</Label>
+                    <TextBlock  x:Name="BlockDS" 
+                        Text="{Binding DS}"
+                        FontSize="16" 
+                        Foreground="White" 
+                        VerticalAlignment="Top"
+                        Padding="0,4,0,0"
+                        HorizontalAlignment="Center">
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="White" FontSize="16">ES =</Label>
+                    <TextBlock  x:Name="BlockES" 
+                        Text="{Binding ES}"
                         FontSize="16" 
                         Foreground="White" 
                         VerticalAlignment="Top"

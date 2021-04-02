@@ -5,7 +5,7 @@ namespace Intel_8086.Console
     class RegistryCommander : CommandInterpreter
     {
         private OutputController output;
-        private RegistryCommandHandler commandHandler;
+        private CommandHandler commandHandler;
         private RegistersController[] supportedRegisters;
 
         public RegistryCommander(OutputController output, params RegistersController[] supportedRegisters) {
@@ -37,7 +37,7 @@ namespace Intel_8086.Console
                 output.ReplaceOutput("Invalid command line.");
         }
 
-        public void AddHandler(RegistryCommandHandler handler)
+        public void AddHandler(CommandHandler handler)
         {
             handler.NextHandler = commandHandler;
             commandHandler = handler;

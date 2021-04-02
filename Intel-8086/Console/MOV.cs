@@ -4,9 +4,9 @@ using Intel_8086.Registers;
 
 namespace Intel_8086.Console
 {
-    class MOV : RegistryCommandHandler
+    class MOV : CommandHandler
     {
-        public RegistryCommandHandler NextHandler { get; set; }
+        public CommandHandler NextHandler { get; set; }
 
         private StringBuilder outputLogBuilder;
         private RegistersController[] processedRegisters;
