@@ -125,7 +125,7 @@
                    Height="25"/>
             <DockPanel>
             <TextBlock x:Name="MemoryView" 
-                           Text="0100" 
+                           Text="" 
                            TextWrapping="NoWrap"  
                            FontSize="16" 
                            Background="#1F1F4D" 

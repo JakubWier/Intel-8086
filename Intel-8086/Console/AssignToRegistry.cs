@@ -14,6 +14,8 @@ namespace Intel_8086.Console
 
             if (IsCommandSetFixedToRegistry(args[0], out RegistersController controller))
             {
+                if (args.Length < 2)
+                    return "Assigning fixed value to registry requires two arguments.";
                 return TrySetFixedToRegistry(controller, args[0], args[1]);
             }
 

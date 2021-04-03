@@ -92,8 +92,8 @@ namespace Intel_8086.Console
 
             SwapInPlace(ref firstValue, ref secondValue);
 
-            secondController.SetBytesToRegistry(firstRegistry, BitConverter.GetBytes((ushort)firstValue));
-            firstController.SetBytesToRegistry(secondRegistry, BitConverter.GetBytes((ushort)secondValue));
+            secondController.SetBytesToRegistry(secondRegistry, BitConverter.GetBytes((ushort)secondValue));
+            firstController.SetBytesToRegistry(firstRegistry, BitConverter.GetBytes((ushort)firstValue));
         }
 
         private void SwapInPlace(ref int firstValue, ref int secondValue)

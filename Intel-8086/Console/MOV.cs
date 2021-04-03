@@ -26,6 +26,9 @@ namespace Intel_8086.Console
                         return "MOV arguments must separated by comma.";
                     args[1] = args[1].Remove(argSeparatorPos, 1);
 
+                    if (ContainsAddressArgument(args, out string[] addressArgs))
+                        return addressArgs.Length.ToString();
+
                     if (!IsRegistryName(args[1], out RegistersController destinatedController))
                         return $"{args[1]} is unknown registry name.";
 
@@ -49,6 +52,43 @@ namespace Intel_8086.Console
         }
 
         private bool IsCommandMOV(string potentialMovKeyword) => (potentialMovKeyword == "MOV");
+
+        private bool ContainsAddressArgument(string[] args, out string [] addressArgs)
+        {
+            int startBracketPos = -1, endBracketPos = -1;
+            int startIndex = 0, endIndex = 0;
+
+            for (int iterator = 0; iterator < args.Length; iterator++)
+            {
+                if (startBracketPos == -1)
+                {
+                    startBracketPos = args[iterator].IndexOf('[');
+                    startIndex = iterator;
+                }
+                else if (endBracketPos == -1)
+                {
+                    endBracketPos = args[iterator].IndexOf(']');
+                    endIndex = iterator;
+                }
+                else
+                    break;
+            }
+
+            if (startBracketPos != -1 && endBracketPos != -1)
+            {
+                addressArgs = new string[endBracketPos - startBracketPos + 1];
+                args[startIndex] = args[startIndex].Remove(startBracketPos, 1);
+                args[endIndex] = args[endIndex].Remove(endBracketPos, 1);
+
+                for(int it=startIndex, k=0; it <= endIndex;it++)
+                {
+                    addressArgs[k] = args[it];
+                }
+                return true;
+            }
+            addressArgs = null;
+            return false;
+        }
 
         private bool TrySetValueToRegistry(RegistersController registryController, string destinatedRegistry, string potentialValue)
         {

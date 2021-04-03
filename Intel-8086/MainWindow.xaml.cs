@@ -23,10 +23,10 @@ namespace Intel_8086
     /// </summary>
     public partial class MainWindow : Window, OutputController
     {
-        RegistersController generalPurposeRegisters;
-        RegistersController indexRegisters;
-        RegistersController pointerRegisters;
-        RegistersController segmentRegisters;
+        GeneralPurposeRegisters generalPurposeRegisters;
+        IndexRegisters indexRegisters;
+        PointerRegisters pointerRegisters;
+        SegmentRegisters segmentRegisters;
 
         GeneralPurposeRegistersView generalPurposeRegistersView;
         IndexRegistersView indexRegistersView;
@@ -78,7 +78,7 @@ namespace Intel_8086
             BlockDS.DataContext = segmentRegistersView;
             BlockES.DataContext = segmentRegistersView;
 
-            Description.Text = "AX FF11";
+            Description.Text = "Description";
         }
 
         private void Input_Enter(object sender, KeyEventArgs e)
