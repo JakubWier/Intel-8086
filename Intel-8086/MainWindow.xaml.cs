@@ -34,19 +34,21 @@ namespace Intel_8086
         SegmentRegistersView segmentRegistersView;
 
         CommandInterpreter commandInterpreter;
-        MemoryModel memory;
         public MainWindow()
         {
             Tests_Intel_8086.UTest.StartAllTests();
             InitializeComponent();
 
-            memory = new MemoryModel(20);
+            MemoryModel.SetAddressBusLength = 20;
+            MemoryModel memory = MemoryModel.GetInstance();
+            memory.SetMemoryWord(255, 255);
+
             generalPurposeRegisters = new GeneralPurposeRegisters();
             indexRegisters = new IndexRegisters();
             pointerRegisters = new PointerRegisters();
             segmentRegisters = new SegmentRegisters();
 
-            commandInterpreter = InitDefaultRegistryCommander(generalPurposeRegisters, indexRegisters);
+            commandInterpreter = InitDefaultRegistryCommander(generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
 
             generalPurposeRegistersView = new GeneralPurposeRegistersView(new HexParser());
             indexRegistersView = new IndexRegistersView(new HexParser());

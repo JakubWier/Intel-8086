@@ -5,23 +5,30 @@ namespace Intel_8086.Memory
 {
     public class MemoryModel
     {
+        private static MemoryModel instance;
+        static int addressBusLength = 0;
         byte[] memoryBlock;
-        BitArray adressBus;
 
-        public MemoryModel(int adressBusLength)
-        {
-            memoryBlock = new byte[(int)Math.Pow(2, adressBusLength)];
-            adressBus = new BitArray(adressBusLength);
+        public int GetMemoryLength => memoryBlock.Length;
+        public static int SetAddressBusLength { set { instance = new MemoryModel(value); } }
 
-            /*CS = 0;
-            SS = 4;
-            DS = 8;
-            ES = 12;*/
+        private MemoryModel(int addressBusLength) {
+            memoryBlock = new byte[(int)Math.Pow(2, addressBusLength)];
+            MemoryModel.addressBusLength = addressBusLength;
         }
 
-        public byte GetMemoryCell(int adress)
+        public static MemoryModel GetInstance() //Naive implementation
         {
-            return memoryBlock[adress];
+            if (instance == null)
+                instance = new MemoryModel(addressBusLength);
+            return instance;
+        }
+
+        public byte GetMemoryCell(int address) => memoryBlock[address];
+
+        public void SetMemoryCell(int address, byte value)
+        {
+            memoryBlock[address] = value;
         }
     }
 }

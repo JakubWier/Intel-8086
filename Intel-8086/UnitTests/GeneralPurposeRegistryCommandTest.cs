@@ -105,16 +105,16 @@ namespace Tests_Intel_8086
             registryCommand.AddHandler(assignTo);
 
             registryCommand.InputCommand("MoV AL, 16");
-            Assert(registersMock.number == 16 && loggerMock.outputResult == "Parsing value from decimal.\n10 moved into AL.");
+            Assert(registersMock.number == 16 && loggerMock.outputResult == "Parsing value \"16\" as decimal.\r\n10 moved into AL.");
 
             registryCommand.InputCommand("MOV Ch, 255");
-            Assert(registersMock.number == 255 && loggerMock.outputResult == "Parsing value from decimal.\nFF moved into CH.");
+            Assert(registersMock.number == 255 && loggerMock.outputResult == "Parsing value \"255\" as decimal.\r\nFF moved into CH.");
 
             registryCommand.InputCommand("MOV bx, 65535");
-            Assert(registersMock.number == 65535 && loggerMock.outputResult == "Parsing value from decimal.\nFFFF moved into BX.");
+            Assert(registersMock.number == 65535 && loggerMock.outputResult == "Parsing value \"65535\" as decimal.\r\nFFFF moved into BX.");
 
             registryCommand.InputCommand("MOV bx, 65536");
-            Assert(registersMock.number == 0 && loggerMock.outputResult == "Parsing value from decimal.\nExpected 16bit value.\nData loss due to conversion.\nMoving first and second byte of value.\n00 moved into BX.");
+            Assert(registersMock.number == 0 && loggerMock.outputResult == "Parsing value \"65536\" as decimal.\r\nExpected 16bit value.\nData loss due to conversion.\nMoving first and second byte of value.\n00 moved into BX.");
 
             registryCommand.InputCommand("mOV Bx, AX");
             Assert(registersMock.number == 16 && loggerMock.outputResult == "AX moved into BX.");
@@ -123,12 +123,12 @@ namespace Tests_Intel_8086
             Assert(registersMock.number == 255 && loggerMock.outputResult == "CL moved into BL.");
 
             registryCommand.InputCommand("mov DH, 1");
-            Assert(registersMock.number == 1 && loggerMock.outputResult == "Parsing value from decimal.\n01 moved into DH.");
+            Assert(registersMock.number == 1 && loggerMock.outputResult == "Parsing value \"1\" as decimal.\r\n01 moved into DH.");
             registryCommand.InputCommand("mov AH, DL");
             Assert(registersMock.number == 1 && loggerMock.outputResult == "DL moved into AH.");
 
             registryCommand.InputCommand("mov AX, ff11H");
-            Assert(registersMock.number == 65297 && loggerMock.outputResult == "Parsing value from hexadecimal.\nFF11 moved into AX.");
+            Assert(registersMock.number == 65297 && loggerMock.outputResult == "Parsing value \"FF11\" as hexadecimal.\r\nFF11 moved into AX.");
         }
 
         public void TestInvalidCommands()
@@ -161,7 +161,7 @@ namespace Tests_Intel_8086
             Assert(loggerMock.outputResult == "BK is unknown registry name.");
 
             registryCommand.InputCommand("mov ah bk");
-            Assert(loggerMock.outputResult == "MOV arguments must separated by comma.");
+            Assert(loggerMock.outputResult == "MOV arguments must be separated by comma.");
 
             registryCommand.InputCommand("xchg ak, bx");
             Assert(loggerMock.outputResult == "AK is unknown registry name.");
