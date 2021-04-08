@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace Intel_8086.Memory
 {
-    public class MemoryModel
+    public class MemoryModel : Memory
     {
         private static MemoryModel instance;
         static int addressBusLength = 0;
@@ -24,9 +24,9 @@ namespace Intel_8086.Memory
             return instance;
         }
 
-        public byte GetMemoryCell(int address) => memoryBlock[address];
+        public byte GetMemoryCell(uint address) => memoryBlock[address];
 
-        public void SetMemoryCell(int address, byte value)
+        public void SetMemoryCell(uint address, byte value)
         {
             memoryBlock[address] = value;
         }

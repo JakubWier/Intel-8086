@@ -5,10 +5,10 @@ namespace Intel_8086.Registers
 {
     class SegmentRegistersView : Observer, INotifyPropertyChanged
     {
-        public string CS { get => cS; set { cS = value; OnPropertyChanged("BP"); } }
-        public string SS { get => sS; set { sS = value; OnPropertyChanged("SP"); } }
-        public string DS { get => dS; set { dS = value; OnPropertyChanged("BP"); } }
-        public string ES { get => eS; set { eS = value; OnPropertyChanged("SP"); } }
+        public string CS { get => cS; set { cS = value; OnPropertyChanged("CS"); } }
+        public string SS { get => sS; set { sS = value; OnPropertyChanged("SS"); } }
+        public string DS { get => dS; set { dS = value; OnPropertyChanged("DS"); } }
+        public string ES { get => eS; set { eS = value; OnPropertyChanged("ES"); } }
 
         private string cS;
         private string sS;

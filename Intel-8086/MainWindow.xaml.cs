@@ -32,6 +32,7 @@ namespace Intel_8086
         IndexRegistersView indexRegistersView;
         PointerRegistersView pointerRegistersView;
         SegmentRegistersView segmentRegistersView;
+        MemoryView memoryView;
 
         CommandInterpreter commandInterpreter;
         public MainWindow()
@@ -40,8 +41,8 @@ namespace Intel_8086
             InitializeComponent();
 
             MemoryModel.SetAddressBusLength = 20;
-            MemoryModel memory = MemoryModel.GetInstance();
-            memory.SetMemoryWord(255, 255);
+            memoryView = new MemoryView();
+            Go_Click(null, null);
 
             generalPurposeRegisters = new GeneralPurposeRegisters();
             indexRegisters = new IndexRegisters();
@@ -79,8 +80,6 @@ namespace Intel_8086
             BlockSS.DataContext = segmentRegistersView;
             BlockDS.DataContext = segmentRegistersView;
             BlockES.DataContext = segmentRegistersView;
-
-            Description.Text = "Description";
         }
 
         private void Input_Enter(object sender, KeyEventArgs e)
@@ -89,6 +88,7 @@ namespace Intel_8086
             {
                 Output.Text = "";
                 commandInterpreter.InputCommand(Input.Text);
+                Description.Text += Input.Text + "\n";
                 Input.Text = "";
             }
         }
@@ -130,6 +130,15 @@ namespace Intel_8086
             commander.AddHandler(assignTo);
 
             return commander;
+        }
+
+        private void Go_Click(object sender, RoutedEventArgs e)
+        {
+            string input = MemoryInput.Text;
+            if (ushort.TryParse(input, System.Globalization.NumberStyles.HexNumber, null, out ushort address))
+            {
+                MemoryOutput.Text = memoryView.GetView(address);
+            }
         }
     }
 

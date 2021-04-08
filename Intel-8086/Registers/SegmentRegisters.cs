@@ -36,7 +36,7 @@ namespace Intel_8086.Registers
             else
                 registryBlock[registryIndex][1] = 0;
 
-            (string regName, byte[] newValue) data = (new string(registryName[0] + "X"), registryBlock[registryIndex]);
+            (string regName, byte[] newValue) data = (registryName, registryBlock[registryIndex]);
             UpdateObservers(data);
             return;
         }

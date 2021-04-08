@@ -30,11 +30,17 @@ namespace Intel_8086.Console
                     {
                         if (TryParseAddressToValue(addressArgs, out int address))
                         {
-                            if(argSeparatorPos == 1)
-                                if(IsSupportedRegistryName(args[1], out RegistersController registryController))
-                                {
-                                    TrySetMemoryToRegistry(registryController, args[1], address);
-                                }
+                            if (addressArgs.Length > 1 && argSeparatorPos == 1)
+                            {
+                                if (IsSupportedRegistryName(args[1], out RegistersController destinatedRegistryContainer))
+                                    TrySetMemoryToRegistry(destinatedRegistryContainer, args[1], address);
+                            }
+                            else
+                            {
+                                if (IsSupportedRegistryName(args[^1], out RegistersController sourcedRegistryContainer))
+                                    TrySetRegistryToMemory(sourcedRegistryContainer, args[^1], address);
+                            }
+
                         }
                         return outputLogBuilder.ToString();
                     }
@@ -83,24 +89,39 @@ namespace Intel_8086.Console
             return pos;
         }
 
-        private void TrySetMemoryToRegistry(RegistersController registryController, string destinatedRegistry, int memoryAddress)
+        private void TrySetMemoryToRegistry(RegistersController registryController, string destinatedRegistry, int effectiveAddress)
         {
             if(IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
                 int dataSegment = BitConverter.ToInt16(segmentsController.GetRegistry("DS"));
                 dataSegment = dataSegment << 4;
-                int physicalAddress = dataSegment + memoryAddress;
+                uint physicalAddress = (uint)(dataSegment + effectiveAddress);
                 MemoryModel memory = MemoryModel.GetInstance();
                 byte[] word = memory.GetMemoryWord(physicalAddress);
-                SetValueToRegistry(registryController, destinatedRegistry, BitConverter.ToUInt16(word));
-                outputLogBuilder.AppendLine(BitConverter.ToUInt16(word).ToString());
-                outputLogBuilder.AppendLine(physicalAddress.ToString("X"));
+                int value = BitConverter.ToUInt16(word);
+                CheckAndReduceOverflow(ref value, destinatedRegistry[^1]);
+                SetValueToRegistry(registryController, destinatedRegistry, value);
+                outputLogBuilder.AppendLine($"Value {value.ToString("X")}h assigned to registry {destinatedRegistry} from physical address {physicalAddress.ToString("X")}h.");
+            }
+        }
+
+        private void TrySetRegistryToMemory(RegistersController registryController, string sourcedRegistry, int effectiveAddress)
+        {
+            if (IsSupportedRegistryName("DS", out RegistersController segmentsController))
+            {
+                int dataSegment = BitConverter.ToInt16(segmentsController.GetRegistry("DS"));
+                dataSegment = dataSegment << 4;
+                uint physicalAddress = (uint)(dataSegment + effectiveAddress);
+                MemoryModel memory = MemoryModel.GetInstance();
+                ushort value = BitConverter.ToUInt16(registryController.GetRegistry(sourcedRegistry));
+                memory.SetMemoryWord(physicalAddress, value);
+                outputLogBuilder.AppendLine($"Value {value.ToString("X")}h from registry {sourcedRegistry} assigned to physical address {physicalAddress.ToString("X")}h.");
             }
         }
 
         private bool TrySetValueToRegistry(RegistersController registryController, string destinatedRegistry, string potentialValue)
         {
-            if (IsValue(potentialValue, out Int64 valueArg))
+            if (IsValue(potentialValue, out int valueArg))
             {
                 char regPostfix = destinatedRegistry[^1];
                 CheckAndReduceOverflow(ref valueArg, regPostfix);
@@ -112,14 +133,14 @@ namespace Intel_8086.Console
             return false;
         }
 
-        private void SetValueToRegistry(RegistersController registryController, string destinatedRegName, Int64 value)
+        private void SetValueToRegistry(RegistersController registryController, string destinatedRegName, int value)
         {
             byte[] bytes = value > 255 ? BitConverter.GetBytes(Convert.ToUInt16(value)) : new[] { Convert.ToByte(value) };
             registryController.SetBytesToRegistry(destinatedRegName, bytes);
         }
 
 
-        private void CheckAndReduceOverflow(ref Int64 value, char registryPostfix = '0')
+        private void CheckAndReduceOverflow(ref int value, char registryPostfix = '0')
         {
             if (registryPostfix == 'L' || registryPostfix == 'H')
             {
@@ -164,11 +185,11 @@ namespace Intel_8086.Console
                 destinatedController.SetBytesToRegistry(destinatedRegistry, bytes);
         }
 
-        private bool IsValue(string arg, out Int64 value)
+        private bool IsValue(string arg, out int value)
         {
             if (!arg.EndsWith("H"))
             {
-                if (Int64.TryParse(arg, out Int64 result))
+                if (int.TryParse(arg, out int result))
                 {
                     outputLogBuilder.Clear();
                     outputLogBuilder.AppendLine($"Parsing value \"{arg}\" as decimal.");
@@ -178,7 +199,7 @@ namespace Intel_8086.Console
             }
             else
             {
-                if (Int64.TryParse(arg.Remove(arg.Length-1, 1), System.Globalization.NumberStyles.HexNumber, null, out Int64 resultFromHex))
+                if (int.TryParse(arg.Remove(arg.Length-1, 1), System.Globalization.NumberStyles.HexNumber, null, out int resultFromHex))
                 {
                     outputLogBuilder.Clear();
                     outputLogBuilder.AppendLine($"Parsing value \"{arg.Substring(0, arg.Length-1)}\" as hexadecimal.");
@@ -223,7 +244,7 @@ namespace Intel_8086.Console
                     {
                         address += BitConverter.ToInt16(regController.GetRegistry(arg));
                     }
-                } else if(IsValue(arg, out long value))
+                } else if(IsValue(arg, out int value))
                 {
                     CheckAndReduceOverflow(ref value);
                     address += (int)value;
@@ -235,8 +256,7 @@ namespace Intel_8086.Console
                     return false;
                 }
             }
-            outputLogBuilder.AppendLine($"Calculating memory address from arguments.");
-            outputLogBuilder.AppendLine($"The effective address is {address.ToString("X")}h.");
+            outputLogBuilder.AppendLine($"Converting arguments into effective address {address.ToString("X")}h.");
             return true;
         }
 

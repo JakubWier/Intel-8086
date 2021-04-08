@@ -53,11 +53,11 @@
                 BorderBrush="Gray">
 
             <TextBlock x:Name="Description" 
-                           TextWrapping="Wrap"  
+                           TextWrapping="Wrap"
                            FontSize="12" 
                            Background="#1F1F4D" 
                            Foreground="White" 
-                           Padding="5,0,5,0"
+                           Padding="2,0,5,0"
                    ></TextBlock>
         </Border>
 
@@ -111,6 +111,38 @@
             </ScrollViewer>
         </Border>
 
+        <StackPanel Grid.Row="2"
+                    Grid.Column="1"
+                    Orientation="Vertical">
+
+            <TextBlock Text="Memory address"
+                       TextAlignment="Center"
+                       FontSize="18"
+                       Margin="0,0,0,5"
+                       Foreground="White"
+                       Background="#0F0F2D"/>
+
+            <TextBox x:Name="MemoryInput"
+                    Text="0000"
+                    FontSize="18"
+                    TextAlignment="Center"
+                    MaxWidth="100"
+                    Margin="0,0,0,5">
+            </TextBox>
+
+            <Button Content="Refresh"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top"
+                Height="25"
+                Width="75"
+                Margin="5"
+                FontSize="16"
+                FontWeight="Bold"
+                Click="Go_Click">
+            </Button>
+
+        </StackPanel>
+
         <StackPanel Orientation="Vertical"
                     Grid.Column="2"
                     Grid.ColumnSpan="2"
@@ -124,14 +156,15 @@
                    Background="#0F0F2D"
                    Height="25"/>
             <DockPanel>
-            <TextBlock x:Name="MemoryView" 
+                    <TextBlock x:Name="MemoryOutput" 
                            Text="" 
                            TextWrapping="NoWrap"  
-                           FontSize="16" 
+                           FontSize="14" 
                            Background="#1F1F4D" 
                            Foreground="White" 
                            Padding="2,0,5,0"/>
             </DockPanel>
+            
         </StackPanel>
 
         <Border BorderThickness="1"
