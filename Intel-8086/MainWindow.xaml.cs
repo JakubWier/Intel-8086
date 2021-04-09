@@ -21,7 +21,7 @@ namespace Intel_8086
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, OutputController
+    public partial class MainWindow : Window, OutputController, Observer
     {
         GeneralPurposeRegisters generalPurposeRegisters;
         IndexRegisters indexRegisters;
@@ -41,6 +41,7 @@ namespace Intel_8086
             InitializeComponent();
 
             MemoryModel.SetAddressBusLength = 20;
+            MemoryModel.GetInstance().AddObserver(this);
             memoryView = new MemoryView();
             Go_Click(null, null);
 
@@ -135,9 +136,21 @@ namespace Intel_8086
         private void Go_Click(object sender, RoutedEventArgs e)
         {
             string input = MemoryInput.Text;
-            if (ushort.TryParse(input, System.Globalization.NumberStyles.HexNumber, null, out ushort address))
+            if (ushort.TryParse(input.Substring(0, 4), System.Globalization.NumberStyles.HexNumber, null, out ushort address))
+                if (ushort.TryParse(input.Substring(input.Length - 4, 4), System.Globalization.NumberStyles.HexNumber, null, out ushort offset))
+                {
+                    MemoryOutput.Text = memoryView.GetView(address, offset);
+                    return;
+                }
+            Output.Text = "Unable to find correct memory location.\nInvalid address formatting.";
+        }
+
+        public void Update(object update)
+        {
+            if (update is uint memoryAddress)
             {
-                MemoryOutput.Text = memoryView.GetView(address);
+                MemoryInput.Text = MemoryView.AddressInputToString(memoryAddress);
+                Go_Click(null, null);
             }
         }
     }

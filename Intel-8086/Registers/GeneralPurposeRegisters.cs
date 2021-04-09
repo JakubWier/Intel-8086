@@ -21,6 +21,10 @@ namespace Intel_8086.Registers
         public byte[] GetRegistry(string registryName)
         {
             int regIndex = ToRegistryIndex(registryName);
+            if (registryName[^1] == 'L')
+                return new byte[] { registryBlock[regIndex][0], 0 };
+            if (registryName[^1] == 'H')
+                return new byte[] { registryBlock[regIndex][1], 0 };
             return registryBlock[regIndex];
         }
 

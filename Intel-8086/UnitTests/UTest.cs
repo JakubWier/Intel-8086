@@ -8,11 +8,13 @@
             TestIndexRegisters();
             TestGeneralRegistryCommand();
             TestRegistryView();
+            TestMemoryModel();
+            TestSegmentRegisters();
         }
 
         public static void TestRegistryView()
         {
-            GeneralPurposeRegistryViewTest registryViewTest = new GeneralPurposeRegistryViewTest();
+            RegistersViewTest registryViewTest = new RegistersViewTest();
             registryViewTest.StartAllTests();
         }
 
@@ -22,9 +24,15 @@
             indexRegistersTest.StartAllTests();
         }
 
+        public static void TestSegmentRegisters()
+        {
+            SegmentRegistersTest indexRegistersTest = new SegmentRegistersTest();
+            indexRegistersTest.StartAllTests();
+        }
+
         public static void TestGeneralRegistryCommand()
         {
-            GeneralPurposeRegistryCommandTest registryCommandTest = new GeneralPurposeRegistryCommandTest();
+            MOVTest registryCommandTest = new MOVTest();
             registryCommandTest.StartAllTests();
         }
 
@@ -32,6 +40,12 @@
         {
             GeneralPurposeRegisterTest registerTest = new GeneralPurposeRegisterTest();
             registerTest.StartAllTests();
+        }
+
+        public static void TestMemoryModel()
+        {
+            MemoryModelTest memoryModelTest = new MemoryModelTest();
+            memoryModelTest.StartAllTests();
         }
 
     }

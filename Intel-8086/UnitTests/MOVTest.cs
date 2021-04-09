@@ -3,17 +3,19 @@ using Intel_8086.Console;
 using static System.Diagnostics.Debug;
 using System;
 using Intel_8086;
+using Intel_8086.Memory;
 
 namespace Tests_Intel_8086
 {
-    class GeneralPurposeRegistryCommandTest
+    class MOVTest
     {
         public void StartAllTests()
         {
             TestAssignToRegistry();
-            TestMOV();
+            TestGeneralRegistersMOV();
             TestXCHG();
             TestInvalidCommands();
+            TestFromToRegistryMemory();
         }
         public void TestAssignToRegistry()
         {
@@ -90,7 +92,7 @@ namespace Tests_Intel_8086
             Assert(loggerMock.outputResult == "DL exchanged with CH.");
         }
 
-        public void TestMOV()
+        public void TestGeneralRegistersMOV()
         {
             GeneralPurposeRegistersMock registersMock = new GeneralPurposeRegistersMock();
             LoggerMock loggerMock = new LoggerMock();
@@ -129,6 +131,57 @@ namespace Tests_Intel_8086
 
             registryCommand.InputCommand("mov AX, ff11H");
             Assert(registersMock.number == 65297 && loggerMock.outputResult == "Parsing value \"FF11\" as hexadecimal.\r\nFF11 moved into AX.");
+        }
+
+        public void TestFromToRegistryMemory()
+        {
+            MemoryModel.SetAddressBusLength = 20;
+            MemoryModel memory = MemoryModel.GetInstance();
+            GeneralPurposeRegisters generalRegistersMock = new GeneralPurposeRegisters();
+            SegmentRegisters segmentRegistersMock = new SegmentRegisters();
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, segmentRegistersMock);
+
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
+
+            registryCommand.InputCommand("MoV AL, 255");
+            registryCommand.InputCommand("MoV [0], AL");
+            byte bytetmp = memory.GetMemoryCell(0);
+            Assert(bytetmp == 255 && loggerMock.outputResult == "Parsing value \"0\" as decimal.\r\nConverting arguments into effective address 0h.\r\nValue FFh from registry AL assigned to physical address 0h.\r\n");
+
+            segmentRegistersMock.SetBytesToRegistry("DS", 255);
+            registryCommand.InputCommand("MoV AH, AAh");
+            registryCommand.InputCommand("MoV [FFh], AH");
+            bytetmp = memory.GetMemoryCell(4335);
+            Assert(bytetmp == 170 && loggerMock.outputResult == "Parsing value \"FF\" as hexadecimal.\r\nConverting arguments into effective address FFh.\r\nValue AAh from registry AH assigned to physical address 10EFh.\r\n");
+
+            segmentRegistersMock.SetBytesToRegistry("DS", 15);
+            registryCommand.InputCommand("MoV [0h], AX");
+            byte[] word = memory.GetMemoryWord(240);
+            Assert(word[0] == 255 && word[1] == 170 && loggerMock.outputResult == "Parsing value \"0\" as hexadecimal.\r\nConverting arguments into effective address 0h.\r\nValue AAFFh from registry AX assigned to physical address F0h.\r\n");
+
+            segmentRegistersMock.SetBytesToRegistry("DS", 0);
+            registryCommand.InputCommand("MoV AX, [0h]");
+            word = generalRegistersMock.GetRegistry("AX");
+            Assert(word[0] == 255 && word[1] == 0 && loggerMock.outputResult == "Parsing value \"0\" as hexadecimal.\r\nConverting arguments into effective address 0h.\r\nValue FFh assigned to registry AX from physical address 0h.\r\n");
+
+            segmentRegistersMock.SetBytesToRegistry("DS", 255);
+            registryCommand.InputCommand("MoV AX, [FEh]");
+            word = generalRegistersMock.GetRegistry("AX");
+            Assert(word[0] == 0 && word[1] == 170 && loggerMock.outputResult == "Parsing value \"FE\" as hexadecimal.\r\nConverting arguments into effective address FEh.\r\nValue AA00h assigned to registry AX from physical address 10EEh.\r\n");
+
+            segmentRegistersMock.SetBytesToRegistry("DS", 15);
+            registryCommand.InputCommand("MoV AX, [0h]");
+            word = generalRegistersMock.GetRegistry("AX");
+            Assert(word[0] == 255 && word[1] == 170 && loggerMock.outputResult == "Parsing value \"0\" as hexadecimal.\r\nConverting arguments into effective address 0h.\r\nValue AAFFh assigned to registry AX from physical address F0h.\r\n");
+            
+            MemoryModel.SetAddressBusLength = 0;
         }
 
         public void TestInvalidCommands()

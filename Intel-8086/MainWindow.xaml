@@ -52,6 +52,7 @@
                 BorderThickness="1" 
                 BorderBrush="Gray">
 
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
             <TextBlock x:Name="Description" 
                            TextWrapping="Wrap"
                            FontSize="12" 
@@ -59,6 +60,7 @@
                            Foreground="White" 
                            Padding="2,0,5,0"
                    ></TextBlock>
+            </ScrollViewer>
         </Border>
 
         <TextBlock Grid.Column="2"
@@ -99,7 +101,7 @@
                 BorderBrush="Gray"
                 Grid.ColumnSpan="2">
 
-            <ScrollViewer>
+            <ScrollViewer ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <TextBlock x:Name="Output" 
                            Text="" 
                            TextWrapping="Wrap"  
@@ -107,6 +109,7 @@
                            Background="#1F1F4D" 
                            Foreground="White" 
                            Padding="2,0,5,0"
+                           ScrollViewer.VerticalScrollBarVisibility="Auto"
                    ></TextBlock>
             </ScrollViewer>
         </Border>
@@ -123,7 +126,7 @@
                        Background="#0F0F2D"/>
 
             <TextBox x:Name="MemoryInput"
-                    Text="0000"
+                    Text="0000:0000"
                     FontSize="18"
                     TextAlignment="Center"
                     MaxWidth="100"

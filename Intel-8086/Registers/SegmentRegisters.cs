@@ -27,7 +27,7 @@ namespace Intel_8086.Registers
         public void SetBytesToRegistry(string registryName, params byte[] bytes)
         {
             int registryIndex = ToRegistryIndex(registryName);
-            if (bytes == null || registryName.Equals(null) || registryIndex > 11)
+            if (bytes == null || bytes.Length == 0 || registryName.Equals(null) || registryIndex == -1)
                 return;
 
             registryBlock[registryIndex][0] = bytes[0];

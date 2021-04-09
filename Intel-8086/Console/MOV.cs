@@ -26,11 +26,11 @@ namespace Intel_8086.Console
                     if (argSeparatorPos == -1)
                         return "MOV arguments must be separated by comma.";
 
-                    if (ContainsAddressArgument(args, out string[] addressArgs))
+                    if (ContainsAddressArgument(args, out string[] addressArgs, out bool isRightOperand))
                     {
-                        if (TryParseAddressToValue(addressArgs, out int address))
+                        if (TryParseEffectiveAddressToValue(addressArgs, out int address))
                         {
-                            if (addressArgs.Length > 1 && argSeparatorPos == 1)
+                            if (isRightOperand)
                             {
                                 if (IsSupportedRegistryName(args[1], out RegistersController destinatedRegistryContainer))
                                     TrySetMemoryToRegistry(destinatedRegistryContainer, args[1], address);
@@ -93,7 +93,7 @@ namespace Intel_8086.Console
         {
             if(IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
-                int dataSegment = BitConverter.ToInt16(segmentsController.GetRegistry("DS"));
+                int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
                 dataSegment = dataSegment << 4;
                 uint physicalAddress = (uint)(dataSegment + effectiveAddress);
                 MemoryModel memory = MemoryModel.GetInstance();
@@ -109,12 +109,15 @@ namespace Intel_8086.Console
         {
             if (IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
-                int dataSegment = BitConverter.ToInt16(segmentsController.GetRegistry("DS"));
+                int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
                 dataSegment = dataSegment << 4;
                 uint physicalAddress = (uint)(dataSegment + effectiveAddress);
                 MemoryModel memory = MemoryModel.GetInstance();
                 ushort value = BitConverter.ToUInt16(registryController.GetRegistry(sourcedRegistry));
-                memory.SetMemoryWord(physicalAddress, value);
+                if(sourcedRegistry[^1] != 'L' && sourcedRegistry[^1] != 'H')
+                    memory.SetMemoryWord(physicalAddress, value);
+                else
+                    memory.SetMemoryCell(physicalAddress, BitConverter.GetBytes(value)[0]);
                 outputLogBuilder.AppendLine($"Value {value.ToString("X")}h from registry {sourcedRegistry} assigned to physical address {physicalAddress.ToString("X")}h.");
             }
         }
@@ -228,7 +231,7 @@ namespace Intel_8086.Console
             return false;
         }
 
-        private bool TryParseAddressToValue(string []addressArgs, out int address)
+        private bool TryParseEffectiveAddressToValue(string []addressArgs, out int address)
         {
             //Adresowanie bazowe (BX lub BP)
             address = 0;
@@ -242,7 +245,8 @@ namespace Intel_8086.Console
                 {
                     if (IsSupportedRegistryName(arg, out RegistersController regController))
                     {
-                        address += BitConverter.ToInt16(regController.GetRegistry(arg));
+                        byte[] bytes = regController.GetRegistry(arg);
+                        address += BitConverter.ToUInt16(bytes);
                     }
                 } else if(IsValue(arg, out int value))
                 {
@@ -264,10 +268,11 @@ namespace Intel_8086.Console
         
         private bool IsBaseRegister(string potentialRegister) => (potentialRegister == "BX" || potentialRegister == "BP");
 
-        private bool ContainsAddressArgument(string[] args, out string[] addressArgs)
+        private bool ContainsAddressArgument(string[] args, out string[] addressArgs, out bool isRightOperand)
         {
             int startBracketPos = -1, endBracketPos = -1;
             int startIndex = 1, endIndex = 1;
+            isRightOperand = false;
 
             for (int iterator = 1; iterator < args.Length; iterator++)
             {
@@ -291,6 +296,8 @@ namespace Intel_8086.Console
 
             if (startBracketPos != -1 || endBracketPos != -1) //AND, OR?
             {
+                if (startIndex > 1)
+                    isRightOperand = true;
                 addressArgs = new string[endIndex - startIndex + 1];
                 args[startIndex] = args[startIndex].Remove(startBracketPos, 1);
 

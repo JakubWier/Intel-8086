@@ -17,23 +17,23 @@ namespace Tests_Intel_8086
             RegistersController registry = new IndexRegisters();
             registry.SetBytesToRegistry("SI", 0, 1);
             test = registry.GetRegistry("SI");
-            Assert(BitConverter.ToUInt16(test) == 256, $"Registry set AX failure, test value: {BitConverter.ToUInt16(test)} expected 256");
+            Assert(BitConverter.ToUInt16(test) == 256, $"Registry set SI failure, test value: {BitConverter.ToUInt16(test)} expected 256");
 
             registry.SetBytesToRegistry("DI", 0, 255);
             test = registry.GetRegistry("DI");
-            Assert(BitConverter.ToUInt16(test) == 65280, $"Registry set BX failure, test value: {BitConverter.ToUInt16(test)} expected 65280");
+            Assert(BitConverter.ToUInt16(test) == 65280, $"Registry set DI failure, test value: {BitConverter.ToUInt16(test)} expected 65280");
 
             registry.SetBytesToRegistry("SI", 1, 0, 1, 0, 1, 0);
             test = registry.GetRegistry("SI");
-            Assert(BitConverter.ToUInt16(test) == 1, $"Registry set CX failure, test value: {BitConverter.ToUInt16(test)} expected 1");
+            Assert(BitConverter.ToUInt16(test) == 1, $"Registry set SI failure, test value: {BitConverter.ToUInt16(test)} expected 1");
 
             registry.SetBytesToRegistry("DI", 255);
             test = registry.GetRegistry("DI");
-            Assert(BitConverter.ToUInt16(test) == 255, $"Registry set DX failure, test value: {BitConverter.ToUInt16(test)} expected 255");
+            Assert(BitConverter.ToUInt16(test) == 255, $"Registry set DI failure, test value: {BitConverter.ToUInt16(test)} expected 255");
 
             registry.SetBytesToRegistry("SI");
             test = registry.GetRegistry("SI");
-            Assert(BitConverter.ToUInt16(test) == 1, $"Registry set DX failure, test value: {BitConverter.ToUInt16(test)} expected 1");
+            Assert(BitConverter.ToUInt16(test) == 1, $"Registry set SI failure, test value: {BitConverter.ToUInt16(test)} expected 1");
         }
     }
 }
