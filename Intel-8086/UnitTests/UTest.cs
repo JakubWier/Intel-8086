@@ -32,7 +32,7 @@
 
         public static void TestGeneralRegistryCommand()
         {
-            MOVTest registryCommandTest = new MOVTest();
+            CommandTest registryCommandTest = new CommandTest();
             registryCommandTest.StartAllTests();
         }
 

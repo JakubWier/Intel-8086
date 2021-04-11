@@ -7,7 +7,7 @@ using Intel_8086.Memory;
 
 namespace Tests_Intel_8086
 {
-    class MOVTest
+    class CommandTest
     {
         public void StartAllTests()
         {
@@ -231,6 +231,11 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("xchg dh");
             Assert(loggerMock.outputResult == "Too few arguments to function XCHG.");
 
+            registryCommand.InputCommand("mov ax, [0");
+            Assert(loggerMock.outputResult == "Argument is missing bracket.");
+
+            registryCommand.InputCommand("mov [0, ax");
+            Assert(loggerMock.outputResult == "Argument is missing bracket.");
         }
 
         private class GeneralPurposeRegistersMock : RegistersController

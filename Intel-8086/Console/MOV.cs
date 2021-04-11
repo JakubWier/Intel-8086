@@ -43,6 +43,9 @@ namespace Intel_8086.Console
 
                         }
                         return outputLogBuilder.ToString();
+                    } else if(addressArgs != null)
+                    {
+                        return "Argument is missing bracket.";
                     }
 
                     if (!IsSupportedRegistryName(args[1], out RegistersController destinatedController))
@@ -99,7 +102,6 @@ namespace Intel_8086.Console
                 MemoryModel memory = MemoryModel.GetInstance();
                 byte[] word = memory.GetMemoryWord(physicalAddress);
                 int value = BitConverter.ToUInt16(word);
-                CheckAndReduceOverflow(ref value, destinatedRegistry[^1]);
                 SetValueToRegistry(registryController, destinatedRegistry, value);
                 outputLogBuilder.AppendLine($"Value {value.ToString("X")}h assigned to registry {destinatedRegistry} from physical address {physicalAddress.ToString("X")}h.");
             }
@@ -294,7 +296,7 @@ namespace Intel_8086.Console
                     break;
             }
 
-            if (startBracketPos != -1 || endBracketPos != -1) //AND, OR?
+            if (startBracketPos != -1 && endBracketPos != -1) //AND, OR?
             {
                 if (startIndex > 1)
                     isRightOperand = true;
@@ -311,6 +313,10 @@ namespace Intel_8086.Console
                     addressArgs[k] = args[it];
                 }
                 return true;
+            } else if(startBracketPos != -1 || endBracketPos != -1)
+            {
+                addressArgs = new string[0];
+                return false;
             }
             addressArgs = null;
             return false;
