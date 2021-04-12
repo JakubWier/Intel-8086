@@ -2,7 +2,7 @@
 
 namespace Intel_8086.Console
 {
-    class RegistryCommander : CommandInterpreter
+    public class RegistryCommander : CommandInterpreter
     {
         private OutputController output;
         private CommandHandler commandHandler;

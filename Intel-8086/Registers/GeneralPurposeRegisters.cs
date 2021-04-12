@@ -2,7 +2,7 @@
 
 namespace Intel_8086.Registers
 {
-    class GeneralPurposeRegisters : RegistersController, Observable
+    public class GeneralPurposeRegisters : RegistersController, Observable
     {
         private List<Observer> observers;
 

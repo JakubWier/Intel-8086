@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Intel_8086.Registers
 {
-    class IndexRegistersView : Observer, INotifyPropertyChanged
+    public class IndexRegistersView : Observer, INotifyPropertyChanged
     {
         public string SI { get => si; set { si = value; OnPropertyChanged("SI"); } }
         public string DI { get => di; set { di = value; OnPropertyChanged("DI"); } }

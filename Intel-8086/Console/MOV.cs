@@ -5,7 +5,7 @@ using Intel_8086.Memory;
 
 namespace Intel_8086.Console
 {
-    class MOV : CommandHandler
+    public class MOV : CommandHandler
     {
         public CommandHandler NextHandler { get; set; }
 
@@ -18,78 +18,73 @@ namespace Intel_8086.Console
             processedRegisters = registryControllers;
 
             if (IsCommandMOV(args[0]))
-                if (args.Length > 2)
-                {
-                    outputLogBuilder = new StringBuilder();
-
-                    int argSeparatorPos = FindAndRemoveArgSeparator(args);
-                    if (argSeparatorPos == -1)
-                        return "MOV arguments must be separated by comma.";
-
-                    if (ContainsAddressArgument(args, out string[] addressArgs, out bool isRightOperand))
-                    {
-                        if (TryParseEffectiveAddressToValue(addressArgs, out int address))
-                        {
-                            if (isRightOperand)
-                            {
-                                if (IsSupportedRegistryName(args[1], out RegistersController destinatedRegistryContainer))
-                                    TrySetMemoryToRegistry(destinatedRegistryContainer, args[1], address);
-                            }
-                            else
-                            {
-                                if (IsSupportedRegistryName(args[^1], out RegistersController sourcedRegistryContainer))
-                                    TrySetRegistryToMemory(sourcedRegistryContainer, args[^1], address);
-                            }
-
-                        }
-                        return outputLogBuilder.ToString();
-                    } else if(addressArgs != null)
-                    {
-                        return "Argument is missing bracket.";
-                    }
-
-                    if (!IsSupportedRegistryName(args[1], out RegistersController destinatedController))
-                        return $"{args[1]} is unknown registry name.";
-
-                    if (TrySetRegistryToRegistry(destinatedController, args[1], args[2]))
-                        return outputLogBuilder.ToString();
-
-                    if (TrySetValueToRegistry(destinatedController, args[1], args[2]))
-                        return outputLogBuilder.ToString();
-
-                    return outputLogBuilder.ToString();
-                }
-                else
-                {
+            {
+                if (args.Length < 3)
                     return "Too few arguments to function MOV.";
-                }
 
-            if (NextHandler!=null)
+                outputLogBuilder = new StringBuilder();
+
+                if (CommandFormatter.FindAndRemoveArgSeparator(args) == -1)
+                    return "MOV arguments must be separated by comma.";
+
+                SelectOperation(args);
+                return outputLogBuilder.ToString();
+            }
+
+            return Next(args);
+        }
+
+        private bool IsCommandMOV(string potentialMovKeyword) => (potentialMovKeyword == "MOV");
+        private bool IsIndexRegister(string potentialRegister) => (potentialRegister == "SI" || potentialRegister == "DI");
+        private bool IsBaseRegister(string potentialRegister) => (potentialRegister == "BX" || potentialRegister == "BP");
+
+        private string Next(string[] args)
+        {
+            if (NextHandler != null)
                 return NextHandler.HandleOperation(args, processedRegisters);
             else
                 return "";
         }
 
-        private bool IsCommandMOV(string potentialMovKeyword) => (potentialMovKeyword == "MOV");
-
-        private int FindAndRemoveArgSeparator(string[] args)
+        private void SelectOperation(string[] args)
         {
-            int pos = 0;
-            int index = -1;
+            if (TryExecuteAddressArgument(args))
+                return;
 
-            for(;pos < args.Length; pos++)
+            if (TrySetRegistryToRegistry(args[1], args[2]))
+                return;
+
+            if (TrySetValueToRegistry(args[1], args[2]))
+                return;
+        }
+
+        private bool TryExecuteAddressArgument(string[] args)
+        {
+            if (ContainsAddressArgument(args, out string[] addressArgs, out bool isRightOperand))
             {
-                index = args[pos].IndexOf(',');
-                if (index != -1)
+                if (TryParseEffectiveAddressToValue(addressArgs, out int address))
                 {
-                    args[pos] = args[pos].Remove(index, 1);
-                    break;
-                }
-            }
-            if (pos == args.Length)
-                return -1;
+                    if (isRightOperand)
+                    {
+                        if (IsSupportedRegistryName(args[1], out RegistersController destinatedRegistryContainer))
+                            TrySetMemoryToRegistry(destinatedRegistryContainer, args[1], address);
+                    }
+                    else
+                    {
+                        if (IsSupportedRegistryName(args[^1], out RegistersController sourcedRegistryContainer))
+                            TrySetRegistryToMemory(sourcedRegistryContainer, args[^1], address);
+                    }
 
-            return pos;
+                }
+                outputLogBuilder.ToString();
+                return true;
+            }
+            else if (addressArgs != null)
+            {
+                outputLogBuilder.Append("Argument is missing bracket.");
+                return true;
+            }
+            return false;
         }
 
         private void TrySetMemoryToRegistry(RegistersController registryController, string destinatedRegistry, int effectiveAddress)
@@ -124,15 +119,25 @@ namespace Intel_8086.Console
             }
         }
 
-        private bool TrySetValueToRegistry(RegistersController registryController, string destinatedRegistry, string potentialValue)
+        private bool TrySetValueToRegistry(string destinatedRegistry, string potentialValue)
         {
-            if (IsValue(potentialValue, out int valueArg))
+            if (!IsSupportedRegistryName(destinatedRegistry, out RegistersController destinatedController))
             {
-                char regPostfix = destinatedRegistry[^1];
-                CheckAndReduceOverflow(ref valueArg, regPostfix);
-                SetValueToRegistry(registryController, destinatedRegistry, valueArg);
+                outputLogBuilder.Clear();
+                outputLogBuilder.Append($"{destinatedRegistry} is unknown registry name.");
+                return false;
+            }
+
+            if (CommandFormatter.IsValue(potentialValue, out int valueArg, out string parseLog))
+            {
+                outputLogBuilder.Clear();
+                CommandFormatter.CheckAndReduceOverflow(ref valueArg, out string overflowLog, destinatedRegistry[^1]);
+                SetValueToRegistry(destinatedController, destinatedRegistry, valueArg);
                 string valueHex = valueArg.ToString("X");
-                outputLogBuilder.Append($"{(valueHex.Length <= 2 ? valueHex.PadLeft(2, '0') : valueHex.PadLeft(4, '0')) } moved into {destinatedRegistry}.");
+
+                outputLogBuilder.Append(parseLog);
+                outputLogBuilder.Append(overflowLog);
+                outputLogBuilder.Append($"{(valueHex.Length <= 2 ? valueHex.PadLeft(2, '0') : valueHex.PadLeft(4, '0')) }h moved into {destinatedRegistry}.");
                 return true;
             }
             return false;
@@ -144,37 +149,22 @@ namespace Intel_8086.Console
             registryController.SetBytesToRegistry(destinatedRegName, bytes);
         }
 
-
-        private void CheckAndReduceOverflow(ref int value, char registryPostfix = '0')
+        private bool TrySetRegistryToRegistry(string destinatedRegistry, string sourcedRegistry)
         {
-            if (registryPostfix == 'L' || registryPostfix == 'H')
+            if (!IsSupportedRegistryName(destinatedRegistry, out RegistersController destinatedController))
             {
-                if (value > byte.MaxValue)
-                {
-                    value = BitConverter.GetBytes(value)[0]; //255;
-                    outputLogBuilder.Append("Expected 8bit value.\nData loss due to conversion.\nMoving first byte of value.\n");
-                }
+                outputLogBuilder.Clear();
+                outputLogBuilder.Append($"{destinatedRegistry} is unknown registry name.");
+                return false;
             }
-            else
-            {
-                if (value > ushort.MaxValue)
-                {
-                    byte[] convert = BitConverter.GetBytes(value);
-                    value = convert[1]*256 + convert[0];
-                    outputLogBuilder.Append("Expected 16bit value.\nData loss due to conversion.\nMoving first and second byte of value.\n");
-                }
-            }
-        }
 
-        private bool TrySetRegistryToRegistry(RegistersController destinatedController, string destinatedRegistry, string potentialSourcedRegistry)
-        {
-            if (IsSupportedRegistryName(potentialSourcedRegistry, out RegistersController sourcedController))//"mov reg,reg2"
+            if (IsSupportedRegistryName(sourcedRegistry, out RegistersController sourcedController))//"mov reg,reg2"
             {
-                SetRegistryToRegistry(destinatedController, sourcedController, destinatedRegistry, potentialSourcedRegistry);
-                outputLogBuilder.Append($"{potentialSourcedRegistry} moved into {destinatedRegistry}.");
+                SetRegistryToRegistry(destinatedController, sourcedController, destinatedRegistry, sourcedRegistry);
+                outputLogBuilder.Append($"{sourcedRegistry} moved into {destinatedRegistry}.");
                 return true;
             }
-            outputLogBuilder.Append($"{potentialSourcedRegistry} is unknown registry name.");
+            outputLogBuilder.Append($"{sourcedRegistry} is unknown registry name.");
             return false;
         }
 
@@ -182,39 +172,10 @@ namespace Intel_8086.Console
         {
             byte[] bytes = sourcedController.GetRegistry(sourcedRegistry);
 
-            if (sourcedRegistry.EndsWith('H'))
-                destinatedController.SetBytesToRegistry(destinatedRegistry, bytes[1]);
-            else if (sourcedRegistry.EndsWith('L'))
+            if (sourcedRegistry.EndsWith('H') || sourcedRegistry.EndsWith('L'))
                 destinatedController.SetBytesToRegistry(destinatedRegistry, bytes[0]);
             else
                 destinatedController.SetBytesToRegistry(destinatedRegistry, bytes);
-        }
-
-        private bool IsValue(string arg, out int value)
-        {
-            if (!arg.EndsWith("H"))
-            {
-                if (int.TryParse(arg, out int result))
-                {
-                    outputLogBuilder.Clear();
-                    outputLogBuilder.AppendLine($"Parsing value \"{arg}\" as decimal.");
-                    value = result;
-                    return true;
-                }
-            }
-            else
-            {
-                if (int.TryParse(arg.Remove(arg.Length-1, 1), System.Globalization.NumberStyles.HexNumber, null, out int resultFromHex))
-                {
-                    outputLogBuilder.Clear();
-                    outputLogBuilder.AppendLine($"Parsing value \"{arg.Substring(0, arg.Length-1)}\" as hexadecimal.");
-                    value = resultFromHex;
-                    return true;
-                }
-            }
-
-            value = int.MinValue;
-            return false;
         }
 
         private bool IsSupportedRegistryName(string potentialRegistryName, out RegistersController registryController)
@@ -250,9 +211,11 @@ namespace Intel_8086.Console
                         byte[] bytes = regController.GetRegistry(arg);
                         address += BitConverter.ToUInt16(bytes);
                     }
-                } else if(IsValue(arg, out int value))
+                } else if(CommandFormatter.IsValue(arg, out int value, out string parseLog))
                 {
-                    CheckAndReduceOverflow(ref value);
+                    outputLogBuilder.Append(parseLog);
+                    CommandFormatter.CheckAndReduceOverflow(ref value, out string log);
+                    outputLogBuilder.Append(log);
                     address += (int)value;
                 }
                 else
@@ -265,10 +228,6 @@ namespace Intel_8086.Console
             outputLogBuilder.AppendLine($"Converting arguments into effective address {address.ToString("X")}h.");
             return true;
         }
-
-        private bool IsIndexRegister(string potentialRegister) => (potentialRegister == "SI" || potentialRegister == "DI");
-        
-        private bool IsBaseRegister(string potentialRegister) => (potentialRegister == "BX" || potentialRegister == "BP");
 
         private bool ContainsAddressArgument(string[] args, out string[] addressArgs, out bool isRightOperand)
         {

@@ -3,7 +3,7 @@ using Intel_8086.Registers;
 
 namespace Intel_8086.Console
 {
-    class AssignToRegistry : CommandHandler
+    public class AssignToRegistry : CommandHandler
     {
         public CommandHandler NextHandler { get; set; }
         private RegistersController[] processedRegisters;

@@ -37,7 +37,6 @@ namespace Intel_8086
         CommandInterpreter commandInterpreter;
         public MainWindow()
         {
-            Tests_Intel_8086.UTest.StartAllTests();
             InitializeComponent();
 
             MemoryModel.SetAddressBusLength = 20;
@@ -50,7 +49,7 @@ namespace Intel_8086
             pointerRegisters = new PointerRegisters();
             segmentRegisters = new SegmentRegisters();
 
-            commandInterpreter = InitDefaultRegistryCommander(generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
+            commandInterpreter = InitDefaultRegistryCommander();
 
             generalPurposeRegistersView = new GeneralPurposeRegistersView(new HexParser());
             indexRegistersView = new IndexRegistersView(new HexParser());
@@ -66,21 +65,7 @@ namespace Intel_8086
             if (segmentRegisters is Observable observableSegmentsReg)
                 observableSegmentsReg.AddObserver(segmentRegistersView);
 
-            BlockAX.DataContext = generalPurposeRegistersView;
-            BlockBX.DataContext = generalPurposeRegistersView;
-            BlockCX.DataContext = generalPurposeRegistersView;
-            BlockDX.DataContext = generalPurposeRegistersView;
-
-            BlockSI.DataContext = indexRegistersView;
-            BlockDI.DataContext = indexRegistersView;
-
-            BlockBP.DataContext = pointerRegistersView;
-            BlockSP.DataContext = pointerRegistersView;
-
-            BlockCS.DataContext = segmentRegistersView;
-            BlockSS.DataContext = segmentRegistersView;
-            BlockDS.DataContext = segmentRegistersView;
-            BlockES.DataContext = segmentRegistersView;
+            SetBlockDataContext();
         }
 
         private void Input_Enter(object sender, KeyEventArgs e)
@@ -118,9 +103,9 @@ namespace Intel_8086
             Output.Text = "General purpose registers randomized.";
         }
 
-        private CommandInterpreter InitDefaultRegistryCommander(params RegistersController[] registries)
+        private CommandInterpreter InitDefaultRegistryCommander()
         {
-            RegistryCommander commander = new RegistryCommander(this, registries);
+            RegistryCommander commander = new RegistryCommander(this, generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
 
             XCHG xchg = new XCHG();
             MOV mov = new MOV();
@@ -143,6 +128,25 @@ namespace Intel_8086
                     return;
                 }
             Output.Text = "Unable to find correct memory location.\nInvalid address formatting.";
+        }
+
+        public void SetBlockDataContext()
+        {
+            BlockAX.DataContext = generalPurposeRegistersView;
+            BlockBX.DataContext = generalPurposeRegistersView;
+            BlockCX.DataContext = generalPurposeRegistersView;
+            BlockDX.DataContext = generalPurposeRegistersView;
+
+            BlockSI.DataContext = indexRegistersView;
+            BlockDI.DataContext = indexRegistersView;
+
+            BlockBP.DataContext = pointerRegistersView;
+            BlockSP.DataContext = pointerRegistersView;
+
+            BlockCS.DataContext = segmentRegistersView;
+            BlockSS.DataContext = segmentRegistersView;
+            BlockDS.DataContext = segmentRegistersView;
+            BlockES.DataContext = segmentRegistersView;
         }
 
         public void Update(object update)

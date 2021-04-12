@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Intel_8086
 {
-    class HexParser : NumeralConverter
+    public class HexParser : NumeralConverter
     {
         public string GetName => "Hexadecimal";
 

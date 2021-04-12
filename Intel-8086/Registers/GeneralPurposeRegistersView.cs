@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace Intel_8086.Registers
 {
-    class GeneralPurposeRegistersView : Observer, INotifyPropertyChanged
+    public class GeneralPurposeRegistersView : Observer, INotifyPropertyChanged
     {
         public string AX { get => ax; set { ax = value; OnPropertyChanged("AX"); } }
         public string BX { get => bx; set { bx = value; OnPropertyChanged("BX"); } }
