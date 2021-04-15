@@ -124,7 +124,7 @@ namespace Intel_8086.Console
             if (!IsSupportedRegistryName(destinatedRegistry, out RegistersController destinatedController))
             {
                 outputLogBuilder.Clear();
-                outputLogBuilder.Append($"{destinatedRegistry} is unknown registry name.");
+                outputLogBuilder.Append($"{destinatedRegistry} is unsupported registry name.");
                 return false;
             }
 
@@ -154,7 +154,7 @@ namespace Intel_8086.Console
             if (!IsSupportedRegistryName(destinatedRegistry, out RegistersController destinatedController))
             {
                 outputLogBuilder.Clear();
-                outputLogBuilder.Append($"{destinatedRegistry} is unknown registry name.");
+                outputLogBuilder.Append($"{destinatedRegistry} is unsupported registry name.");
                 return false;
             }
 
@@ -164,7 +164,7 @@ namespace Intel_8086.Console
                 outputLogBuilder.Append($"{sourcedRegistry} moved into {destinatedRegistry}.");
                 return true;
             }
-            outputLogBuilder.Append($"{sourcedRegistry} is unknown registry name.");
+            outputLogBuilder.Append($"{sourcedRegistry} is unsupported registry name.");
             return false;
         }
 

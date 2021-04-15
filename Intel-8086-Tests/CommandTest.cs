@@ -314,19 +314,19 @@ namespace Tests_Intel_8086
             Assert.AreEqual(loggerMock.outputResult, "Invalid command line.");
 
             registryCommand.InputCommand("mov ak, bh");
-            Assert.AreEqual(loggerMock.outputResult, "AK is unknown registry name.");
+            Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.");
 
             registryCommand.InputCommand("mov ah, bk");
-            Assert.AreEqual(loggerMock.outputResult, "BK is unknown registry name.");
+            Assert.AreEqual(loggerMock.outputResult, "BK is unsupported registry name.");
 
             registryCommand.InputCommand("mov ah bk");
             Assert.AreEqual(loggerMock.outputResult, "MOV arguments must be separated by comma.");
 
             registryCommand.InputCommand("xchg ak, bx");
-            Assert.AreEqual(loggerMock.outputResult, "AK is unknown registry name.");
+            Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.");
 
             registryCommand.InputCommand("xchg ah, bk");
-            Assert.AreEqual(loggerMock.outputResult, "BK is unknown registry name.");
+            Assert.AreEqual(loggerMock.outputResult, "BK is unsupported registry name.");
 
             registryCommand.InputCommand("xchg ah bk");
             Assert.AreEqual(loggerMock.outputResult, "XCHG arguments must be separated by comma.");

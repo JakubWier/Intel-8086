@@ -75,13 +75,13 @@ namespace Intel_8086.Console
         {
             if (!IsSupportedRegistryName(firstRegistry, out RegistersController firstController))
             {
-                outputLogBuilder.Append($"{firstRegistry} is unknown registry name.");
+                outputLogBuilder.Append($"{firstRegistry} is unsupported registry name.");
                 return false;
             }
 
             if (!IsSupportedRegistryName(secondRegistry, out RegistersController secondController))
             {
-                outputLogBuilder.Append($"{secondRegistry} is unknown registry name.");
+                outputLogBuilder.Append($"{secondRegistry} is unsupported registry name.");
                 return false;
             }
 
