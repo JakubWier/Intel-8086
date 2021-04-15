@@ -5,7 +5,7 @@ using Intel_8086.MemorySystem;
 
 namespace Intel_8086.Console
 {
-    public class PUSH : CommandHandler
+    public class POP : CommandHandler
     {
         public CommandHandler NextHandler { get; set; }
         private RegistersController[] supportedRegistries;
@@ -18,10 +18,10 @@ namespace Intel_8086.Console
             if (IsCommandPush(args[0]))
             {
                 if (args.Length < 2)
-                    return "Pushing registry on stack requires two arguments.";
+                    return "Popping to registry from stack requires two arguments.";
                 outputLogBuilder = new StringBuilder();
 
-                PushOnStack(args[1]);
+                PopFromStack(args[1]);
 
                 return outputLogBuilder.ToString();
             }
@@ -32,7 +32,7 @@ namespace Intel_8086.Console
                 return "";
         }
 
-        private bool IsCommandPush(string commandName) => commandName == "PUSH";
+        private bool IsCommandPush(string commandName) => commandName == "POP";
 
         private bool TryGetRegistry(string potentialRegistryName, out RegistersController controller)
         {
@@ -49,13 +49,13 @@ namespace Intel_8086.Console
             return false;
         }
 
-        private void PushOnStack(string registryName)
+        private void PopFromStack(string destinatedRegistryName)
         {
             const int TO_20BIT_SHIFT = 4;
 
-            if (!TryGetRegistry(registryName, out RegistersController sourceContainer))
+            if (!TryGetRegistry(destinatedRegistryName, out RegistersController destinatedContainer))
             {
-                outputLogBuilder.AppendLine($"{registryName} is unsupported registry name.");
+                outputLogBuilder.AppendLine($"{destinatedRegistryName} is unsupported registry name.");
                 return;
             }
 
@@ -65,7 +65,7 @@ namespace Intel_8086.Console
                 return;
             }
 
-            if(!TryGetRegistry("SS", out RegistersController stackSegmentContainer))
+            if (!TryGetRegistry("SS", out RegistersController stackSegmentContainer))
             {
                 outputLogBuilder.AppendLine("Command interpreter couldn't find SS registry.");
                 return;
@@ -74,14 +74,14 @@ namespace Intel_8086.Console
             MemoryModel memory = MemoryModel.GetInstance();
             UInt16 stackSegment = BitConverter.ToUInt16(stackSegmentContainer.GetRegistry("SS"));
             UInt16 stackPointer = BitConverter.ToUInt16(stackPointerContainer.GetRegistry("SP"));
-            uint physicalAddress = (uint)(stackSegment << TO_20BIT_SHIFT) + stackPointer;
-            byte[] wordToPush = sourceContainer.GetRegistry(registryName);
-            memory.SetMemoryWord(physicalAddress, wordToPush);
-
-            stackPointer += 2;
+            stackPointer -= 2;
             stackPointerContainer.SetBytesToRegistry("SP", BitConverter.GetBytes(stackPointer));
+            uint physicalAddress = (uint)(stackSegment << TO_20BIT_SHIFT) + stackPointer;
+            byte[] wordToPop = memory.GetMemoryWord(physicalAddress);
+            destinatedContainer.SetBytesToRegistry(destinatedRegistryName, wordToPop);
+            //memory.SetMemoryWord(physicalAddress, 0);
 
-            outputLogBuilder.AppendLine($"Value {BitConverter.ToUInt16(wordToPush).ToString("X")}h from registry {registryName} pushed on stack with physical address {physicalAddress.ToString("X")}h.");
+            outputLogBuilder.AppendLine($"Value {BitConverter.ToUInt16(wordToPop).ToString("X")}h from physical address {physicalAddress.ToString("X")}h popped from stack to registry {destinatedRegistryName}.");
         }
     }
 }

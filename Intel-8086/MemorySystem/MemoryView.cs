@@ -6,12 +6,16 @@ namespace Intel_8086.MemorySystem
 {
     class MemoryView
     {
+        public uint CurrentViewAddress => currentViewAddress;
+        public uint currentViewAddress;
+
         public string GetView(UInt16 segmentAddress, UInt16 offset, UInt16 lines = 8)
         {
             StringBuilder viewBuilder = new StringBuilder();
             byte cell;
             Memory memory = MemoryModel.GetInstance();
             uint addressIterator = (uint)((segmentAddress << 4) + offset);
+            currentViewAddress = addressIterator;
 
             for (UInt16 it = 0; it < lines; it++, offset += 16)
             {

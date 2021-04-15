@@ -107,11 +107,13 @@ namespace Intel_8086
         {
             RegistryCommander commander = new RegistryCommander(this, generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
 
+            POP pop = new POP();
             PUSH push = new PUSH();
             XCHG xchg = new XCHG();
             MOV mov = new MOV();
             AssignToRegistry assignTo = new AssignToRegistry();
 
+            commander.AddHandler(pop);
             commander.AddHandler(push);
             commander.AddHandler(xchg);
             commander.AddHandler(mov);
@@ -154,7 +156,7 @@ namespace Intel_8086
         public void Update(object update)
         {
             if (update is uint memoryAddress)
-            {
+            { 
                 MemoryInput.Text = MemoryView.AddressInputToString(memoryAddress);
                 Go_Click(null, null);
             }

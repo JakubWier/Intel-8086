@@ -328,17 +328,70 @@ namespace Tests_Intel_8086
         }
 
         [TestMethod]
+        public void TestPOP()
+        {
+            MemoryModel.SetAddressBusLength = 20;
+            MemoryModel memory = MemoryModel.GetInstance();
+            GeneralPurposeRegisters generalRegistersMock = new GeneralPurposeRegisters();
+            SegmentRegisters segmentRegistersMock = new SegmentRegisters();
+            PointerRegisters pointerRegistersMock = new PointerRegisters();
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+
+            POP pop = new POP();
+            PUSH push = new PUSH();
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(pop);
+            registryCommand.AddHandler(push);
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
+
+            byte[] word;
+
+            registryCommand.InputCommand("ax 1122");
+            registryCommand.InputCommand("push ax");
+            registryCommand.InputCommand("pop cx");
+            word = generalRegistersMock.GetRegistry("CX");
+            Assert.AreEqual(34, word[0]);
+            Assert.AreEqual(17, word[1]);
+            Assert.AreEqual("Value 1122h from physical address 0h popped from stack to registry CX.\r\n", loggerMock.outputResult);
+
+            word = pointerRegistersMock.GetRegistry("SP");
+            Assert.AreEqual(0, word[0]);
+
+            registryCommand.InputCommand("ax FFEE");
+            registryCommand.InputCommand("bx AA99");
+            registryCommand.InputCommand("SS FF");
+            registryCommand.InputCommand("push ax");
+            registryCommand.InputCommand("push bx");
+            registryCommand.InputCommand("pop dx");
+            word = generalRegistersMock.GetRegistry("DX");
+            Assert.AreEqual(153, word[0]);
+            Assert.AreEqual(170, word[1]);
+            Assert.AreEqual("Value AA99h from physical address FF2h popped from stack to registry DX.\r\n", loggerMock.outputResult);
+
+            word = pointerRegistersMock.GetRegistry("SP");
+            Assert.AreEqual(2, word[0]);
+        }
+
+        [TestMethod]
         public void TestInvalidCommands()
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
             RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
 
+            POP pop = new POP();
             PUSH push = new PUSH();
             XCHG xchg = new XCHG();
             MOV mov = new MOV();
             AssignToRegistry assignTo = new AssignToRegistry();
 
+            registryCommand.AddHandler(pop);
             registryCommand.AddHandler(push);
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
@@ -391,7 +444,7 @@ namespace Tests_Intel_8086
         }
 
         [TestMethod]
-        private void TestInvalidPushCommand()
+        private void TestInvalidPUSHCommand()
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
@@ -418,6 +471,38 @@ namespace Tests_Intel_8086
 
             registryCommand = new RegistryCommander(loggerMock, registersMock, new PointerRegisters());
             registryCommand.InputCommand("push ax");
+            Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
+        }
+
+        private void TestInvalidPOPCommand()
+        {
+            GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+
+            POP pop = new POP();
+            PUSH push = new PUSH();
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(pop);
+            registryCommand.AddHandler(push);
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
+
+            registryCommand.InputCommand("pop");
+            Assert.AreEqual(loggerMock.outputResult, "Popping registry from stack requires two arguments.");
+
+            registryCommand.InputCommand("pop ak");
+            Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.\r\n");
+
+            registryCommand.InputCommand("pop ax");
+            Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SP registry.\r\n");
+
+            registryCommand = new RegistryCommander(loggerMock, registersMock, new PointerRegisters());
+            registryCommand.InputCommand("pop ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
         }
 
