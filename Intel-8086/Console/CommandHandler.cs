@@ -5,6 +5,6 @@ namespace Intel_8086.Console
     public interface CommandHandler
     {
         CommandHandler NextHandler { get; set; }
-        string HandleOperation(string[] args, params RegistersController[] supportedRegisters);
+        string HandleOperation(string[] args);
     }
 }

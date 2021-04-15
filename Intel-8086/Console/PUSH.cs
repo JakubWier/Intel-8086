@@ -11,10 +11,13 @@ namespace Intel_8086.Console
         private RegistersController[] supportedRegistries;
         private StringBuilder outputLogBuilder;
 
-        public string HandleOperation(string[] args, params RegistersController[] supportedRegistries)
+        public PUSH(params RegistersController[] supportedRegistries)
         {
             this.supportedRegistries = supportedRegistries;
+        }
 
+        public string HandleOperation(string[] args)
+        {
             if (IsCommandPush(args[0]))
             {
                 if (args.Length < 2)
@@ -27,7 +30,7 @@ namespace Intel_8086.Console
             }
 
             if (NextHandler != null)
-                return NextHandler.HandleOperation(args, supportedRegistries);
+                return NextHandler.HandleOperation(args);
             else
                 return "";
         }
@@ -49,13 +52,19 @@ namespace Intel_8086.Console
             return false;
         }
 
-        private void PushOnStack(string registryName)
+        private void PushOnStack(string sourcedRegistryName)
         {
             const int TO_20BIT_SHIFT = 4;
 
-            if (!TryGetRegistry(registryName, out RegistersController sourceContainer))
+            if (sourcedRegistryName.EndsWith('H') || sourcedRegistryName.EndsWith('L'))
             {
-                outputLogBuilder.AppendLine($"{registryName} is unsupported registry name.");
+                outputLogBuilder.AppendLine($"Cannot use command PUSH for half registers.");
+                return;
+            }
+
+            if (!TryGetRegistry(sourcedRegistryName, out RegistersController sourceContainer))
+            {
+                outputLogBuilder.AppendLine($"{sourcedRegistryName} is unsupported registry name.");
                 return;
             }
 
@@ -75,13 +84,14 @@ namespace Intel_8086.Console
             UInt16 stackSegment = BitConverter.ToUInt16(stackSegmentContainer.GetRegistry("SS"));
             UInt16 stackPointer = BitConverter.ToUInt16(stackPointerContainer.GetRegistry("SP"));
             uint physicalAddress = (uint)(stackSegment << TO_20BIT_SHIFT) + stackPointer;
-            byte[] wordToPush = sourceContainer.GetRegistry(registryName);
+
+            byte[] wordToPush = sourceContainer.GetRegistry(sourcedRegistryName);
             memory.SetMemoryWord(physicalAddress, wordToPush);
 
             stackPointer += 2;
             stackPointerContainer.SetBytesToRegistry("SP", BitConverter.GetBytes(stackPointer));
 
-            outputLogBuilder.AppendLine($"Value {BitConverter.ToUInt16(wordToPush).ToString("X")}h from registry {registryName} pushed on stack with physical address {physicalAddress.ToString("X")}h.");
+            outputLogBuilder.AppendLine($"Value {BitConverter.ToUInt16(wordToPush).ToString("X")}h from registry {sourcedRegistryName} pushed on stack with physical address {physicalAddress.ToString("X")}h.");
         }
     }
 }

@@ -7,15 +7,18 @@ namespace Intel_8086.Console
 {
     public class XCHG : CommandHandler
     {
-        private StringBuilder outputLogBuilder;
-        private RegistersController[] processedRegisters;
-
         public CommandHandler NextHandler { get; set; }
 
-        public string HandleOperation(string[] args, params RegistersController[] registryControllers)
-        {
-            processedRegisters = registryControllers;
+        private StringBuilder outputLogBuilder;
+        private RegistersController[] supportedRegistries;
 
+        public XCHG(params RegistersController[] supportedRegistries)
+        {
+            this.supportedRegistries = supportedRegistries;
+        }
+
+        public string HandleOperation(string[] args)
+        {
             if (IsCommandXCHG(args[0]))
             {
                 if (args.Length < 3)
@@ -41,7 +44,7 @@ namespace Intel_8086.Console
         private string Next(string[] args)
         {
             if (NextHandler != null)
-                return NextHandler.HandleOperation(args, processedRegisters);
+                return NextHandler.HandleOperation(args);
             else
                 return "";
         }
@@ -49,7 +52,7 @@ namespace Intel_8086.Console
         private bool IsSupportedRegistryName(string potentialRegistryName, out RegistersController registryController)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (RegistersController container in processedRegisters)
+                foreach (RegistersController container in supportedRegistries)
                 {
                     if (container.Contains(potentialRegistryName))
                     {
@@ -146,12 +149,19 @@ namespace Intel_8086.Console
         {
             if (IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
+                MemoryModel memory = MemoryModel.GetInstance();
                 const int TO_20BIT_SHIFT = 4;
                 int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
                 dataSegment = dataSegment << TO_20BIT_SHIFT;
+
                 uint physicalAddress = (uint)(dataSegment + effectiveAddress);
 
-                MemoryModel memory = MemoryModel.GetInstance();
+                if (physicalAddress > memory.GetMemoryLength)
+                {
+                    outputLogBuilder.AppendLine($"Physical address {physicalAddress.ToString("X")}h is out of range memory.\nAborting operation XCHG.");
+                    return;
+                }
+
                 int regValue = BitConverter.ToUInt16(registryContainer.GetRegistry(registryName));
                 int memValue = BitConverter.ToUInt16(memory.GetMemoryWord(physicalAddress));
 

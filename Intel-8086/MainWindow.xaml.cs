@@ -18,9 +18,6 @@ using Intel_8086.Console;
 
 namespace Intel_8086
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window, OutputController, Observer
     {
         GeneralPurposeRegisters generalPurposeRegisters;
@@ -72,7 +69,6 @@ namespace Intel_8086
         {
             if(e.Key == Key.Enter)
             {
-                Output.Text = "";
                 commandInterpreter.InputCommand(Input.Text);
                 Description.Text += Input.Text + "\n";
                 Input.Text = "";
@@ -105,13 +101,13 @@ namespace Intel_8086
 
         private CommandInterpreter InitDefaultRegistryCommander()
         {
-            RegistryCommander commander = new RegistryCommander(this, generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
+            RegistryCommander commander = new RegistryCommander(this);
 
-            POP pop = new POP();
-            PUSH push = new PUSH();
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            POP pop = new POP(generalPurposeRegisters, pointerRegisters, segmentRegisters);
+            PUSH push = new PUSH(generalPurposeRegisters, pointerRegisters, segmentRegisters);
+            XCHG xchg = new XCHG(generalPurposeRegisters, segmentRegisters);
+            MOV mov = new MOV(generalPurposeRegisters, segmentRegisters);
+            AssignToRegistry assignTo = new AssignToRegistry(generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
 
             commander.AddHandler(pop);
             commander.AddHandler(push);

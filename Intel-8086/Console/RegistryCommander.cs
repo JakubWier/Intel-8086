@@ -6,11 +6,10 @@ namespace Intel_8086.Console
     {
         private OutputController output;
         private CommandHandler commandHandler;
-        private RegistersController[] supportedRegisters;
 
-        public RegistryCommander(OutputController output, params RegistersController[] supportedRegisters) {
+        public RegistryCommander(OutputController output) {
             this.output = output;
-            this.supportedRegisters = supportedRegisters;
+            commandHandler = new NULL();
         }
 
         /// <summary>
@@ -20,21 +19,18 @@ namespace Intel_8086.Console
         /// <returns>Returns method interpreted name.</returns>
         public void InputCommand(string line)
         {
+            line = line.Trim();
             if (line.Length == 0)
                 return;
-            line = line.Trim();
 
             string[] commandBlockBuffer = line.Split(' ');
 
             for(int i=0; i<commandBlockBuffer.Length;i++)
                 commandBlockBuffer[i] = commandBlockBuffer[i].ToUpper();
 
-            string outputResult = commandHandler.HandleOperation(commandBlockBuffer, supportedRegisters);
+            string outputResult = commandHandler.HandleOperation(commandBlockBuffer);
 
-            if (outputResult?.Length != 0)
-                output.ReplaceOutput(outputResult);
-            else
-                output.ReplaceOutput("Invalid command line.");
+            output.ReplaceOutput(outputResult);
         }
 
         public void AddHandler(CommandHandler handler)

@@ -10,13 +10,15 @@ namespace Intel_8086.Console
         public CommandHandler NextHandler { get; set; }
 
         private StringBuilder outputLogBuilder;
-        private RegistersController[] processedRegisters;
-        //private string[] processedArgs;
+        private RegistersController[] supportedRegistries;
 
-        public string HandleOperation(string[] args, params RegistersController[] registryControllers)
+        public MOV(params RegistersController[] supportedRegistries)
         {
-            processedRegisters = registryControllers;
+            this.supportedRegistries = supportedRegistries;
+        }
 
+        public string HandleOperation(string[] args)
+        {
             if (IsCommandMOV(args[0]))
             {
                 if (args.Length < 3)
@@ -41,7 +43,7 @@ namespace Intel_8086.Console
         private string Next(string[] args)
         {
             if (NextHandler != null)
-                return NextHandler.HandleOperation(args, processedRegisters);
+                return NextHandler.HandleOperation(args);
             else
                 return "";
         }
@@ -91,12 +93,22 @@ namespace Intel_8086.Console
         {
             if(IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
-                int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
-                dataSegment = dataSegment << 4;
-                uint physicalAddress = (uint)(dataSegment + effectiveAddress);
                 MemoryModel memory = MemoryModel.GetInstance();
+                const int TO_20BIT_SHIFT = 4;
+                int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
+                dataSegment = dataSegment << TO_20BIT_SHIFT;
+
+                uint physicalAddress = (uint)(dataSegment + effectiveAddress);
+
+                if (physicalAddress > memory.GetMemoryLength)
+                {
+                    outputLogBuilder.AppendLine($"Physical address {physicalAddress.ToString("X")}h is out of range memory.\nAborting operation MOV.");
+                    return;
+                }
+
                 byte[] word = memory.GetMemoryWord(physicalAddress);
                 int value = BitConverter.ToUInt16(word);
+
                 SetValueToRegistry(registryController, destinatedRegistry, value);
                 outputLogBuilder.AppendLine($"Value {value.ToString("X")}h assigned to registry {destinatedRegistry} from physical address {physicalAddress.ToString("X")}h.");
             }
@@ -106,16 +118,26 @@ namespace Intel_8086.Console
         {
             if (IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
+                MemoryModel memory = MemoryModel.GetInstance();
                 const int TO_20BIT_SHIFT = 4;
                 int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
                 dataSegment = dataSegment << TO_20BIT_SHIFT;
+
                 uint physicalAddress = (uint)(dataSegment + effectiveAddress);
-                MemoryModel memory = MemoryModel.GetInstance();
+
+                if (physicalAddress > memory.GetMemoryLength)
+                {
+                    outputLogBuilder.AppendLine($"Physical address {physicalAddress.ToString("X")}h is out of range memory.\nAborting operation MOV.");
+                    return;
+                }
+
                 ushort value = BitConverter.ToUInt16(registryController.GetRegistry(sourcedRegistry));
+
                 if(sourcedRegistry[^1] != 'L' && sourcedRegistry[^1] != 'H')
                     memory.SetMemoryWord(physicalAddress, value);
                 else
                     memory.SetMemoryCell(physicalAddress, BitConverter.GetBytes(value)[0]);
+
                 outputLogBuilder.AppendLine($"Value {value.ToString("X")}h from registry {sourcedRegistry} assigned to physical address {physicalAddress.ToString("X")}h.");
             }
         }
@@ -182,7 +204,7 @@ namespace Intel_8086.Console
         private bool IsSupportedRegistryName(string potentialRegistryName, out RegistersController registryController)
         {
             if (potentialRegistryName.Length == 2)
-                foreach (RegistersController container in processedRegisters)
+                foreach (RegistersController container in supportedRegistries)
                 {
                     if (container.Contains(potentialRegistryName))
                     {

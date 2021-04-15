@@ -11,10 +11,12 @@ namespace Intel_8086.Console
         private RegistersController[] supportedRegistries;
         private StringBuilder outputLogBuilder;
 
-        public string HandleOperation(string[] args, params RegistersController[] supportedRegistries)
-        {
+        public POP(params RegistersController[] supportedRegistries) {
             this.supportedRegistries = supportedRegistries;
+        }
 
+        public string HandleOperation(string[] args)
+        {
             if (IsCommandPush(args[0]))
             {
                 if (args.Length < 2)
@@ -27,7 +29,7 @@ namespace Intel_8086.Console
             }
 
             if (NextHandler != null)
-                return NextHandler.HandleOperation(args, supportedRegistries);
+                return NextHandler.HandleOperation(args);
             else
                 return "";
         }
@@ -52,6 +54,12 @@ namespace Intel_8086.Console
         private void PopFromStack(string destinatedRegistryName)
         {
             const int TO_20BIT_SHIFT = 4;
+
+            if (destinatedRegistryName.EndsWith('H') || destinatedRegistryName.EndsWith('L'))
+            {
+                outputLogBuilder.AppendLine($"Cannot use command POP for half registers.");
+                return;
+            }
 
             if (!TryGetRegistry(destinatedRegistryName, out RegistersController destinatedContainer))
             {

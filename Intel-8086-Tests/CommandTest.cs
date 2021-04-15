@@ -16,11 +16,11 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
-            
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
+
+            XCHG xchg = new XCHG(registersMock);
+            MOV mov = new MOV(registersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(registersMock);
 
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
@@ -46,11 +46,11 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            XCHG xchg = new XCHG(registersMock);
+            MOV mov = new MOV(registersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(registersMock);
 
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
@@ -113,11 +113,11 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            XCHG xchg = new XCHG(registersMock);
+            MOV mov = new MOV(registersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(registersMock);
 
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
@@ -181,11 +181,11 @@ namespace Tests_Intel_8086
             GeneralPurposeRegisters generalRegistersMock = new GeneralPurposeRegisters();
             SegmentRegisters segmentRegistersMock = new SegmentRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, new IndexRegisters(), new PointerRegisters(), segmentRegistersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            XCHG xchg = new XCHG(generalRegistersMock, segmentRegistersMock);
+            MOV mov = new MOV(generalRegistersMock, segmentRegistersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(generalRegistersMock, segmentRegistersMock);
 
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
@@ -226,11 +226,11 @@ namespace Tests_Intel_8086
             GeneralPurposeRegisters generalRegistersMock = new GeneralPurposeRegisters();
             SegmentRegisters segmentRegistersMock = new SegmentRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, segmentRegistersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            XCHG xchg = new XCHG(generalRegistersMock, segmentRegistersMock);
+            MOV mov = new MOV(generalRegistersMock, segmentRegistersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(generalRegistersMock, segmentRegistersMock);
 
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
@@ -289,12 +289,12 @@ namespace Tests_Intel_8086
             SegmentRegisters segmentRegistersMock = new SegmentRegisters();
             PointerRegisters pointerRegistersMock = new PointerRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            PUSH push = new PUSH();
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            PUSH push = new PUSH(generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+            XCHG xchg = new XCHG(generalRegistersMock, segmentRegistersMock);
+            MOV mov = new MOV(generalRegistersMock, segmentRegistersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
 
             registryCommand.AddHandler(push);
             registryCommand.AddHandler(xchg);
@@ -336,13 +336,13 @@ namespace Tests_Intel_8086
             SegmentRegisters segmentRegistersMock = new SegmentRegisters();
             PointerRegisters pointerRegistersMock = new PointerRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            POP pop = new POP();
-            PUSH push = new PUSH();
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            POP pop = new POP(generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+            PUSH push = new PUSH(generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+            XCHG xchg = new XCHG(generalRegistersMock, segmentRegistersMock);
+            MOV mov = new MOV(generalRegistersMock, segmentRegistersMock);
+            AssignToRegistry assignTo = new AssignToRegistry(generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
 
             registryCommand.AddHandler(pop);
             registryCommand.AddHandler(push);
@@ -379,32 +379,20 @@ namespace Tests_Intel_8086
         }
 
         [TestMethod]
-        public void TestInvalidCommands()
+        public void TestMOVInvalidCommands()
         {
+            MemoryModel.SetAddressBusLength = 20;
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
+            SegmentRegisters segmentsMock = new SegmentRegisters();
+            PointerRegisters pointersMock = new PointerRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            POP pop = new POP();
-            PUSH push = new PUSH();
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            MOV mov = new MOV(registersMock, pointersMock, segmentsMock);
+            AssignToRegistry assign = new AssignToRegistry(registersMock, pointersMock, segmentsMock);
 
-            registryCommand.AddHandler(pop);
-            registryCommand.AddHandler(push);
-            registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
-            registryCommand.AddHandler(assignTo);
-
-            registryCommand.InputCommand("");
-            Assert.AreEqual(loggerMock.outputResult, "");
-
-            registryCommand.InputCommand(" ");
-            Assert.AreEqual(loggerMock.outputResult, "Invalid command line.");
-
-            registryCommand.InputCommand("][/]'/]['");
-            Assert.AreEqual(loggerMock.outputResult, "Invalid command line.");
+            registryCommand.AddHandler(assign);
 
             registryCommand.InputCommand("mov ak, bh");
             Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.");
@@ -415,6 +403,46 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("mov ah bk");
             Assert.AreEqual(loggerMock.outputResult, "MOV arguments must be separated by comma.");
 
+            registryCommand.InputCommand("mov ch,");
+            Assert.AreEqual(loggerMock.outputResult, "Too few arguments to function MOV.");
+
+            registryCommand.InputCommand("mov ax, [0");
+            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");
+
+            registryCommand.InputCommand("mov [0, ax");
+            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");            
+
+            registryCommand.InputCommand("mov [0, ch");
+            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");
+
+            registryCommand.InputCommand("BP ffff");
+            registryCommand.InputCommand("DS ffff");
+            registryCommand.InputCommand("mov [BP], CX");
+            Assert.AreEqual("Converting arguments into effective address FFFFh.\r\nPhysical address 10FFEFh is out of range memory.\nAborting operation MOV.\r\n", loggerMock.outputResult);
+
+            registryCommand.InputCommand("mov CX, [BP]");
+            Assert.AreEqual("Converting arguments into effective address FFFFh.\r\nPhysical address 10FFEFh is out of range memory.\nAborting operation MOV.\r\n", loggerMock.outputResult);
+            
+            MemoryModel.SetAddressBusLength = 0;
+        }
+
+
+        [TestMethod]
+        public void TestXCHGInvalidCommands()
+        {
+            MemoryModel.SetAddressBusLength = 20;
+            GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
+            SegmentRegisters segmentsMock = new SegmentRegisters();
+            PointerRegisters pointersMock = new PointerRegisters();
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
+
+            XCHG xchg = new XCHG(registersMock, pointersMock, segmentsMock);
+            AssignToRegistry assign = new AssignToRegistry(registersMock, pointersMock, segmentsMock);
+
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(assign);
+
             registryCommand.InputCommand("xchg ak, bx");
             Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.");
 
@@ -424,23 +452,37 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("xchg ah bk");
             Assert.AreEqual(loggerMock.outputResult, "XCHG arguments must be separated by comma.");
 
-            registryCommand.InputCommand("mov ch,");
-            Assert.AreEqual(loggerMock.outputResult, "Too few arguments to function MOV.");
-
             registryCommand.InputCommand("xchg dh");
             Assert.AreEqual(loggerMock.outputResult, "Too few arguments to function XCHG.");
 
-            registryCommand.InputCommand("mov ax, [0");
-            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");
-
-            registryCommand.InputCommand("mov [0, ax");
-            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");            
-            
             registryCommand.InputCommand("xchg bl, [0");
             Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");
 
-            registryCommand.InputCommand("mov [0, ch");
-            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");            
+            registryCommand.InputCommand("BP ffff");
+            registryCommand.InputCommand("DS ffff");
+            registryCommand.InputCommand("xchg [BP], CX");
+            Assert.AreEqual("Converting arguments into effective address FFFFh.\r\nPhysical address 10FFEFh is out of range memory.\nAborting operation XCHG.\r\n", loggerMock.outputResult);
+
+            registryCommand.InputCommand("xchg CX, [BP]");
+            Assert.AreEqual("Converting arguments into effective address FFFFh.\r\nPhysical address 10FFEFh is out of range memory.\nAborting operation XCHG.\r\n", loggerMock.outputResult);
+            
+            MemoryModel.SetAddressBusLength = 0;
+        }
+
+        [TestMethod]
+        public void TestInvalidCommands()
+        {
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
+
+            registryCommand.InputCommand("");
+            Assert.AreEqual("", loggerMock.outputResult);
+
+            registryCommand.InputCommand(" ");
+            Assert.AreEqual("", loggerMock.outputResult);
+
+            registryCommand.InputCommand("][/]'/]['");
+            Assert.AreEqual("Unsupported command line", loggerMock.outputResult);
         }
 
         [TestMethod]
@@ -448,17 +490,11 @@ namespace Tests_Intel_8086
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            PUSH push = new PUSH();
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            PUSH push = new PUSH(registersMock);
 
             registryCommand.AddHandler(push);
-            registryCommand.AddHandler(xchg);
-            registryCommand.AddHandler(mov);
-            registryCommand.AddHandler(assignTo);
 
             registryCommand.InputCommand("push");
             Assert.AreEqual(loggerMock.outputResult, "Pushing registry on stack requires two arguments.");
@@ -469,28 +505,24 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("push ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SP registry.\r\n");
 
-            registryCommand = new RegistryCommander(loggerMock, registersMock, new PointerRegisters());
+            push = new PUSH(registersMock, new PointerRegisters());
             registryCommand.InputCommand("push ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
+
+            push = new PUSH(registersMock, new PointerRegisters(), new SegmentRegisters());
+            registryCommand.InputCommand("push ax");
+            Assert.AreEqual(loggerMock.outputResult, "Cannot use command PUSH for half registers.\r\n");
         }
 
         private void TestInvalidPOPCommand()
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
-            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock);
 
-            POP pop = new POP();
-            PUSH push = new PUSH();
-            XCHG xchg = new XCHG();
-            MOV mov = new MOV();
-            AssignToRegistry assignTo = new AssignToRegistry();
+            POP pop = new POP(registersMock);
 
             registryCommand.AddHandler(pop);
-            registryCommand.AddHandler(push);
-            registryCommand.AddHandler(xchg);
-            registryCommand.AddHandler(mov);
-            registryCommand.AddHandler(assignTo);
 
             registryCommand.InputCommand("pop");
             Assert.AreEqual(loggerMock.outputResult, "Popping registry from stack requires two arguments.");
@@ -501,9 +533,13 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("pop ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SP registry.\r\n");
 
-            registryCommand = new RegistryCommander(loggerMock, registersMock, new PointerRegisters());
+            pop = new POP(registersMock, new PointerRegisters());
             registryCommand.InputCommand("pop ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
+
+            pop = new POP(registersMock, new PointerRegisters(), new SegmentRegisters());
+            registryCommand.InputCommand("pop ax");
+            Assert.AreEqual(loggerMock.outputResult, "Cannot use command POP for half registers.\r\n");
         }
 
         private class LoggerMock : OutputController
