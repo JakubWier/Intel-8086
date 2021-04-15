@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Intel_8086.Registers;
-using Intel_8086.Memory;
+using Intel_8086.MemorySystem;
 
 namespace Intel_8086.Console
 {
@@ -146,8 +146,9 @@ namespace Intel_8086.Console
         {
             if (IsSupportedRegistryName("DS", out RegistersController segmentsController))
             {
+                const int TO_20BIT_SHIFT = 4;
                 int dataSegment = BitConverter.ToUInt16(segmentsController.GetRegistry("DS"));
-                dataSegment = dataSegment << 4;
+                dataSegment = dataSegment << TO_20BIT_SHIFT;
                 uint physicalAddress = (uint)(dataSegment + effectiveAddress);
 
                 MemoryModel memory = MemoryModel.GetInstance();

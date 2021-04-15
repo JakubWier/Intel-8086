@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Intel_8086.Memory
+namespace Intel_8086.MemorySystem
 {
     public class MemoryModel : Memory, Observable
     {
@@ -19,7 +19,7 @@ namespace Intel_8086.Memory
             observers = new List<Observer>();
         }
 
-        public static MemoryModel GetInstance() //Naive implementation
+        public static MemoryModel GetInstance()
         {
             if (instance == null)
                 instance = new MemoryModel(addressBusLength);

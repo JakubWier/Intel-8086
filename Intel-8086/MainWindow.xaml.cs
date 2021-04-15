@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;*/
 using Intel_8086.Registers;
-using Intel_8086.Memory;
+using Intel_8086.MemorySystem;
 using Intel_8086.Console;
 
 namespace Intel_8086
@@ -107,10 +107,12 @@ namespace Intel_8086
         {
             RegistryCommander commander = new RegistryCommander(this, generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
 
+            PUSH push = new PUSH();
             XCHG xchg = new XCHG();
             MOV mov = new MOV();
             AssignToRegistry assignTo = new AssignToRegistry();
 
+            commander.AddHandler(push);
             commander.AddHandler(xchg);
             commander.AddHandler(mov);
             commander.AddHandler(assignTo);

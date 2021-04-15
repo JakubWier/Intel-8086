@@ -3,22 +3,13 @@ using Intel_8086;
 using Intel_8086.Registers;
 using Intel_8086.Console;
 using System;
-using Intel_8086.Memory;
+using Intel_8086.MemorySystem;
 
 namespace Tests_Intel_8086
 {
     [TestClass]
     public class CommandTest
     {
-        public void StartAllTests()
-        {
-            TestAssignToRegistry();
-            TestGeneralRegistersMOV();
-            TestXCHG();
-            TestInvalidCommands();
-            TestFromToRegistryMemory();
-            TestXCHGMemoryRegistry();
-        }
 
         [TestMethod]
         public void TestAssignToRegistry()
@@ -290,16 +281,65 @@ namespace Tests_Intel_8086
         }
 
         [TestMethod]
+        public void TestPUSH()
+        {
+            MemoryModel.SetAddressBusLength = 20;
+            MemoryModel memory = MemoryModel.GetInstance();
+            GeneralPurposeRegisters generalRegistersMock = new GeneralPurposeRegisters();
+            SegmentRegisters segmentRegistersMock = new SegmentRegisters();
+            PointerRegisters pointerRegistersMock = new PointerRegisters();
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, generalRegistersMock, pointerRegistersMock, segmentRegistersMock);
+
+            PUSH push = new PUSH();
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(push);
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
+
+            byte[] word;
+
+            registryCommand.InputCommand("ax 1122");
+            registryCommand.InputCommand("push ax");
+            word = memory.GetMemoryWord(0);
+            Assert.AreEqual(word[0], 34);
+            Assert.AreEqual(word[1], 17);
+            Assert.AreEqual("Value 1122h from registry AX pushed on stack with physical address 0h.\r\n", loggerMock.outputResult);
+
+            word = pointerRegistersMock.GetRegistry("SP");
+            Assert.AreEqual(word[0], 2);
+
+            registryCommand.InputCommand("ax FFEE");
+            registryCommand.InputCommand("bx AA99");
+            registryCommand.InputCommand("SS FF");
+            registryCommand.InputCommand("push ax");
+            registryCommand.InputCommand("push bx");
+            word = memory.GetMemoryWord(4083);
+            Assert.AreEqual(word[0], 255);
+            Assert.AreEqual(word[1], 153);
+            Assert.AreEqual("Value AA99h from registry BX pushed on stack with physical address FF4h.\r\n", loggerMock.outputResult);
+
+            word = pointerRegistersMock.GetRegistry("SP");
+            Assert.AreEqual(word[0], 6);
+        }
+
+        [TestMethod]
         public void TestInvalidCommands()
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
             RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
 
+            PUSH push = new PUSH();
             XCHG xchg = new XCHG();
             MOV mov = new MOV();
             AssignToRegistry assignTo = new AssignToRegistry();
 
+            registryCommand.AddHandler(push);
             registryCommand.AddHandler(xchg);
             registryCommand.AddHandler(mov);
             registryCommand.AddHandler(assignTo);
@@ -347,7 +387,38 @@ namespace Tests_Intel_8086
             Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");
 
             registryCommand.InputCommand("mov [0, ch");
-            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");
+            Assert.AreEqual(loggerMock.outputResult, "Argument is missing bracket.");            
+        }
+
+        [TestMethod]
+        private void TestInvalidPushCommand()
+        {
+            GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
+            LoggerMock loggerMock = new LoggerMock();
+            RegistryCommander registryCommand = new RegistryCommander(loggerMock, registersMock);
+
+            PUSH push = new PUSH();
+            XCHG xchg = new XCHG();
+            MOV mov = new MOV();
+            AssignToRegistry assignTo = new AssignToRegistry();
+
+            registryCommand.AddHandler(push);
+            registryCommand.AddHandler(xchg);
+            registryCommand.AddHandler(mov);
+            registryCommand.AddHandler(assignTo);
+
+            registryCommand.InputCommand("push");
+            Assert.AreEqual(loggerMock.outputResult, "Pushing registry on stack requires two arguments.");
+
+            registryCommand.InputCommand("push ak");
+            Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.\r\n");
+
+            registryCommand.InputCommand("push ax");
+            Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SP registry.\r\n");
+
+            registryCommand = new RegistryCommander(loggerMock, registersMock, new PointerRegisters());
+            registryCommand.InputCommand("push ax");
+            Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
         }
 
         private class LoggerMock : OutputController

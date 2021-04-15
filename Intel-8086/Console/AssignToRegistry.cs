@@ -43,7 +43,6 @@ namespace Intel_8086.Console
 
         private string TrySetFixedToRegistry(RegistersController controller, string registryName, string valueHex)
         {
-            registryName = registryName.ToUpper();
             if (valueHex.Length > 4)
                 valueHex = valueHex.Substring(valueHex.Length - 4, 4);
 

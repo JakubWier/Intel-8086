@@ -2,7 +2,7 @@
 using System.Text;
 using Intel_8086;
 
-namespace Intel_8086.Memory
+namespace Intel_8086.MemorySystem
 {
     class MemoryView
     {

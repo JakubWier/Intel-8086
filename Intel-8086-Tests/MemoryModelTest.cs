@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Intel_8086.Registers;
-using Intel_8086.Memory;
+using Intel_8086.MemorySystem;
 
 namespace Tests_Intel_8086
 {

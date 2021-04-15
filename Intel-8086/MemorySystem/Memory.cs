@@ -1,4 +1,4 @@
-﻿namespace Intel_8086.Memory
+﻿namespace Intel_8086.MemorySystem
 {
     interface Memory
     {

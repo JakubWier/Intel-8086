@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Intel_8086.Memory
+namespace Intel_8086.MemorySystem
 {
     public static class MemoryModelExtension
     {
