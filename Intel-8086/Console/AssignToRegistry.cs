@@ -48,6 +48,8 @@ namespace Intel_8086.Console
         {
             if (valueHex.Length > 4)
                 valueHex = valueHex.Substring(valueHex.Length - 4, 4);
+            if (valueHex.EndsWith('H'))
+                valueHex = valueHex.Remove(valueHex.Length - 1, 1);
 
             try
             {
@@ -59,11 +61,6 @@ namespace Intel_8086.Console
             {
                 return $"Cannot parse \"{valueHex}\" as hexadecimal.";
             }
-            catch (ArgumentException arg)
-            {
-                return arg.Message;
-            }
-
 
         }
     }
