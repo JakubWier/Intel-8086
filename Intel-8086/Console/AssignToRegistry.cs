@@ -22,6 +22,11 @@ namespace Intel_8086.Console
                 return TrySetFixedToRegistry(controller, args[0], args[1]);
             }
 
+            return Next(args);
+        }
+
+        private string Next(string[] args)
+        {
             if (NextHandler != null)
                 return NextHandler.HandleOperation(args);
             else

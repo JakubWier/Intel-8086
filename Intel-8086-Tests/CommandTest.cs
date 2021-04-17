@@ -486,8 +486,9 @@ namespace Tests_Intel_8086
         }
 
         [TestMethod]
-        private void TestInvalidPUSHCommand()
+        public void TestInvalidPUSHCommand()
         {
+            MemoryModel.SetAddressBusLength = 20;
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
             RegistryCommander registryCommand = new RegistryCommander(loggerMock);
@@ -505,16 +506,25 @@ namespace Tests_Intel_8086
             registryCommand.InputCommand("push ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SP registry.\r\n");
 
+            registryCommand = new RegistryCommander(loggerMock);
             push = new PUSH(registersMock, new PointerRegisters());
+            registryCommand.AddHandler(push);
+
             registryCommand.InputCommand("push ax");
             Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
 
+            registryCommand = new RegistryCommander(loggerMock);
             push = new PUSH(registersMock, new PointerRegisters(), new SegmentRegisters());
-            registryCommand.InputCommand("push ax");
+            registryCommand.AddHandler(push);
+
+            registryCommand.InputCommand("push ah");
             Assert.AreEqual(loggerMock.outputResult, "Cannot use command PUSH for half registers.\r\n");
+
+            MemoryModel.SetAddressBusLength = 0;
         }
 
-        private void TestInvalidPOPCommand()
+        [TestMethod]
+        public void TestInvalidPOPCommand()
         {
             GeneralPurposeRegisters registersMock = new GeneralPurposeRegisters();
             LoggerMock loggerMock = new LoggerMock();
@@ -525,21 +535,30 @@ namespace Tests_Intel_8086
             registryCommand.AddHandler(pop);
 
             registryCommand.InputCommand("pop");
-            Assert.AreEqual(loggerMock.outputResult, "Popping registry from stack requires two arguments.");
+            Assert.AreEqual("Popping to registry from stack requires two arguments.", loggerMock.outputResult);
 
             registryCommand.InputCommand("pop ak");
-            Assert.AreEqual(loggerMock.outputResult, "AK is unsupported registry name.\r\n");
+            Assert.AreEqual("AK is unsupported registry name.\r\n", loggerMock.outputResult);
 
             registryCommand.InputCommand("pop ax");
-            Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SP registry.\r\n");
+            Assert.AreEqual("Command interpreter couldn't find SP registry.\r\n", loggerMock.outputResult);
 
+            registryCommand = new RegistryCommander(loggerMock);
             pop = new POP(registersMock, new PointerRegisters());
-            registryCommand.InputCommand("pop ax");
-            Assert.AreEqual(loggerMock.outputResult, "Command interpreter couldn't find SS registry.\r\n");
+            registryCommand.AddHandler(pop);
 
-            pop = new POP(registersMock, new PointerRegisters(), new SegmentRegisters());
             registryCommand.InputCommand("pop ax");
-            Assert.AreEqual(loggerMock.outputResult, "Cannot use command POP for half registers.\r\n");
+            Assert.AreEqual("Command interpreter couldn't find SS registry.\r\n", loggerMock.outputResult);
+
+            registryCommand = new RegistryCommander(loggerMock);
+            pop = new POP(registersMock, new PointerRegisters(), new SegmentRegisters());
+            registryCommand.AddHandler(pop);
+
+            registryCommand.InputCommand("pop al");
+            Assert.AreEqual("Cannot use command POP for half registers.\r\n", loggerMock.outputResult);
+
+            registryCommand.InputCommand("pop ax");
+            Assert.AreEqual("The stack is empty, cannot perform operation.\r\n", loggerMock.outputResult);
         }
 
         private class LoggerMock : OutputController

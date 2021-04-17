@@ -81,10 +81,17 @@ namespace Intel_8086.Console
 
             MemoryModel memory = MemoryModel.GetInstance();
             UInt16 stackSegment = BitConverter.ToUInt16(stackSegmentContainer.GetRegistry("SS"));
-            UInt16 stackPointer = BitConverter.ToUInt16(stackPointerContainer.GetRegistry("SP"));
+            Int16 stackPointer = BitConverter.ToInt16(stackPointerContainer.GetRegistry("SP"));
             stackPointer -= 2;
+
+            if(stackPointer < 0)
+            {
+                outputLogBuilder.AppendLine($"The stack is empty, cannot perform operation.");
+                return;
+            }
+
             stackPointerContainer.SetBytesToRegistry("SP", BitConverter.GetBytes(stackPointer));
-            uint physicalAddress = (uint)(stackSegment << TO_20BIT_SHIFT) + stackPointer;
+            uint physicalAddress = (uint)(stackSegment << TO_20BIT_SHIFT) + (UInt16)stackPointer;
             byte[] wordToPop = memory.GetMemoryWord(physicalAddress);
             destinatedContainer.SetBytesToRegistry(destinatedRegistryName, wordToPop);
             //memory.SetMemoryWord(physicalAddress, 0);
