@@ -6,6 +6,6 @@ namespace Intel_8086
 {
     public interface Observer
     {
-        void Update(object update);
+        public void Update(object update);
     }
 }
