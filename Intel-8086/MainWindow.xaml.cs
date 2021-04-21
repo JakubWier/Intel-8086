@@ -105,8 +105,8 @@ namespace Intel_8086
 
             POP pop = new POP(generalPurposeRegisters, pointerRegisters, segmentRegisters);
             PUSH push = new PUSH(generalPurposeRegisters, pointerRegisters, segmentRegisters);
-            XCHG xchg = new XCHG(generalPurposeRegisters, segmentRegisters);
-            MOV mov = new MOV(generalPurposeRegisters, segmentRegisters);
+            XCHG xchg = new XCHG(generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
+            MOV mov = new MOV(generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
             AssignToRegistry assignTo = new AssignToRegistry(generalPurposeRegisters, indexRegisters, pointerRegisters, segmentRegisters);
 
             commander.AddHandler(pop);

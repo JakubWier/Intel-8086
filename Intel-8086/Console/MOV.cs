@@ -219,7 +219,6 @@ namespace Intel_8086.Console
 
         private bool TryParseEffectiveAddressToValue(string []addressArgs, out int address)
         {
-            //Adresowanie bazowe (BX lub BP)
             address = 0;
             foreach (string arg in addressArgs)
             {
@@ -234,7 +233,8 @@ namespace Intel_8086.Console
                         byte[] bytes = regController.GetRegistry(arg);
                         address += BitConverter.ToUInt16(bytes);
                     }
-                } else if(CommandFormatter.IsValue(arg, out int value, out string parseLog))
+                } 
+                else if(CommandFormatter.IsValue(arg, out int value, out string parseLog))
                 {
                     outputLogBuilder.Append(parseLog);
                     CommandFormatter.CheckAndReduceOverflow(ref value, out string log);

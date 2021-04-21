@@ -237,7 +237,6 @@ namespace Intel_8086.Console
 
         private bool TryParseEffectiveAddressToValue(string[] addressArgs, out int address)
         {
-            //Adresowanie bazowe (BX lub BP)
             address = 0;
             foreach (string arg in addressArgs)
             {
